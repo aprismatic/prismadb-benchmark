@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <useProxy>true</useProxy>
+  <encrypt>true</encrypt>
+  <latencyTest>
+    <multiple>10</multiple>
+  </latencyTest>
+  <loadTest>
+    <startSpeed>3</startSpeed>
+    <stride>1</stride>
+    <workers>1</workers>
+    <verbal>2</verbal>
+    <connectionTime>2000</connectionTime>
+  </loadTest>
+</configuration>
