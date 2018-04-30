@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-  <useProxy>true</useProxy>
-  <encrypt>true</encrypt>
+  <host>155.69.149.158</host>
+  <port>3306</port>
+  <useProxy>false</useProxy>
+  <encrypt>false</encrypt>
   <latencyTest>
     <multiple>10</multiple>
   </latencyTest>
@@ -9,7 +11,7 @@
     <startSpeed>3</startSpeed>
     <stride>1</stride>
     <workers>1</workers>
-    <verbal>2</verbal>
+    <verbal>0</verbal>
     <connectionTime>2000</connectionTime>
   </loadTest>
 </configuration>

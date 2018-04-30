@@ -52,8 +52,8 @@ namespace PrismaBenchmark
                 int stride = conf.stride;
                 if (!conf.useProxy && queryType.Contains("SELECT"))
                 {
-                    startSpeed = 900;
-                    stride = 50;
+                    startSpeed = 100;
+                    stride = 2;
                 }
                 int rpm = RunLoad(ProduceQuery, queryType, verbal: conf.verbal, startSpeed: startSpeed, stride: stride, workers: conf.workers);
                 Console.WriteLine("Max rpm {0}: {1}", queryType, rpm);

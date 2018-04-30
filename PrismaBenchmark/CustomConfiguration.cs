@@ -9,6 +9,10 @@ namespace PrismaBenchmark
         private CustomConfiguration() {
             XmlDocument conf = new XmlDocument();
             conf.Load("conf.xml");
+            host = conf.GetElementsByTagName("host")[0].InnerText;
+            port = conf.GetElementsByTagName("port")[0].InnerText;
+            if (!Boolean.TryParse(conf.GetElementsByTagName("useProxy")[0].InnerText, out useProxy))
+                useProxy = true; // default
             if (!Boolean.TryParse(conf.GetElementsByTagName("useProxy")[0].InnerText, out useProxy))
                 useProxy = true; // default
             if (!Boolean.TryParse(conf.GetElementsByTagName("encrypt")[0].InnerText, out encrypt))
@@ -42,6 +46,8 @@ namespace PrismaBenchmark
         }
         public readonly Boolean useProxy;
         public readonly Boolean encrypt;
+        public readonly string host;
+        public readonly string port;
         public readonly int multiple;
         public readonly int startSpeed;
         public readonly int stride;

@@ -20,8 +20,8 @@ namespace PrismaBenchmark
             {
                 ["user id"] = "root",
                 ["password"] = "toor",
-                ["server"] = "127.0.0.1",
-                ["port"] = conf.useProxy? "4000": "3306", // proxy
+                ["server"] = conf.host,
+                ["port"] = conf.port, //conf.useProxy? "4000": "3306", // proxy
                 ["database"] = "testdb",
             };
             try
@@ -42,8 +42,8 @@ namespace PrismaBenchmark
             {
                 ["user id"] = "root",
                 ["password"] = "toor",
-                ["server"] = "127.0.0.1",
-                ["port"] = conf.useProxy ? "4000" : "3306", // proxy
+                ["server"] = conf.host,
+                ["port"] = conf.port,//conf.useProxy ? "4000" : "3306", // proxy
                 ["database"] = "testdb",
             };
             try
