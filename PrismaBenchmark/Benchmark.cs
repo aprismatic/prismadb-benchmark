@@ -11,7 +11,7 @@ namespace PrismaBenchmark
 {
     abstract class Benchmark
     {
-        protected static CustomConfiguration conf;
+        public static CustomConfiguration conf;
         protected DataStore ds;
         protected static Random rand = new Random();
         protected static DataGenerator dataGen = DataGenerator.Instance(rand);

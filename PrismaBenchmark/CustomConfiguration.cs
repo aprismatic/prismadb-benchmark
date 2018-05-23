@@ -21,6 +21,27 @@ namespace PrismaBenchmark
             {
                 throw new Exception("Error: Inappropriate configuration - cannot encrypt while not use proxy!");
             }
+            ///
+            if (conf.GetElementsByTagName("latencyTest").Count != 0)
+            {
+                XmlNode operations = conf.SelectSingleNode("configuration/latencyTest/operations");
+                String[] operations_str = new String[operations.ChildNodes.Count];
+                for (var i = 0; i < operations.ChildNodes.Count; i++)
+                {
+                    operations_str[i] = operations.ChildNodes[i].InnerText;
+                }
+                latency = new Latency(operations_str);
+            }
+            if (conf.GetElementsByTagName("loadTest").Count != 0)
+            {
+                XmlNode operations = conf.SelectSingleNode("configuration/loadTest/operations");
+                String[] operations_str = new String[operations.ChildNodes.Count];
+                for (var i = 0; i < operations.ChildNodes.Count; i++)
+                {
+                    operations_str[i] = operations.ChildNodes[i].InnerText;
+                }
+                load = new Load(operations_str);
+            };
             //// latencyTest variables
             if (!Int32.TryParse(conf.GetElementsByTagName("multiple")[0].InnerText, out multiple))
                 multiple = 10; // default
@@ -46,6 +67,8 @@ namespace PrismaBenchmark
         }
         public readonly Boolean useProxy;
         public readonly Boolean encrypt;
+        public readonly Latency latency = null;
+        public readonly Load load = null;
         public readonly string host;
         public readonly string port;
         public readonly int multiple;
@@ -54,5 +77,23 @@ namespace PrismaBenchmark
         public readonly int workers;
         public readonly int verbal;
         public readonly int connectionTime;
+
+    }
+
+    public class Test
+    {
+        public String[] Operations { get; }
+        public Test(String[] operations)
+        {
+            this.Operations = operations;
+        }
+    }
+    public class Load : Test
+    {
+        public Load(String[] operations) : base(operations) { }
+    }
+    public class Latency : Test
+    {
+        public Latency(String[] operations) : base(operations) { }
     }
 }

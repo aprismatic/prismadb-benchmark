@@ -17,14 +17,29 @@ namespace PrismaBenchmark
         public LoadBenchmark(): base()
         {
             ds = new DataStore();
-            queryTypeMap.Add("SINGLE_INSERT", 1);
-            queryTypeMap.Add("MULTIPLE_INSERT", 2);
-            queryTypeMap.Add("SINGLE_SELECT", 3);
-            queryTypeMap.Add("MULTIPLE_SELECT", 4);
-            queryTypeMap.Add("SINGLE_SELECT_WITH_JOIN", 5);
-            queryTypeMap.Add("MULTIPLE_SELECT_WITH_JOIN", 6);
-            queryTypeMap.Add("SINGLE_UPDATE", 7);
-            queryTypeMap.Add("MULTIPLE_UPDATE", 8);
+            foreach (var test in conf.load.Operations)
+            {
+                switch (test)
+                {
+                    case "insert":
+                        queryTypeMap.Add("SINGLE_INSERT", 1);
+                        queryTypeMap.Add("MULTIPLE_INSERT", 2);
+                        break;
+                    case "select":
+                        queryTypeMap.Add("SINGLE_SELECT", 3);
+                        queryTypeMap.Add("MULTIPLE_SELECT", 4);
+                        queryTypeMap.Add("SINGLE_SELECT_WITH_JOIN", 5);
+                        queryTypeMap.Add("MULTIPLE_SELECT_WITH_JOIN", 6);
+                        break;
+                    case "update":
+                        queryTypeMap.Add("SINGLE_UPDATE", 7);
+                        queryTypeMap.Add("MULTIPLE_UPDATE", 8);
+                        break;
+                }
+            }
+
+
+
         }
         private string ProduceQuery(int type)
         {
@@ -50,11 +65,6 @@ namespace PrismaBenchmark
                 string queryType = entry.Key;
                 int startSpeed = conf.startSpeed;
                 int stride = conf.stride;
-                if (!conf.useProxy && queryType.Contains("SELECT"))
-                {
-                    startSpeed = 100;
-                    stride = 2;
-                }
                 int rpm = RunLoad(ProduceQuery, queryType, verbal: conf.verbal, startSpeed: startSpeed, stride: stride, workers: conf.workers);
                 Console.WriteLine("Max rpm {0}: {1}", queryType, rpm);
             }
@@ -102,7 +112,7 @@ namespace PrismaBenchmark
                     }
                 }
                 if (info.verbal >= 1)
-                    Console.WriteLine("Done processing!");
+                    Console.WriteLine("\nDone processing!");
             }
 
             Parallel.For(0, conf.workers, i => startWorker());
@@ -113,12 +123,14 @@ namespace PrismaBenchmark
             Thread.Sleep(conf.connectionTime *info.numberOfWorkers); // wait for workers to connect to db
             ConcurrentQueue<string> cq = info.cq;
             int v = info.v;
+            int floor = v;
+            int ceil = -1;
             void action()
             {
                 do
                 {
                     if (info.verbal >= 1)
-                        Console.WriteLine(String.Format("Speed: {0}", v));
+                        Console.Write("\rSpeed: {0}", v);
                     long elapsed = 0;
                     var watch = Stopwatch.StartNew();
                     Parallel.For(0, v, i => {
@@ -126,24 +138,39 @@ namespace PrismaBenchmark
                         cq.Enqueue(query);
                     });
                     Interlocked.Add(ref info.produced, v);
-                    if (info.verbal >= 2)
-                        Console.WriteLine("Queue now have: " + cq.Count);
+                    //if (info.verbal >= 2)
+                    //    Console.Write("\rQueue now have: {0}", cq.Count);
                     do
                     {
                         elapsed = watch.ElapsedMilliseconds;
                     } while (elapsed < 1000); // each pulse last 1s
-                    if (cq.Count > 0)
+                    if (cq.Count > 0 || ceil != -1)
                     {
-                        info.rps = v; // only 1 master thread write to info.rps -> no need lock
-                        return;
+                        if (cq.Count > 0)
+                            ceil = v;
+                        else
+                            floor = v;
+                        v = (floor + ceil)/2;
+                        while (cq.Count > 0) { }
+                    }
+                    else
+                    {   // change strategy to doubling speed every cycle
+                        floor = v;
+                        v *= 2;
+                    }
+                    if (ceil <= floor + 1 && ceil!=-1)
+                    {
+                        info.rps = ceil; // only 1 master thread write to info.rps -> no need lock
                     }
                     watch.Stop();
-                    if (info.verbal >= 2)
-                    {
-                        Console.WriteLine("Left in queue: " + cq.Count);
-                        Console.WriteLine("Total processed: " + info.processed);
-                    }
-                    v += info.stride; // increase speed after every pulse
+                    //if (info.verbal >= 2)
+                    //{
+                    //    Console.Write("\rLeft in queue: {0}", cq.Count);
+                    //    Console.Write("\rTotal processed: {0}", info.processed);
+                    //}
+                    //v += info.stride; // increase speed after every pulse
+
+
                 } while (info.rps == 0);
             }
             Parallel.Invoke(action);

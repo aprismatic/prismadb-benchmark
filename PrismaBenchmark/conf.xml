@@ -1,17 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-  <host>155.69.149.158</host>
+  <!--<host>155.69.149.158</host>-->
+  <host>localhost</host>
   <port>3306</port>
   <useProxy>false</useProxy>
   <encrypt>false</encrypt>
   <latencyTest>
+    <operations>
+      <operation>insert</operation>
+      <!--<operation>select</operation>
+      <operation>udpate</operation>
+      <operation>delete</operation>-->
+    </operations>
     <multiple>10</multiple>
   </latencyTest>
   <loadTest>
+    <operations>
+      <operation>insert</operation>
+      <operation>select</operation>
+      <operation>udpate</operation>
+    </operations>
     <startSpeed>3</startSpeed>
     <stride>1</stride>
     <workers>1</workers>
-    <verbal>0</verbal>
+    <verbal>1</verbal>
     <connectionTime>2000</connectionTime>
   </loadTest>
 </configuration>

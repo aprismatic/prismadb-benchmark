@@ -156,16 +156,30 @@ namespace PrismaBenchmark
         {
             Console.WriteLine("Start Latency Benchmarking ... ");
             Setup();
-            InsertionTest(1);
-            InsertionTest(10);
-            SelectionTest(true);
-            SelectionTest(false);
-            SelectionTestWithJoin(true);
-            SelectionTestWithJoin(false);
-            UpdateTest(true);
-            UpdateTest(false);
-            DeleteTest(1);
-            DeleteTest(10);
+            foreach (var test in conf.latency.Operations)
+            {
+                switch (test)
+                {
+                    case "insert":
+                        InsertionTest(1);
+                        InsertionTest(10);
+                        break;
+                    case "select":
+                        SelectionTest(true);
+                        SelectionTest(false);
+                        SelectionTestWithJoin(true);
+                        SelectionTestWithJoin(false);
+                        break;
+                    case "update":
+                        UpdateTest(true);
+                        UpdateTest(false);
+                        break;
+                    case "delete":
+                        DeleteTest(1);
+                        DeleteTest(10);
+                        break;
+                }
+            }
             /////
             dataGen.ResetNextSingle();
             Console.WriteLine("Finish Latency Benchmarking ... ");
