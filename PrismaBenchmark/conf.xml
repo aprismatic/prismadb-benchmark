@@ -5,6 +5,7 @@
   <port>3306</port>
   <useProxy>false</useProxy>
   <encrypt>false</encrypt>
+  <useIndex>true</useIndex>
   <latencyTest>
     <operations>
       <operation>insert</operation>

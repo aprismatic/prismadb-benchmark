@@ -151,7 +151,7 @@ namespace PrismaBenchmark
                         else
                             floor = v;
                         v = (floor + ceil)/2;
-                        while (cq.Count > 0) { }
+                        while (cq.Count > 0) { } // wait for the queue to clear off
                     }
                     else
                     {   // change strategy to doubling speed every cycle
@@ -163,14 +163,6 @@ namespace PrismaBenchmark
                         info.rps = ceil; // only 1 master thread write to info.rps -> no need lock
                     }
                     watch.Stop();
-                    //if (info.verbal >= 2)
-                    //{
-                    //    Console.Write("\rLeft in queue: {0}", cq.Count);
-                    //    Console.Write("\rTotal processed: {0}", info.processed);
-                    //}
-                    //v += info.stride; // increase speed after every pulse
-
-
                 } while (info.rps == 0);
             }
             Parallel.Invoke(action);

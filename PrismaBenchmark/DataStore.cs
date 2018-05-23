@@ -85,22 +85,40 @@ namespace PrismaBenchmark
                 return;
             }
             // build query
-            String query = conf.useProxy && conf.encrypt? String.Format(@"CREATE TABLE {0}
-                                    (
-                                        a INT ENCRYPTED FOR(INTEGER_MULTIPLICATION, INTEGER_ADDITION, SEARCH),
-                                        b INT ENCRYPTED FOR(INTEGER_MULTIPLICATION, INTEGER_ADDITION, SEARCH),
-                                        c INT,
-                                        d VARCHAR(30) ENCRYPTED FOR(STORE, SEARCH),
-                                        e VARCHAR(30)
-                                    );", tableName)
-                                    : String.Format(@"CREATE TABLE {0}
-                                    (
-                                        a INT,
-                                        b INT,
-                                        c INT,
-                                        d VARCHAR(30),
-                                        e VARCHAR(30)
-                                    );", tableName);
+            String query;
+            if (conf.useProxy && conf.encrypt)
+            {
+                query = String.Format(@"CREATE TABLE {0}
+                (
+                    a INT ENCRYPTED FOR(INTEGER_MULTIPLICATION, INTEGER_ADDITION, SEARCH),
+                    b INT ENCRYPTED FOR(INTEGER_MULTIPLICATION, INTEGER_ADDITION, SEARCH),
+                    c INT,
+                    d VARCHAR(30) ENCRYPTED FOR(STORE, SEARCH),
+                    e VARCHAR(30)
+                );", tableName);
+            } else if (conf.useIndex)
+            {
+                query = String.Format(@"CREATE TABLE {0}
+                (
+                    a INT,
+                    b INT,
+                    c INT,
+                    d VARCHAR(30),
+                    e VARCHAR(30));
+                    ALTER TABLE {0} ADD INDEX (a);"
+                , tableName);
+            } else
+            {
+                query = String.Format(@"CREATE TABLE {0}
+                (
+                    a INT,
+                    b INT,
+                    c INT,
+                    d VARCHAR(30),
+                    e VARCHAR(30)
+                );", tableName);
+            }
+
             // execute query
             MySqlCommand cmd = new MySqlCommand();
             cmd.CommandText = query.ToString();

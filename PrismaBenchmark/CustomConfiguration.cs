@@ -21,6 +21,8 @@ namespace PrismaBenchmark
             {
                 throw new Exception("Error: Inappropriate configuration - cannot encrypt while not use proxy!");
             }
+            if (!Boolean.TryParse(conf.GetElementsByTagName("useIndex")[0].InnerText, out useIndex))
+                useIndex = true; // default
             ///
             if (conf.GetElementsByTagName("latencyTest").Count != 0)
             {
@@ -69,6 +71,7 @@ namespace PrismaBenchmark
         public readonly Boolean encrypt;
         public readonly Latency latency = null;
         public readonly Load load = null;
+        public readonly Boolean useIndex;
         public readonly string host;
         public readonly string port;
         public readonly int multiple;
