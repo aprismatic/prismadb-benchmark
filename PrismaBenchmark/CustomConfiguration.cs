@@ -23,6 +23,8 @@ namespace PrismaBenchmark
             }
             if (!Boolean.TryParse(conf.GetElementsByTagName("useIndex")[0].InnerText, out useIndex))
                 useIndex = true; // default
+            if (!Int32.TryParse(conf.GetElementsByTagName("rows")[0].InnerText, out rows))
+                rows = 500000; // default
             ///
             if (conf.GetElementsByTagName("latencyTest").Count != 0)
             {
@@ -74,6 +76,7 @@ namespace PrismaBenchmark
         public readonly Boolean useIndex;
         public readonly string host;
         public readonly string port;
+        public readonly int rows;
         public readonly int multiple;
         public readonly int startSpeed;
         public readonly int stride;

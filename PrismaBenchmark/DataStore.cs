@@ -154,7 +154,6 @@ namespace PrismaBenchmark
                 return -1;
             }
             string query = QueryConstructor.ConstructInsertQuery(tableName, tuples);
-            // Console.WriteLine(query);
             // execute query
             return Execute(query);
         }

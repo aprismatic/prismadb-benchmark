@@ -58,6 +58,7 @@ namespace PrismaBenchmark
         public List<List<ArrayList>> GetDataRows(int numberOfRows, int range=0, int copy=1)
         // range 0: random range [0..9]
         // range 1: single range [20..]
+        // copy: number of tables of the same data structure
         {
             List<List<ArrayList>> data = new List<List<ArrayList>>();
             // init data with List<ArrayList>
@@ -85,6 +86,17 @@ namespace PrismaBenchmark
         private int GetNextSingle()
         {
             return this.nextSingle++;
+        }
+        public List<ArrayList> GetDataRowsForSelect(int start, int batch_size=1000)
+        // sequence number of batch, each batch contains batch_size rows, with index starting with batch*batch_size, end with index (batch+1)*batch_size - 1 
+        {
+            List<ArrayList> data = new List<ArrayList>(batch_size);
+            // init data with List<ArrayList>
+            for (var i = start; i < start + batch_size; i++)
+            {
+                data.Add(new ArrayList { i, rand.Next(10), rand.Next(10), RandomString(10), RandomString(10) });
+            }
+            return data;
         }
     }
 }

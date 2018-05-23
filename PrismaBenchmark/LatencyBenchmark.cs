@@ -155,26 +155,29 @@ namespace PrismaBenchmark
         public override void RunBenchMark()
         {
             Console.WriteLine("Start Latency Benchmarking ... ");
-            Setup();
             foreach (var test in conf.latency.Operations)
             {
                 switch (test)
                 {
                     case "insert":
+                        Setup();
                         InsertionTest(1);
                         InsertionTest(10);
                         break;
                     case "select":
+                        SetupForSelect();
                         SelectionTest(true);
                         SelectionTest(false);
                         SelectionTestWithJoin(true);
                         SelectionTestWithJoin(false);
                         break;
                     case "update":
+                        Setup();
                         UpdateTest(true);
                         UpdateTest(false);
                         break;
                     case "delete":
+                        Setup();
                         DeleteTest(1);
                         DeleteTest(10);
                         break;

@@ -59,10 +59,23 @@ namespace PrismaBenchmark
         public override void RunBenchMark()
         {
             Console.WriteLine("Start Load Benchmarking ... ");
-            Setup();
             foreach (KeyValuePair<string, int> entry in queryTypeMap)
             {
                 string queryType = entry.Key;
+                switch (entry.Key)
+                {
+                    case "SINGLE_INSERT":
+                        Setup();
+                        break;
+                    case "SINGLE_SELECT":
+                        SetupForSelect();
+                        break;
+                    case "SINGLE_UPDATE":
+                        Setup();
+                        break;
+                    default:
+                        break;
+                }
                 int startSpeed = conf.startSpeed;
                 int stride = conf.stride;
                 int rpm = RunLoad(ProduceQuery, queryType, verbal: conf.verbal, startSpeed: startSpeed, stride: stride, workers: conf.workers);
@@ -130,7 +143,7 @@ namespace PrismaBenchmark
                 do
                 {
                     if (info.verbal >= 1)
-                        Console.Write("\rSpeed: {0}", v);
+                        Console.Write("\rSpeed: {0}  ", v); // extra space at the end to make sure to overwrite the previously written line
                     long elapsed = 0;
                     var watch = Stopwatch.StartNew();
                     Parallel.For(0, v, i => {
