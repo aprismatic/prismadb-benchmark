@@ -185,6 +185,7 @@ namespace PrismaBenchmark
             }
             /////
             dataGen.ResetNextSingle();
+            ds.Close();
             Console.WriteLine("Finish Latency Benchmarking ... ");
         }
 

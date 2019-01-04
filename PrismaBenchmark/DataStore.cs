@@ -90,8 +90,8 @@ namespace PrismaBenchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT ENCRYPTED FOR(INTEGER_MULTIPLICATION, INTEGER_ADDITION, SEARCH),
-                    b INT ENCRYPTED FOR(INTEGER_MULTIPLICATION, INTEGER_ADDITION, SEARCH),
+                    a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH),
+                    b INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH),
                     c INT,
                     d VARCHAR(30) ENCRYPTED FOR(STORE, SEARCH),
                     e VARCHAR(30)
@@ -134,7 +134,7 @@ namespace PrismaBenchmark
                 if (e.Message == String.Format("Table '{0}' already exists", tableName))
                     if (overwrite)
                     {
-                        cmd.CommandText = String.Format("DROP TABLE {0}", tableName);
+                        cmd.CommandText = String.Format("DROP TABLE IF EXISTS {0}", tableName);
                         cmd.ExecuteNonQuery();
                         Console.WriteLine("Deleted previously created table with the same name!");
                         CreateTable(tableName);

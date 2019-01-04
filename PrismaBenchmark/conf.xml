@@ -2,25 +2,25 @@
 <configuration>
   <!--<host>155.69.149.158</host>-->
   <host>localhost</host>
-  <port>3306</port>
-  <useProxy>false</useProxy>
-  <encrypt>false</encrypt>
-  <useIndex>true</useIndex>
-  <rows>500000</rows>
+  <port>4000</port>
+  <useProxy>true</useProxy>
+  <encrypt>true</encrypt>
+  <useIndex>false</useIndex>
+  <rows>10000</rows>
   <latencyTest>
     <operations>
-      <!--<operation>insert</operation>-->
-      <!--<operation>select</operation>-->
-      <!--<operation>udpate</operation>
+      <!--<operation>insert</operation>
+      <operation>select</operation>
+      <operation>update</operation>
       <operation>delete</operation>-->
     </operations>
     <multiple>10</multiple>
   </latencyTest>
   <loadTest>
     <operations>
-      <!--<operation>insert</operation>-->
+      <operation>insert</operation>
       <operation>select</operation>
-      <!--<operation>udpate</operation>-->
+      <operation>update</operation>
     </operations>
     <startSpeed>3</startSpeed>
     <stride>1</stride>

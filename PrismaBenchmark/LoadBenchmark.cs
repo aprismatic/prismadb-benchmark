@@ -82,6 +82,7 @@ namespace PrismaBenchmark
                 Console.WriteLine("Max rpm {0}: {1}", queryType, rpm);
             }
             dataGen.ResetNextSingle();
+            ds.Close();
             Console.WriteLine("Finish Load Benchmarking ... ");
         }
         protected int RunLoad(Func<int, string> ProduceQuery, string queryType, int startSpeed = 10, int stride = 1, int workers=2,int verbal=0)
@@ -124,6 +125,9 @@ namespace PrismaBenchmark
                         Interlocked.Add(ref info.processed, 1);
                     }
                 }
+
+                privateDS.Close();
+
                 if (info.verbal >= 1)
                     Console.WriteLine("\nDone processing!");
             }
