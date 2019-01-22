@@ -3,26 +3,24 @@
   <!--<host>155.69.149.158</host>-->
   <host>localhost</host>
   <port>4000</port>
+  <userid>root</userid>
+  <password>toor</password>
   <useProxy>true</useProxy>
   <encrypt>true</encrypt>
   <useIndex>false</useIndex>
-  <rows>10000</rows>
-  <latencyTest>
-    <operations>
-      <!--<operation>insert</operation>
-      <operation>select</operation>
-      <operation>update</operation>
-      <operation>delete</operation>-->
-    </operations>
-    <multiple>10</multiple>
-  </latencyTest>
+  <rows>100</rows>
   <loadTest>
     <operations>
+      <!--<operation>decrypt</operation>
       <operation>insert</operation>
       <operation>select</operation>
       <operation>update</operation>
+      <operation>delete</operation>-->
+      <operation>encrypt</operation>
+      <operation>decrypt</operation>
     </operations>
     <startSpeed>3</startSpeed>
+    <multiple></multiple>
     <stride>1</stride>
     <workers>1</workers>
     <verbal>1</verbal>

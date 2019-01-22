@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -11,12 +12,13 @@ using System.Threading.Tasks.Dataflow;
 namespace PrismaBenchmark
 {
     class LoadBenchmark : Benchmark
-
     {
         private static Dictionary<string, int> queryTypeMap = new Dictionary<string, int>();
         public LoadBenchmark(): base()
         {
-            ds = new DataStore();
+            CreateTable("t1");
+            CreateTable("t2", encrypt: false);
+            SetupForSelect();
             foreach (var test in conf.load.Operations)
             {
                 switch (test)
@@ -26,66 +28,153 @@ namespace PrismaBenchmark
                         queryTypeMap.Add("MULTIPLE_INSERT", 2);
                         break;
                     case "select":
-                        queryTypeMap.Add("SINGLE_SELECT", 3);
-                        queryTypeMap.Add("MULTIPLE_SELECT", 4);
-                        queryTypeMap.Add("SINGLE_SELECT_WITH_JOIN", 5);
-                        queryTypeMap.Add("MULTIPLE_SELECT_WITH_JOIN", 6);
+                        queryTypeMap.Add("SINGLE_SELECT_WITHOUT_EN/DECRYPTION", 3);
+                        queryTypeMap.Add("MULTIPLE_SELECT_WITHOUT_EN/DECRYPTION", 4);
+                        queryTypeMap.Add("SINGLE_SELECT", 5);
+                        queryTypeMap.Add("MULTIPLE_SELECT", 6);
+                        queryTypeMap.Add("SINGLE_SELECT_ADDITION", 7);
+                        queryTypeMap.Add("MULTIPLE_SELECT_ADDITION", 8);
+                        queryTypeMap.Add("SINGLE_SELECT_MULTIPLICATION", 9);
+                        queryTypeMap.Add("MULTIPLE_SELECT_MULTIPLICATION", 10);
+                        queryTypeMap.Add("SINGLE_SELECT_COMPOSITION", 11);
+                        queryTypeMap.Add("MULTIPLE_SELECT_COMPOSITION", 12);
+                        queryTypeMap.Add("SINGLE_SELECT_WITH_JOIN", 13);
+                        queryTypeMap.Add("MULTIPLE_SELECT_WITH_JOIN", 14);
                         break;
                     case "update":
-                        queryTypeMap.Add("SINGLE_UPDATE", 7);
-                        queryTypeMap.Add("MULTIPLE_UPDATE", 8);
+                        queryTypeMap.Add("SINGLE_UPDATE", 15);
+                        queryTypeMap.Add("MULTIPLE_UPDATE", 16);
+                        break;
+                    case "delete":
+                        queryTypeMap.Add("SINGLE_DELETE", 17);
+                        queryTypeMap.Add("MULTIPLE_DELETE", 18);
+                        break;
+                    case "decrypt":
+                        queryTypeMap.Add("DECRYPT", 19);
+                        break;
+                    case "encrypt":
+                        queryTypeMap.Add("ENCRYPT_STORE", 20);
+                        queryTypeMap.Add("ENCRYPT_SEARCH", 21);
+                        queryTypeMap.Add("ENCRYPT_RANGE", 22);
+                        //queryTypeMap.Add("ENCRYPT_WILDCARD", 23);
+                        queryTypeMap.Add("ENCRYPT_ADDITION", 24);
+                        queryTypeMap.Add("ENCRYPT_MULTIPLICATION", 25);
+                        //queryTypeMap.Add("ENCRYPT_ALL", 26);
+                        break;
+                    case "updatekey":
+                        queryTypeMap.Add("UPDATE_KEY", 27);
                         break;
                 }
             }
-
-
-
         }
+
         private string ProduceQuery(int type)
         {
             switch (type){
                 case 1: return GenerateInsertQuery(1); // single insertion
                 case 2: return GenerateInsertQuery(10); // multiple insertion
-                case 3: return GenerateSelectQuery(true); // single selection
-                case 4: return GenerateSelectQuery(false); // multiple selection
-                case 5: return GenerateSelectJoinQuery(true); // single selection with join
-                case 6: return GenerateSelectJoinQuery(false); // multiple selection with join
-                case 7: return GenerateUpdateQuery(true); // update single row
-                case 8: return GenerateUpdateQuery(false); // update multiple rows
+                case 3: return GenerateSelectWithoutQuery(single: true); // single selection without en/decryption
+                case 4: return GenerateSelectWithoutQuery(single: false); // multiple selection without en/decryption
+                case 5: return GenerateSelectQuery(single: true); // single selection
+                case 6: return GenerateSelectQuery(single: false); // multiple selection
+                case 7: return GenerateSelectQuery(single: true, operationCase: 2); // single selection a+b
+                case 8: return GenerateSelectQuery(single: false, operationCase: 2); // multiple selection a+b
+                case 9: return GenerateSelectQuery(single: true, operationCase: 3); // single selection a*c
+                case 10: return GenerateSelectQuery(single: false, operationCase: 3); // multiple selection a*c
+                case 11: return GenerateSelectQuery(single: true, operationCase: 4); // single selection a+a*c+b
+                case 12: return GenerateSelectQuery(single: false, operationCase: 4); // multiple selection a+a*c+b
+                case 13: return GenerateSelectJoinQuery(true); // single selection with join
+                case 14: return GenerateSelectJoinQuery(false); // multiple selection with join
+                case 15: return GenerateUpdateQuery(true); // update single row
+                case 16: return GenerateUpdateQuery(false); // update multiple rows
+                case 17: return GenerateDeleteQuery(true); // delete single row
+                case 18: return GenerateDeleteQuery(false); // delete multiple rows
+                case 19: return GenerateDecryptQuery(); // decrypt columns
+                case 20: return GenerateEncryptQuery(typeCase: 1); // encrypt columns for store
+                case 21: return GenerateEncryptQuery(typeCase: 2); // encrypt columns for search
+                case 22: return GenerateEncryptQuery(typeCase: 3); // encrypt columns for range
+                case 23: return GenerateEncryptQuery(typeCase: 4); // encrypt columns for wildcard
+                case 24: return GenerateEncryptQuery(typeCase: 5); // encrypt columns for paillier addition
+                case 25: return GenerateEncryptQuery(typeCase: 6); // encrypt columns for elgmal multiplication
+                case 26: return GenerateEncryptQuery(typeCase: 7); // encrypt columns for all types
+                case 27: return GenerateUpdateKeyQuery(); // update key for table
                 default: return GenerateInsertQuery(1);
             }
 
         }
+
+        private string CheckQuery(int type)
+        {
+            switch (type)
+            {
+                case 19: return GenerateDecryptQuery(true); // check status of decrypt columns
+                case 20: return GenerateEncryptQuery(true, typeCase: 1); // check status of encrypt columns for store
+                case 21: return GenerateEncryptQuery(true, typeCase: 2); // check status of encrypt columns for search
+                case 22: return GenerateEncryptQuery(true, typeCase: 3); // check status of encrypt columns for range
+                case 23: return GenerateEncryptQuery(true, typeCase: 4); // check status of encrypt columns for wildcard
+                case 24: return GenerateEncryptQuery(true, typeCase: 5); // check status of encrypt columns for paillier addition
+                case 25: return GenerateEncryptQuery(true, typeCase: 6); // check status of encrypt columns for elgmal multiplication
+                case 26: return GenerateEncryptQuery(true, typeCase: 7); // check status of encrypt columns for all types
+                case 27: return GenerateUpdateKeyQuery(true); // check status of update key for tables
+                default: return GenerateInsertQuery(1);
+            }
+
+        }
+
         public override void RunBenchMark()
         {
             Console.WriteLine("Start Load Benchmarking ... ");
-            foreach (KeyValuePair<string, int> entry in queryTypeMap)
+            foreach (var entry in queryTypeMap)
             {
                 string queryType = entry.Key;
-                switch (entry.Key)
+                int queryTypeInt = entry.Value;
+                if (queryTypeInt <= 27 && queryTypeInt >= 19)
                 {
-                    case "SINGLE_INSERT":
-                        Setup();
-                        break;
-                    case "SINGLE_SELECT":
-                        SetupForSelect();
-                        break;
-                    case "SINGLE_UPDATE":
-                        Setup();
-                        break;
-                    default:
-                        break;
+                    if (queryTypeInt == 27)
+                        DropTable("t1");
+                    Console.WriteLine("Benchmarking load {0}...", queryType);
+                    var time = RunTime(ProduceQuery, queryType);
+                    Console.WriteLine("Time of {0}: {1}", queryType, time);
                 }
-                int startSpeed = conf.startSpeed;
-                int stride = conf.stride;
-                int rpm = RunLoad(ProduceQuery, queryType, verbal: conf.verbal, startSpeed: startSpeed, stride: stride, workers: conf.workers);
-                Console.WriteLine("Max rpm {0}: {1}", queryType, rpm);
+                else
+                {
+                    if (queryType == "SINGLE_SELECT_WITHOUT_EN/DECRYPTION")
+                    {
+                        CreateTable("t1");
+                        SetupForSelect();
+                    }
+                    int rps = RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.workers, conf.verbal);
+                    Console.WriteLine("Max RPS of {0}: {1}", queryType, rps);
+                }
             }
             dataGen.ResetNextSingle();
-            ds.Close();
+            Close();
             Console.WriteLine("Finish Load Benchmarking ... ");
         }
-        protected int RunLoad(Func<int, string> ProduceQuery, string queryType, int startSpeed = 10, int stride = 1, int workers=2,int verbal=0)
+
+        private long RunTime(Func<int, string> ProduceQuery, string queryType)
+        {
+            if (queryType != "DECRYPT" && queryType != "UPDATE_KEY")
+            {
+                RunTime(ProduceQuery, "DECRYPT");
+            }
+            int queryTypeInt = queryTypeMap.TryGetValue(queryType, out queryTypeInt) ? queryTypeInt : 1;
+            string query = ProduceQuery(queryTypeInt);
+            string queryCheck = CheckQuery(queryTypeInt);
+            var watch = Stopwatch.StartNew();
+            if (ExecuteQuery(query) == -1)
+                return -1;
+            string result;
+            do
+            {
+                result = ExecuteReader(queryCheck);
+                Thread.Sleep(100);
+            } while (result != "Completed");
+            watch.Stop();
+            return watch.ElapsedMilliseconds;
+        }
+
+        protected int RunLoad(Func<int, string> ProduceQuery, string queryType, int startSpeed = 10, int stride = 1, int workers = 1, int verbal = 0)
         {
             Console.WriteLine("Benchmarking load {0}...", queryType);
             ThreadInfo threadInfo;
@@ -102,6 +191,7 @@ namespace PrismaBenchmark
             Task.WaitAll(tasks);
             return threadInfo.rps;
         }
+
         void WorkerProc(Object threadInfo)
         {
             ThreadInfo info = threadInfo as ThreadInfo;
@@ -111,13 +201,12 @@ namespace PrismaBenchmark
             // An action to consume the ConcurrentQueue.
             void startWorker()
             {
-                DataStore privateDS = new DataStore();
-                string query;
                 while (info.rps == 0)
                 {
-                    if (cq.TryDequeue(out query))
+                    if (cq.TryDequeue(out string query))
                     {
-                        if (privateDS.Execute(query) == -1)
+                        Refresh();
+                        if (ExecuteQuery(query) == -1)
                         {
                             Console.WriteLine("Lost connection.");
                             return;
@@ -126,18 +215,17 @@ namespace PrismaBenchmark
                     }
                 }
 
-                privateDS.Close();
-
                 if (info.verbal >= 1)
                     Console.WriteLine("\nDone processing!");
             }
 
             Parallel.For(0, conf.workers, i => startWorker());
         }
+
         void MasterProc(Object threadInfo)
         {
             ThreadInfo info = threadInfo as ThreadInfo;
-            Thread.Sleep(conf.connectionTime *info.numberOfWorkers); // wait for workers to connect to db
+            Thread.Sleep(conf.connectionTime * info.numberOfWorkers); // wait for workers to connect to db
             ConcurrentQueue<string> cq = info.cq;
             int v = info.v;
             int floor = v;
@@ -185,6 +273,7 @@ namespace PrismaBenchmark
             Parallel.Invoke(action);
         }
     }
+
     class ThreadInfo
     {
         public ThreadInfo(ConcurrentQueue<string> cq, Func<int, string> produceQuery, int queryType, int v = 100, int stride=1, int numberOfWorkers = 1, int verbal=0)
