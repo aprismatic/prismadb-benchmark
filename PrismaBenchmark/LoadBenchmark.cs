@@ -18,7 +18,6 @@ namespace PrismaBenchmark
         {
             CreateTable("t1");
             CreateTable("t2", encrypt: false);
-            SetupForSelect();
             foreach (var test in conf.load.Operations)
             {
                 switch (test)
@@ -56,10 +55,10 @@ namespace PrismaBenchmark
                         queryTypeMap.Add("ENCRYPT_STORE", 20);
                         queryTypeMap.Add("ENCRYPT_SEARCH", 21);
                         queryTypeMap.Add("ENCRYPT_RANGE", 22);
-                        //queryTypeMap.Add("ENCRYPT_WILDCARD", 23);
+                        queryTypeMap.Add("ENCRYPT_WILDCARD", 23);
                         queryTypeMap.Add("ENCRYPT_ADDITION", 24);
                         queryTypeMap.Add("ENCRYPT_MULTIPLICATION", 25);
-                        //queryTypeMap.Add("ENCRYPT_ALL", 26);
+                        queryTypeMap.Add("ENCRYPT_ALL", 26);
                         break;
                     case "updatekey":
                         queryTypeMap.Add("UPDATE_KEY", 27);
@@ -100,7 +99,6 @@ namespace PrismaBenchmark
                 case 27: return GenerateUpdateKeyQuery(); // update key for table
                 default: return GenerateInsertQuery(1);
             }
-
         }
 
         private string CheckQuery(int type)
@@ -123,73 +121,88 @@ namespace PrismaBenchmark
 
         public override void RunBenchMark()
         {
-            Console.WriteLine("Start Load Benchmarking ... ");
+            Console.WriteLine("\nStart Load Benchmarking ... \n");
+
             foreach (var entry in queryTypeMap)
             {
                 string queryType = entry.Key;
                 int queryTypeInt = entry.Value;
                 if (queryTypeInt <= 27 && queryTypeInt >= 19)
                 {
+                    // Drop table t1 before update keys
                     if (queryTypeInt == 27)
                         DropTable("t1");
-                    Console.WriteLine("Benchmarking load {0}...", queryType);
-                    var time = RunTime(ProduceQuery, queryType);
-                    Console.WriteLine("Time of {0}: {1}", queryType, time);
+
+                    // Decrypt the column before Encrypt
+                    if (queryTypeInt >= 20 && queryTypeInt <= 26 && queryTypeInt != 23)
+                    {
+                        RunTime(ProduceQuery, "DECRYPT", false);
+                    }
+
+                    RunTime(ProduceQuery, queryType);
                 }
                 else
                 {
-                    if (queryType == "SINGLE_SELECT_WITHOUT_EN/DECRYPTION")
+                    if (queryTypeInt == 3)
                     {
                         CreateTable("t1");
                         SetupForSelect();
                     }
-                    int rps = RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.workers, conf.verbal);
-                    Console.WriteLine("Max RPS of {0}: {1}", queryType, rps);
+                    if (queryTypeInt >= 15 && queryTypeInt <= 18)
+                        RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal);
+                    else
+                        RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.threads, conf.verbal);
                 }
             }
             dataGen.ResetNextSingle();
             Close();
+
             Console.WriteLine("Finish Load Benchmarking ... ");
         }
 
-        private long RunTime(Func<int, string> ProduceQuery, string queryType)
+        private void RunTime(Func<int, string> ProduceQuery, string queryType, bool showMsg = true)
         {
-            if (queryType != "DECRYPT" && queryType != "UPDATE_KEY")
-            {
-                RunTime(ProduceQuery, "DECRYPT");
-            }
             int queryTypeInt = queryTypeMap.TryGetValue(queryType, out queryTypeInt) ? queryTypeInt : 1;
+            if (showMsg)
+                Console.WriteLine("Benchmarking load {0}...", queryType);
             string query = ProduceQuery(queryTypeInt);
             string queryCheck = CheckQuery(queryTypeInt);
-            var watch = Stopwatch.StartNew();
-            if (ExecuteQuery(query) == -1)
-                return -1;
             string result;
+            var watch = Stopwatch.StartNew();
+
+            ExecuteQuery(query);
+            Thread.Sleep(500); // Sleep to wait for the last query execute
             do
             {
                 result = ExecuteReader(queryCheck);
                 Thread.Sleep(100);
             } while (result != "Completed");
+
             watch.Stop();
-            return watch.ElapsedMilliseconds;
+            if (showMsg)
+                Console.WriteLine("====Time of {0}: {1} ms====\n", queryType, watch.ElapsedMilliseconds);
         }
 
-        protected int RunLoad(Func<int, string> ProduceQuery, string queryType, int startSpeed = 10, int stride = 1, int workers = 1, int verbal = 0)
+        protected void RunLoad(Func<int, string> ProduceQuery, string queryType, int startSpeed, int stride, int workers, int verbal)
         {
             Console.WriteLine("Benchmarking load {0}...", queryType);
+
             ThreadInfo threadInfo;
             int v = startSpeed;
             int queryTypeInt = queryTypeMap.TryGetValue(queryType, out queryTypeInt)? queryTypeInt: 1;
-            ////
             if (verbal >= 1)
                 Console.WriteLine("Start Speed: {0}", v);
+
             ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
             threadInfo = new ThreadInfo(cq, ProduceQuery, queryTypeInt, v:v, stride:stride, numberOfWorkers:workers, verbal: verbal);
             Task master = Task.Run(() => MasterProc(threadInfo));
             Task worker = Task.Run(() => WorkerProc(threadInfo));
             Task[] tasks = new Task[2] { worker, master };
             Task.WaitAll(tasks);
-            return threadInfo.rps;
+
+            if (threadInfo.verbal >= 1)
+                Console.WriteLine("\nDone processing!");
+            Console.WriteLine("====Max RPS of {0}: {1}====\n", queryType, threadInfo.rps);
         }
 
         void WorkerProc(Object threadInfo)
@@ -201,35 +214,31 @@ namespace PrismaBenchmark
             // An action to consume the ConcurrentQueue.
             void startWorker()
             {
+                DataBase database = new DataBase();
+                string query;
                 while (info.rps == 0)
                 {
-                    if (cq.TryDequeue(out string query))
+                    if (cq.TryDequeue(out query))
                     {
-                        Refresh();
-                        if (ExecuteQuery(query) == -1)
-                        {
-                            Console.WriteLine("Lost connection.");
-                            return;
-                        }
+                        database.ExecuteQuery(query);
                         Interlocked.Add(ref info.processed, 1);
                     }
                 }
-
-                if (info.verbal >= 1)
-                    Console.WriteLine("\nDone processing!");
+                database.Close();
             }
 
-            Parallel.For(0, conf.workers, i => startWorker());
+            Parallel.For(0, info.numberOfWorkers, i => startWorker());
         }
 
         void MasterProc(Object threadInfo)
         {
             ThreadInfo info = threadInfo as ThreadInfo;
-            Thread.Sleep(conf.connectionTime * info.numberOfWorkers); // wait for workers to connect to db
+            Thread.Sleep(conf.connectionTime); // wait for workers to connect to db
             ConcurrentQueue<string> cq = info.cq;
             int v = info.v;
             int floor = v;
             int ceil = -1;
+
             void action()
             {
                 do
@@ -255,7 +264,7 @@ namespace PrismaBenchmark
                             ceil = v;
                         else
                             floor = v;
-                        v = (floor + ceil)/2;
+                        v = (floor + ceil) / 2;
                         while (cq.Count > 0) { } // wait for the queue to clear off
                     }
                     else
@@ -263,13 +272,14 @@ namespace PrismaBenchmark
                         floor = v;
                         v *= 2;
                     }
-                    if (ceil <= floor + 1 && ceil!=-1)
+                    if (ceil <= floor + 1 && ceil != -1)
                     {
                         info.rps = ceil; // only 1 master thread write to info.rps -> no need lock
                     }
                     watch.Stop();
                 } while (info.rps == 0);
             }
+
             Parallel.Invoke(action);
         }
     }

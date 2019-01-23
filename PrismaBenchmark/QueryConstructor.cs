@@ -63,17 +63,17 @@ namespace PrismaBenchmark
 
         public static string ConstructDecryptQuery(bool check) // select on column a
         {
-            return String.Format("PRISMADB DECRYPT t1.a {0};", check? "STATUS" : "");
+            return String.Format("PRISMADB DECRYPT t2.a {0};", check? "STATUS" : "");
         }
 
         public static string ConstructEncryptQuery(bool check, string type) // select on column a
         {
-            return String.Format("PRISMADB ENCRYPT t1.a FOR({1}) {0};", check ? "STATUS" : "", type);
+            return String.Format("PRISMADB ENCRYPT t2.{2} FOR({1}) {0};", check ? "STATUS" : "", type, type == "WILDCARD" ? "d" : "a");
         }
 
         public static string ConstructUpdateKeyQuery(bool check) // select on column a
         {
-            return String.Format("PRISMADB UPDATE KEY {0};", check ? "STATUS" : "");
+            return String.Format("PRISMADB UPDATE KEYS {0};", check ? "STATUS" : "");
         }
     }
 }

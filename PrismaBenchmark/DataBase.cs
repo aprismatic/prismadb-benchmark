@@ -44,7 +44,8 @@ namespace PrismaBenchmark
             }
             catch (MySqlException ex)
             {
-                Console.WriteLine("Cannot init connection:\n" + ex.Message);
+                if (ex.Message != "Couldn't connect to server")
+                    Console.WriteLine("Cannot init connection:\n" + ex.Message);
             }
             connection = null;
         }
@@ -65,9 +66,9 @@ namespace PrismaBenchmark
                 connection.Open();
                 //Console.WriteLine("Connected!");
             }
-            catch (MySqlException ex)
+            catch (MySqlException e)
             {
-                Console.WriteLine("Cannot create connection:\n" + ex.Message);
+                Console.WriteLine("Cannot create connection:\n" + e.Message);
                 connection = null;
             }
         }
@@ -104,16 +105,10 @@ namespace PrismaBenchmark
                 Connection = connection,
                 CommandType = CommandType.Text
             };
-            // start clock
-            //var watch = Stopwatch.StartNew();
-            // execute query
             using (MySqlDataReader reader = cmd.ExecuteReader())
             {
                 reader.Close();
             }
-            // measure latency
-            //watch.Stop();
-            //var elapsed = watch.ElapsedMilliseconds;
             return 0;
         }
 

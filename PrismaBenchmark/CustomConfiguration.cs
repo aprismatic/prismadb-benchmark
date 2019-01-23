@@ -45,8 +45,8 @@ namespace PrismaBenchmark
                 startSpeed = 10; // default
             if (!Int32.TryParse(conf.GetElementsByTagName("stride")[0].InnerText, out stride))
                 stride = 1; // default
-            if (!Int32.TryParse(conf.GetElementsByTagName("workers")[0].InnerText, out workers))
-                workers = 1; // default
+            if (!Int32.TryParse(conf.GetElementsByTagName("threads")[0].InnerText, out threads))
+                threads = 1; // default
             if (!Int32.TryParse(conf.GetElementsByTagName("verbal")[0].InnerText, out verbal))
                 verbal = 1; // default
             if (!Int32.TryParse(conf.GetElementsByTagName("connectionTime")[0].InnerText, out connectionTime))
@@ -75,7 +75,7 @@ namespace PrismaBenchmark
         public readonly int multiple;
         public readonly int startSpeed;
         public readonly int stride;
-        public readonly int workers;
+        public readonly int threads;
         public readonly int verbal;
         public readonly int connectionTime;
 

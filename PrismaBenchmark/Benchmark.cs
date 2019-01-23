@@ -76,7 +76,7 @@ namespace PrismaBenchmark
 
         protected void DropTable(string tableName)
         {
-            string query = String.Format("DROP TABLE IF EXISTS {0}", tableName);
+            string query = String.Format("DROP TABLE {0}", tableName);
             if(ExecuteQuery(query) != -1)
                 Console.WriteLine(String.Format("Table {0} dropped.", tableName));
         }
@@ -234,7 +234,7 @@ namespace PrismaBenchmark
                     type = "MULTIPLICATION";
                     break;
                 case 7:
-                    type = "SEARCH, STORE, RANGE, WILDCARD, ADDITION, MULTIPLICATION";
+                    type = "SEARCH, STORE, RANGE, ADDITION, MULTIPLICATION";
                     break;
                 default:
                     type = "STORE";
