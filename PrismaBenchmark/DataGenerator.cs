@@ -14,47 +14,32 @@ namespace PrismaBenchmark
         private int SINGLE_RANGE_L = 20;
         private int nextSingle;
         private Random rand;
-        private DataGenerator(Random rand=null)
+
+        private DataGenerator(Random rand)
         {
             nextSingle = SINGLE_RANGE_L;
             this.rand = rand;
         }
+
         public static DataGenerator Instance(Random rand)
         {
             if (_self == null)
                 _self = new DataGenerator(rand);
             return _self;
         }
+
         public void ResetNextSingle()
         {
             nextSingle = SINGLE_RANGE_L;
         }
+
         public string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[rand.Next(s.Length)]).ToArray());
         }
-        public List<ArrayList> GetDataRowsForMultiRange(int multiple)
-        {
-            int range= MULTI_RANGE.Item2 - MULTI_RANGE.Item1;
-            List<ArrayList> data = new List<ArrayList>(range*multiple);
-            for (var i = 0; i < range; i++)
-            {
-                for (var j=0; j<multiple; j++)
-                {
-                    data.Add(new ArrayList { MULTI_RANGE.Item1+i, rand.Next(10), rand.Next(10), RandomString(10), RandomString(10) });
-                }
-            }
-            return data;
-        }
-        public List<ArrayList> GetDataRowsForMultiRange(int multiple, int targetA)
-        {
-            List<ArrayList> data = new List<ArrayList>(multiple);
-            for (var j = 0; j < multiple; j++)
-                data.Add(new ArrayList { targetA, rand.Next(10), rand.Next(10), RandomString(10), RandomString(10) });
-            return data;
-        }
+
         public List<List<ArrayList>> GetDataRows(int numberOfRows, int range=0, int copy=1)
         // range 0: random range [0..9]
         // range 1: single range [20..]
@@ -62,7 +47,7 @@ namespace PrismaBenchmark
         {
             List<List<ArrayList>> data = new List<List<ArrayList>>();
             // init data with List<ArrayList>
-            for (var i=0; i<copy; i++)
+            for (var i = 0; i < copy; i++)
             {
                 data.Add(new List<ArrayList>());
             }
@@ -77,16 +62,18 @@ namespace PrismaBenchmark
                 }
                 for (var j = 0; j<copy; j++)
                 {
-                    data[j].Add(new ArrayList { rand.Next(l, r), rand.Next(10), rand.Next(10), RandomString(10), RandomString(10) });
+                    data[j].Add(new ArrayList { rand.Next(l, r), rand.Next(1000), rand.Next(1000), RandomString(10), RandomString(10) });
                 }
                 
             }
             return data;
         }
+
         private int GetNextSingle()
         {
             return this.nextSingle++;
         }
+
         public List<ArrayList> GetDataRowsForSelect(int start, int batch_size=1000)
         // sequence number of batch, each batch contains batch_size rows, with index starting with batch*batch_size, end with index (batch+1)*batch_size - 1 
         {
@@ -94,7 +81,7 @@ namespace PrismaBenchmark
             // init data with List<ArrayList>
             for (var i = start; i < start + batch_size; i++)
             {
-                data.Add(new ArrayList { i, rand.Next(10), rand.Next(10), RandomString(10), RandomString(10) });
+                data.Add(new ArrayList { i, rand.Next(1000), i, RandomString(10), RandomString(10) });
             }
             return data;
         }

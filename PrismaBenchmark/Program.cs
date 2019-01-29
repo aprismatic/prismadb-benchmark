@@ -8,11 +8,12 @@ namespace PrismaBenchmark
         private static CustomConfiguration conf = CustomConfiguration.LoadConfiguration();
         static void Main(string[] args)
         {
-            if (conf.latency != null)
+            var db = new DataBase(true);
+            /*if (conf.latency != null)
             {
                 Benchmark latency = new LatencyBenchmark();
                 latency.RunBenchMark();
-            }
+            }*/
             if (conf.load != null)
             {
                 Benchmark load = new LoadBenchmark();
