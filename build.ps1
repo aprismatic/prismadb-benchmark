@@ -2,6 +2,7 @@ Push-Location $PSScriptRoot
 
 try {
 
+	$DigitalOceanToken = $env:DOTokenSecure
 	$DockerMachine = "BenchmarkTest"
 
 	docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
