@@ -89,6 +89,7 @@ namespace PrismaBenchmark
                 case 17: return GenerateDeleteQuery(true); // delete single row
                 case 18: return GenerateDeleteQuery(false); // delete multiple rows
                 case 19: return GenerateDecryptQuery(); // decrypt columns
+                case 29: return GenerateDecryptQuery(str: true); // decrypt columns
                 case 20: return GenerateEncryptQuery(typeCase: 1); // encrypt columns for store
                 case 21: return GenerateEncryptQuery(typeCase: 2); // encrypt columns for search
                 case 22: return GenerateEncryptQuery(typeCase: 3); // encrypt columns for range
@@ -105,7 +106,8 @@ namespace PrismaBenchmark
         {
             switch (type)
             {
-                case 19: return GenerateDecryptQuery(true); // check status of decrypt columns
+                case 19: return GenerateDecryptQuery(check: true); // check status of decrypt columns
+                case 29: return GenerateDecryptQuery(check: true, str: true); // check status of decrypt columns
                 case 20: return GenerateEncryptQuery(true, typeCase: 1); // check status of encrypt columns for store
                 case 21: return GenerateEncryptQuery(true, typeCase: 2); // check status of encrypt columns for search
                 case 22: return GenerateEncryptQuery(true, typeCase: 3); // check status of encrypt columns for range
@@ -133,13 +135,16 @@ namespace PrismaBenchmark
                     if (queryTypeInt == 27)
                         DropTable("t1");
 
-                    // Decrypt the column before Encrypt
-                    if (queryTypeInt >= 20 && queryTypeInt <= 26 && queryTypeInt != 23)
-                    {
-                        RunTime(ProduceQuery, "DECRYPT", false);
-                    }
+                    RunTime(queryTypeInt, queryType);
 
-                    RunTime(ProduceQuery, queryType);
+                    // Decrypt the column after Encrypt
+                    if (queryTypeInt >= 20 && queryTypeInt <= 26)
+                    {
+                        if (queryTypeInt == 23)
+                            RunTime(29, "DECRYPT_" + queryType.Split("_")[1]);
+                        else
+                            RunTime(19, "DECRYPT_" + queryType.Split("_")[1]);
+                    }
                 }
                 else
                 {
@@ -160,11 +165,9 @@ namespace PrismaBenchmark
             Console.WriteLine("Finish Load Benchmarking ... ");
         }
 
-        private void RunTime(Func<int, string> ProduceQuery, string queryType, bool showMsg = true)
+        private void RunTime(int queryTypeInt, string queryType)
         {
-            int queryTypeInt = queryTypeMap.TryGetValue(queryType, out queryTypeInt) ? queryTypeInt : 1;
-            if (showMsg)
-                Console.WriteLine("Benchmarking load {0}...", queryType);
+            Console.WriteLine("Benchmarking load {0}...", queryType);
             string query = ProduceQuery(queryTypeInt);
             string queryCheck = CheckQuery(queryTypeInt);
             string result;
@@ -179,8 +182,7 @@ namespace PrismaBenchmark
             } while (result != "Completed");
 
             watch.Stop();
-            if (showMsg)
-                Console.WriteLine("====Time of {0}: {1} ms====\n", queryType, watch.ElapsedMilliseconds);
+            Console.WriteLine("====Time of {0}: {1} ms====\n", queryType, watch.ElapsedMilliseconds);
         }
 
         protected void RunLoad(Func<int, string> ProduceQuery, string queryType, int startSpeed, int stride, int workers, int verbal)

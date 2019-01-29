@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text;
 using MySql.Data.MySqlClient;
 
@@ -23,15 +25,16 @@ namespace PrismaBenchmark
                 Connect();
         }
 
-        public void InitDataBase()
+        private void InitDataBase()
         {
+            while (!IsServerConnected()) System.Threading.Thread.Sleep(5000);
             var bldr = new MySqlConnectionStringBuilder
             {
                 ["user id"] = "init",
                 ["password"] = "init",
                 ["server"] = conf.host,
                 ["port"] = conf.port,//conf.useProxy ? "4000" : "3306", // proxy
-                ["database"] = "testdb",
+                ["database"] = conf.database,
             };
             try
             {
@@ -58,7 +61,7 @@ namespace PrismaBenchmark
                 ["password"] = conf.password,
                 ["server"] = conf.host,
                 ["port"] = conf.port,//conf.useProxy ? "4000" : "3306", // proxy
-                ["database"] = "testdb",
+                ["database"] = conf.database,
             };
             try
             {
@@ -70,6 +73,29 @@ namespace PrismaBenchmark
             {
                 Console.WriteLine("Cannot create connection:\n" + e.Message);
                 connection = null;
+            }
+        }
+
+        public bool IsServerConnected()
+        {
+            var bldr = new MySqlConnectionStringBuilder
+            {
+                ["user id"] = conf.userid,
+                ["password"] = conf.password,
+                ["server"] = conf.dbhost,
+                ["port"] = conf.dbport,//conf.useProxy ? "4000" : "3306", // proxy
+            };
+            using (var l_oConnection = new MySqlConnection(bldr.ConnectionString))
+            {
+                try
+                {
+                    l_oConnection.Open();
+                    return true;
+                }
+                catch (MySqlException)
+                {
+                    return false;
+                }
             }
         }
 

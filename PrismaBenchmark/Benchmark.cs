@@ -205,9 +205,9 @@ namespace PrismaBenchmark
             return QueryConstructor.ConstructUpdateQuery(a, data);
         }
 
-        protected string GenerateDecryptQuery(bool check = false)
+        protected string GenerateDecryptQuery(bool check = false, bool str = false)
         {
-            return QueryConstructor.ConstructDecryptQuery(check);
+            return QueryConstructor.ConstructDecryptQuery(check, str);
         }
 
         protected string GenerateEncryptQuery(bool check = false, int typeCase = 1)

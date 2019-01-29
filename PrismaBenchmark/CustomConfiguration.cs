@@ -12,8 +12,11 @@ namespace PrismaBenchmark
             conf.Load("conf.xml");
             host = conf.GetElementsByTagName("host")[0].InnerText;
             port = conf.GetElementsByTagName("port")[0].InnerText;
+            dbhost = conf.GetElementsByTagName("dbhost")[0].InnerText;
+            dbport = conf.GetElementsByTagName("dbport")[0].InnerText;
             userid = conf.GetElementsByTagName("userid")[0].InnerText;
             password = conf.GetElementsByTagName("password")[0].InnerText;
+            database = conf.GetElementsByTagName("database")[0].InnerText;
             if (!Boolean.TryParse(conf.GetElementsByTagName("useProxy")[0].InnerText, out useProxy))
                 useProxy = true; // default
             if (!Boolean.TryParse(conf.GetElementsByTagName("useProxy")[0].InnerText, out useProxy))
@@ -69,8 +72,11 @@ namespace PrismaBenchmark
         public readonly Boolean useIndex;
         public readonly string host;
         public readonly string port;
+        public readonly string dbhost;
+        public readonly string dbport;
         public readonly string userid;
         public readonly string password;
+        public readonly string database;
         public readonly int rows;
         public readonly int multiple;
         public readonly int startSpeed;

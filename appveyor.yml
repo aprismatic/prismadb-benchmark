@@ -1,0 +1,16 @@
+---
+skip_tags: true
+branches:
+  only:
+    - master
+image: "Visual Studio 2017"
+before_build:  
+  - ps: ./pull.ps1
+build_script:
+  - ps: ./build.ps1
+environment:
+  AuthTokenSecure:
+    secure: hDmhAYD8sltmvMXgXADCaZeFM/4iJCpo8c24wf/BWvs=
+  AccountNameSecure:
+    secure: tjnWYxXSiCBP/XN3tEYtKg==
+version: "0.2.8.{build}"
