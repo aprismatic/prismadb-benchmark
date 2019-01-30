@@ -3,10 +3,10 @@ Push-Location $PSScriptRoot
 try {
 
 	$DigitalOceanToken = $env:DOTokenSecure
-	$DockerMachine = "BenchmarkTest"
+	$DockerMachine = 'BenchmarkTest'
 
 	docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
-						--digitalocean-region sgp1 --digitalocean-size s-4vcpu-8gb $DockerMachine
+						--digitalocean-region='sgp1' --digitalocean-size='s-4vcpu-8gb' $DockerMachine
 
 	docker-machine env $DockerMachine | Invoke-Expression
 
