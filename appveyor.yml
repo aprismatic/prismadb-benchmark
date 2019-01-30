@@ -13,6 +13,8 @@ environment:
     secure: hDmhAYD8sltmvMXgXADCaZeFM/4iJCpo8c24wf/BWvs=
   AccountNameSecure:
     secure: tjnWYxXSiCBP/XN3tEYtKg==
-  DOTokenSecure:
+  DigitalOceanToken:
     secure: wgZ+dw54aGo8jJXMNTdE4jB6s673xW9hCzuDwly8RiozEw3J0uJlaMtNJ+GZCkFVXcsEQAPrSCRAUCHDYRoRFV6sK3rtTAkwbt60xUnnpDk=
+  SqlPassword:
+    secure: GXTb7QSkvZsdmQxk6d/0Ub3cruDU0tJKfKRWSeHshH2vYyZgwhDWULgVOptV6goG
 version: "0.2.8.{build}"

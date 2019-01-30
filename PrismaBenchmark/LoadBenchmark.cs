@@ -326,8 +326,8 @@ namespace PrismaBenchmark
                 DataSource = "aprismatic-dev.database.windows.net",
                 InitialCatalog = "prismadb-benchmark",
                 UserID = "prismadb-benchmark",
-                Password = "d!cXZdGcbN%T7ThPpZf3G*k7bXy3t7CR"
-            };
+                Password = Environment.GetEnvironmentVariable("SqlPassword")
+        };
             SqlConnection conn = new SqlConnection(builder.ConnectionString);
             try
             {
