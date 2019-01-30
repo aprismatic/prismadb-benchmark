@@ -16,5 +16,5 @@ environment:
   DOTokenSecure:
     secure: wgZ+dw54aGo8jJXMNTdE4jB6s673xW9hCzuDwly8RiozEw3J0uJlaMtNJ+GZCkFVXcsEQAPrSCRAUCHDYRoRFV6sK3rtTAkwbt60xUnnpDk=
   SqlPassword:
-    secure: GXTb7QSkvZsdmQxk6d/0Ub3cruDU0tJKfKRWSeHshH2vYyZgwhDWULgVOptV6goG
+    secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
 version: "0.2.8.{build}"

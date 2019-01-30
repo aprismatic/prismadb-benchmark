@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace PrismaBenchmark
@@ -8,53 +10,51 @@ namespace PrismaBenchmark
         private static CustomConfiguration _self = null;
 
         private CustomConfiguration() {
-            XmlDocument conf = new XmlDocument();
-            conf.Load("conf.xml");
-            host = conf.GetElementsByTagName("host")[0].InnerText;
-            port = conf.GetElementsByTagName("port")[0].InnerText;
-            dbhost = conf.GetElementsByTagName("dbhost")[0].InnerText;
-            dbport = conf.GetElementsByTagName("dbport")[0].InnerText;
-            userid = conf.GetElementsByTagName("userid")[0].InnerText;
-            password = conf.GetElementsByTagName("password")[0].InnerText;
-            database = conf.GetElementsByTagName("database")[0].InnerText;
-            if (!Boolean.TryParse(conf.GetElementsByTagName("useProxy")[0].InnerText, out useProxy))
+
+            IConfiguration conf = new ConfigurationBuilder()
+                .AddJsonFile("settings.json", true, false)
+                .AddEnvironmentVariables()
+                .Build();
+            host = conf["host"];
+            port = conf["port"];
+            dbhost = conf["dbhost"];
+            dbport = conf["dbport"];
+            userid = conf["userid"];
+            password = conf["password"];
+            SqlPassword = conf["SqlPassword"];
+            database = conf["database"];
+            if (!Boolean.TryParse(conf["useProxy"], out useProxy))
                 useProxy = true; // default
-            if (!Boolean.TryParse(conf.GetElementsByTagName("useProxy")[0].InnerText, out useProxy))
-                useProxy = true; // default
-            if (!Boolean.TryParse(conf.GetElementsByTagName("encrypt")[0].InnerText, out encrypt))
+            if (!Boolean.TryParse(conf["encrypt"], out encrypt))
                 encrypt = true; // default
             if (!useProxy && encrypt)
             {
                 throw new Exception("Error: Inappropriate configuration - cannot encrypt while not use proxy!");
             }
-            if (!Boolean.TryParse(conf.GetElementsByTagName("useIndex")[0].InnerText, out useIndex))
+            if (!Boolean.TryParse(conf["useIndex"], out useIndex))
                 useIndex = true; // default
-            if (!Int32.TryParse(conf.GetElementsByTagName("rows")[0].InnerText, out rows))
+            if (!Int32.TryParse(conf["rows"], out rows))
                 rows = 500000; // default
-            if (conf.GetElementsByTagName("loadTest").Count != 0)
+            List<string> temp = new List<string>();
+            foreach (var setting in conf.GetSection("Operations").GetChildren())
             {
-                XmlNode operations = conf.SelectSingleNode("configuration/loadTest/operations");
-                String[] operations_str = new String[operations.ChildNodes.Count];
-                for (var i = 0; i < operations.ChildNodes.Count; i++)
-                {
-                    operations_str[i] = operations.ChildNodes[i].InnerText;
-                }
-                load = new Load(operations_str);
+                temp.Add(setting.Value);
             };
+            load = new Load(temp);
             //// loadTest variables
-            if (!Int32.TryParse(conf.GetElementsByTagName("multiple")[0].InnerText, out multiple))
+            if (!Int32.TryParse(conf["multiple"], out multiple))
                 multiple = 10; // default
-            if (!Int32.TryParse(conf.GetElementsByTagName("startSpeed")[0].InnerText, out startSpeed))
+            if (!Int32.TryParse(conf["startSpeed"], out startSpeed))
                 startSpeed = 10; // default
-            if (!Int32.TryParse(conf.GetElementsByTagName("stride")[0].InnerText, out stride))
+            if (!Int32.TryParse(conf["stride"], out stride))
                 stride = 1; // default
-            if (!Int32.TryParse(conf.GetElementsByTagName("threads")[0].InnerText, out threads))
+            if (!Int32.TryParse(conf["threads"], out threads))
                 threads = 1; // default
 #if !DEBUG
-            if (!Int32.TryParse(conf.GetElementsByTagName("verbal")[0].InnerText, out verbal))
+            if (!Int32.TryParse(conf["verbal"], out verbal))
                 verbal = 1; // default
 #endif
-            if (!Int32.TryParse(conf.GetElementsByTagName("connectionTime")[0].InnerText, out connectionTime))
+            if (!Int32.TryParse(conf["connectionTime"], out connectionTime))
                 connectionTime = 1000; // default
         }
 
@@ -69,7 +69,6 @@ namespace PrismaBenchmark
 
         public readonly Boolean useProxy;
         public readonly Boolean encrypt;
-        public readonly Latency latency = null;
         public readonly Load load = null;
         public readonly Boolean useIndex;
         public readonly string host;
@@ -78,6 +77,7 @@ namespace PrismaBenchmark
         public readonly string dbport;
         public readonly string userid;
         public readonly string password;
+        public readonly string SqlPassword;
         public readonly string database;
         public readonly int rows;
         public readonly int multiple;
@@ -89,20 +89,13 @@ namespace PrismaBenchmark
 
     }
 
-    public class Test
+    public class Load
     {
-        public String[] Operations { get; }
-        public Test(String[] operations)
+        public List<string> Operations { get; }
+
+        public Load(List<string> operations)
         {
-            this.Operations = operations;
+            Operations = operations;
         }
-    }
-    public class Load : Test
-    {
-        public Load(String[] operations) : base(operations) { }
-    }
-    public class Latency : Test
-    {
-        public Latency(String[] operations) : base(operations) { }
     }
 }

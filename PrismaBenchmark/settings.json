@@ -1,0 +1,26 @@
+{
+    "host": "prismaproxy",
+    "dbhost": "prismadb",
+    "port": "4000",
+    "dbport": "3306",
+    "userid": "root",
+    "password": "toor",
+    "database": "testdb",
+    "useProxy": true,
+    "encrypt": true,
+    "useIndex": false,
+    "rows": 10000,
+    "operations": [
+        "insert",
+        "select",
+        "update",
+        "delete",
+        "encrypt"
+    ],
+    "startSpeed": 3,
+    "multiple": 10,
+    "stride": 1,
+    "threads": 5,
+    "verbal": 0,
+    "connectionTime": 2000
+}
