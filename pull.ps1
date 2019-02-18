@@ -2,22 +2,16 @@
 Push-Location $PSScriptRoot
 
 try {
-	#$base = 'https://github.com/docker/machine/releases/download/v0.16.1'
-	#$DMPath = 'C:\Program Files\Docker\Docker\resources\bin'
-	#curl.exe -o $DMPath\docker-machine.exe $base/docker-machine-Windows-x86_64.exe
-	
     $myPublishPath = "$PSScriptRoot/Prisma-Mysql-Proxy"
     $myPublishPathP = "$myPublishPath/Plugins"
 
     $apiUrl = 'https://ci.appveyor.com/api'
-    $token = 'obv75bsvkg8y6wjjqm2k'
-    #$token = $env:AuthTokenSecure
+    $token = $env:AuthTokenSecure
     $headers = @{
         "Authorization" = "Bearer $token"
         "Content-type" = "application/json"
     }
-    #$accountName = $env:AccountNameSecure
-    $accountName = 'bazzilic'
+    $accountName = $env:AccountNameSecure
     $projectSlugMyPeek = 'PrismaDB-Proxy-MySQL'
     $projectSlugMyPlugin = 'PrismaDB-Plugin-MySQL'
 
