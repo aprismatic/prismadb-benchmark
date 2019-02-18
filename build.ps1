@@ -7,8 +7,7 @@ try {
 
 	docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
 						--digitalocean-region='sgp1' --digitalocean-size='s-1vcpu-1gb' $DockerMachine
-
-						
+	
 	docker-machine ls
 	docker-machine env --shell powershell $DockerMachine
 	docker-machine env --shell powershell $DockerMachine | Invoke-Expression
