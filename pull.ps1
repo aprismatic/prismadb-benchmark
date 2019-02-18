@@ -2,9 +2,9 @@
 Push-Location $PSScriptRoot
 
 try {
-	$base = 'https://github.com/docker/machine/releases/download/v0.16.1'
-	$DMPath = 'C:\Program Files\Docker\Docker\resources\bin'
-	curl.exe -Lo $DMPath\docker-machine.exe $base/docker-machine-Windows-x86_64.exe
+	#$base = 'https://github.com/docker/machine/releases/download/v0.16.1'
+	#$DMPath = 'C:\Program Files\Docker\Docker\resources\bin'
+	#curl.exe -o $DMPath\docker-machine.exe $base/docker-machine-Windows-x86_64.exe
 	
     $myPublishPath = "$PSScriptRoot/Prisma-Mysql-Proxy"
     $myPublishPathP = "$myPublishPath/Plugins"
