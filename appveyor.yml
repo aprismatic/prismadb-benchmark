@@ -4,7 +4,7 @@ branches:
   only:
     - master
 image: "Visual Studio 2017"
-before_build:  
+before_build:
   - ps: ./pull.ps1
 build_script:
   - ps: ./build.ps1
@@ -14,5 +14,7 @@ environment:
   AccountNameSecure:
     secure: tjnWYxXSiCBP/XN3tEYtKg==
   DOTokenSecure:
-    secure: wgZ+dw54aGo8jJXMNTdE4jB6s673xW9hCzuDwly8RiozEw3J0uJlaMtNJ+GZCkFVXcsEQAPrSCRAUCHDYRoRFV6sK3rtTAkwbt60xUnnpDk=
+    secure: 0y497zzC4fi9jBt6uAXJC6rxNwAf9mIJMeUFAvcinh8lUmVd6OP4FGaEy3wi6/yzXVFO0ucDkgRw7FZN/hoNVEYrmy3UsWgyEp6X91wPgEA=
+  SqlPassword:
+    secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
 version: "0.2.8.{build}"

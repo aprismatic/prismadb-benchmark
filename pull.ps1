@@ -6,14 +6,12 @@ try {
     $myPublishPathP = "$myPublishPath/Plugins"
 
     $apiUrl = 'https://ci.appveyor.com/api'
-    $token = 'obv75bsvkg8y6wjjqm2k'
-    #$token = $env:AuthTokenSecure
+    $token = $env:AuthTokenSecure
     $headers = @{
         "Authorization" = "Bearer $token"
         "Content-type" = "application/json"
     }
-    #$accountName = $env:AccountNameSecure
-    $accountName = 'bazzilic'
+    $accountName = $env:AccountNameSecure
     $projectSlugMyPeek = 'PrismaDB-Proxy-MySQL'
     $projectSlugMyPlugin = 'PrismaDB-Plugin-MySQL'
 

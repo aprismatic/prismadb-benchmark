@@ -10,6 +10,8 @@ services:
         container_name: PrismaDB_SQL_Benchmark
         networks:
             - prisma
+        environment:
+            SqlPassword: ${SqlPassword}
         depends_on:
             - prismadb
             - prismaproxy
