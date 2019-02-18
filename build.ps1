@@ -9,7 +9,7 @@ try {
 						--digitalocean-region='sgp1' --digitalocean-size='s-4vcpu-8gb' $DockerMachine
 
 	docker-machine env --shell powershell $DockerMachine
-	docker-machine env --shell=powershell $DockerMachine | Invoke-Expression
+	docker-machine env --shell powershell $DockerMachine | Invoke-Expression
 
 	$blockRdp = $true
 	iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
