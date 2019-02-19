@@ -8,7 +8,7 @@ try {
 	cd PrismaBenchmark | dotnet restore | dotnet publish -c Release -o out
 
 	docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
-						--digitalocean-region='sgp1' --digitalocean-size='s-6vcpu-16gb' $DockerMachine
+						--digitalocean-region='nyc3' --digitalocean-size='s-6vcpu-16gb' $DockerMachine
 	
 	docker-machine ls
 	docker-machine env --shell powershell $DockerMachine
