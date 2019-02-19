@@ -8,7 +8,7 @@ try {
 	cd PrismaBenchmark | dotnet restore | dotnet publish -c Release -o out
 
 	docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
-						--digitalocean-region='nyc3' --digitalocean-size='c-32' $DockerMachine
+						--digitalocean-region='nyc3' --digitalocean-size='c-16' $DockerMachine
 	
 	docker-machine ls
 	docker-machine env --shell powershell $DockerMachine
@@ -17,7 +17,9 @@ try {
 	docker-machine active
 	
 	docker-compose up -d --build prismadb prismaproxy
-	docker-compose up --build prismabenchmark
+	docker-compose up -d --build prismabenchmark
+
+	Start-Sleep -s 1800
 	
 	docker-machine stop $DockerMachine
 	echo "y" | docker-machine rm $DockerMachine
