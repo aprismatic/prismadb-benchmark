@@ -6,7 +6,7 @@ try {
 	$DockerMachine = 'BenchmarkTest'
 
 	docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
-						--digitalocean-region='sgp1' --digitalocean-size='s-1vcpu-1gb' $DockerMachine
+						--digitalocean-region='sgp1' --digitalocean-size='s-6vcpu-16gb' $DockerMachine
 	
 	docker-machine ls
 	docker-machine env --shell powershell $DockerMachine
