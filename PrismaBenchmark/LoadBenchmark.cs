@@ -2,22 +2,26 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
+using System.Data.SqlClient;
 
 namespace PrismaBenchmark
 {
     class LoadBenchmark : Benchmark
     {
         private static Dictionary<string, int> queryTypeMap = new Dictionary<string, int>();
+        private static List<ArrayList> benchaMark = new List<ArrayList>();
+        private static string dateTime;
+
         public LoadBenchmark(): base()
         {
             CreateTable("t1");
             CreateTable("t2", encrypt: false);
+            dateTime = DateTime.Now.ToString();
             foreach (var test in conf.load.Operations)
             {
                 switch (test)
@@ -161,7 +165,7 @@ namespace PrismaBenchmark
             }
             dataGen.ResetNextSingle();
             Close();
-
+            SavetoDB();
             Console.WriteLine("Finish Load Benchmarking ... ");
         }
 
@@ -182,6 +186,7 @@ namespace PrismaBenchmark
             } while (result != "Completed");
 
             watch.Stop();
+            benchaMark.Add(new ArrayList { queryType, null, watch.ElapsedMilliseconds, dateTime });
             Console.WriteLine("====Time of {0}: {1} ms====\n", queryType, watch.ElapsedMilliseconds);
         }
 
@@ -204,10 +209,11 @@ namespace PrismaBenchmark
 
             if (threadInfo.verbal >= 1)
                 Console.WriteLine("\nDone processing!");
+            benchaMark.Add(new ArrayList { queryType, threadInfo.rps, null, dateTime });
             Console.WriteLine("====Max RPS of {0}: {1}====\n", queryType, threadInfo.rps);
         }
 
-        void WorkerProc(Object threadInfo)
+        private void WorkerProc(Object threadInfo)
         {
             ThreadInfo info = threadInfo as ThreadInfo;
             ConcurrentQueue<string> cq = info.cq;
@@ -232,7 +238,7 @@ namespace PrismaBenchmark
             Parallel.For(0, info.numberOfWorkers, i => startWorker());
         }
 
-        void MasterProc(Object threadInfo)
+        private void MasterProc(Object threadInfo)
         {
             ThreadInfo info = threadInfo as ThreadInfo;
             Thread.Sleep(conf.connectionTime); // wait for workers to connect to db
@@ -283,6 +289,61 @@ namespace PrismaBenchmark
             }
 
             Parallel.Invoke(action);
+        }
+
+        private void SavetoDB()
+        {
+            StringBuilder query = new StringBuilder();
+            query.Append("INSERT INTO Benchmark (Query, RPS, Time, Date) VALUES ");
+            for (var i = 0; i < benchaMark.Count(); i++)
+            {
+                var tuple = benchaMark[i];
+                StringBuilder queryTail = new StringBuilder("(");
+                for (var j = 0; j < tuple.Count; j++)
+                {
+                    var value = tuple[j];
+                    if (value == null)
+                        queryTail.Append("NULL");
+                    else
+                    {
+                        if (value.GetType().Equals("".GetType()))
+                            value = "'" + value + "'";
+                        queryTail.Append(value);
+                    }
+                    if (j == tuple.Count - 1)
+                        queryTail.Append(")");
+                    else
+                        queryTail.Append(",");
+                }
+                query.Append(queryTail);
+                if (i == benchaMark.Count - 1)
+                    query.Append(";");
+                else
+                    query.Append(",");
+            }
+
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder
+            {
+                DataSource = "aprismatic-dev.database.windows.net",
+                InitialCatalog = "prismadb-benchmark",
+                UserID = "prismadb-benchmark",
+                Password = conf.SqlPassword
+            };
+            SqlConnection conn = new SqlConnection(builder.ConnectionString);
+
+            try
+            {
+                conn.Open();
+                SqlCommand command = new SqlCommand(query.ToString(), conn);
+                command.ExecuteNonQuery();
+                conn.Close();
+                //Console.WriteLine("Connected!");
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.Message);
+                Environment.Exit(1);
+            }
         }
     }
 

@@ -7,10 +7,14 @@
 
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="0.40.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="conf.xml">
+    <None Update="settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
