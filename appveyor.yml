@@ -7,6 +7,7 @@ image: "Visual Studio 2017"
 before_build:
   - ps: ./pull.ps1
 build_script:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: ./build.ps1
 environment:
   AuthTokenSecure:
@@ -14,7 +15,7 @@ environment:
   AccountNameSecure:
     secure: tjnWYxXSiCBP/XN3tEYtKg==
   DOTokenSecure:
-    secure: 0y497zzC4fi9jBt6uAXJC6rxNwAf9mIJMeUFAvcinh8lUmVd6OP4FGaEy3wi6/yzXVFO0ucDkgRw7FZN/hoNVEYrmy3UsWgyEp6X91wPgEA=
+    secure: w+zSXJnn4R+xzSmUl7MM/gMiOpgsez3+AGQo9+S1H3gZaFEhCKib2dBPiTlCnXb9JNRn4HJC0FivoGPaqbgOShA0Vq6Q2rh42fnkvLLvZQU=
   SqlPassword:
     secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
 version: "0.2.8.{build}"

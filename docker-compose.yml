@@ -12,9 +12,6 @@ services:
             - prisma
         environment:
             SqlPassword: ${SqlPassword}
-        depends_on:
-            - prismadb
-            - prismaproxy
         
     prismadb:
         image: bazzilic/prismadb-mysql
