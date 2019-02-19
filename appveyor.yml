@@ -14,7 +14,7 @@ environment:
   AccountNameSecure:
     secure: tjnWYxXSiCBP/XN3tEYtKg==
   DOTokenSecure:
-    secure: J1qd8UqNSIL88Tb/KLTjwsi7dZDvwBKNlzJjTw6z3BGoyvE4k1/Z90rTuHC8AB04dEZ0xBgB/45+LzPKHFjziUn+Am5Uyj+t3drnArO/7ck=
+    secure: Tk+kQ8w/Xy+Z3xzIH03Ml4lw+5LL3eXvFwV3fXilBTVD+R/JrgUH9VgGnVazoU1HcvFjcpQ8Tlmg37E/hqHfcocPQoxmRpCcEzeanBITYeU=
   SqlPassword:
     secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
 version: "0.2.8.{build}"
