@@ -1,23 +1,18 @@
-version: '3.6'
+version: "3.6"
 
 services:
-
     prismabenchmark:
         build:
             context: ./
             dockerfile: Dockerfile-Benchmark
         image: prismadb/prismadb-benchmark
         container_name: PrismaDB_SQL_Benchmark
-        networks:
-            - prisma
         environment:
             SqlPassword: ${SqlPassword}
-        
+
     prismadb:
         image: bazzilic/prismadb-mysql
         container_name: PrismaDB_SQL_Server
-        networks:
-            - prisma
         ports:
             - 3306:3306
         environment:
@@ -29,8 +24,6 @@ services:
             dockerfile: Dockerfile-Proxy
         image: prismadb/prismadb-mysql-proxy
         container_name: PrismaDB_SQL_Server_Proxy
-        networks:
-            - prisma
         ports:
             - 4000:4000
         depends_on:
@@ -40,6 +33,3 @@ services:
             ServerAddress: "prismadb"
             ServerPort: "3306"
             Database: "testdb"
-    
-networks:
-    prisma:
