@@ -18,10 +18,6 @@ try {
 	
     docker-compose up -d --build prismadb prismaproxy
     docker-compose up --build prismabenchmark
-	
-    docker-machine stop $DockerMachine
-    echo "y" | docker-machine rm $DockerMachine
-	
 }
 finally {
     if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }

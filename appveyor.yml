@@ -8,6 +8,8 @@ before_build:
   - ps: ./pull.ps1
 build_script:
   - ps: ./build.ps1
+on_finish:
+  - ps: ./kill.ps1
 environment:
   AuthTokenSecure:
     secure: hDmhAYD8sltmvMXgXADCaZeFM/4iJCpo8c24wf/BWvs=
