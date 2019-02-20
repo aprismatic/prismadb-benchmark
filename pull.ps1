@@ -9,7 +9,7 @@ try {
     $token = $env:AuthTokenSecure
     $headers = @{
         "Authorization" = "Bearer $token"
-        "Content-type" = "application/json"
+        "Content-type"  = "application/json"
     }
     $accountName = $env:AccountNameSecure
     $projectSlugMyPeek = 'PrismaDB-Proxy-MySQL'
@@ -20,9 +20,9 @@ try {
 
     # get project with last build details
     $projectMyPeek = Invoke-RestMethod -Method Get -Headers $headers `
-									   -Uri "$apiUrl/projects/$accountName/$projectSlugMyPeek"
+        -Uri "$apiUrl/projects/$accountName/$projectSlugMyPeek"
     $projectMyPlugin = Invoke-RestMethod -Method Get -Headers $headers `
-										 -Uri "$apiUrl/projects/$accountName/$projectSlugMyPlugin"
+        -Uri "$apiUrl/projects/$accountName/$projectSlugMyPlugin"
 
     # we assume here that build has a single job
     # get this job id
@@ -30,18 +30,18 @@ try {
     $jobIdMyPlugin = $projectMyPlugin.build.jobs[0].jobId
 
     "Downloading artifacts for MySQL Proxy..."
-	$artifactPeek = 'sqlpeek-MySQL-linux-musl-x64.zip'
-	$ArtifactPathPeek = "$downloadLocation\$artifactPeek"
+    $artifactPeek = 'sqlpeek-MySQL-linux-musl-x64.zip'
+    $ArtifactPathPeek = "$downloadLocation\$artifactPeek"
 
-	Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMyPeek/artifacts/$artifactPeek" `
-					  -OutFile $ArtifactPathPeek -Headers @{ "Authorization" = "Bearer $token" }
+    Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMyPeek/artifacts/$artifactPeek" `
+        -OutFile $ArtifactPathPeek -Headers @{ "Authorization" = "Bearer $token" }
 					
     "Downloading artifacts for MySQL Proxy Plugins..."					
-	$artifactPlugin = 'PrismaDB-Plugin-MySQL.zip'
-	$ArtifactPathPlugin = "$downloadLocation\$artifactPlugin"
+    $artifactPlugin = 'PrismaDB-Plugin-MySQL.zip'
+    $ArtifactPathPlugin = "$downloadLocation\$artifactPlugin"
 
-	Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMyPlugin/artifacts/$artifactPlugin" `
-					  -OutFile $ArtifactPathPlugin -Headers @{ "Authorization" = "Bearer $token" }
+    Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMyPlugin/artifacts/$artifactPlugin" `
+        -OutFile $ArtifactPathPlugin -Headers @{ "Authorization" = "Bearer $token" }
 					  
     "Listing downloaded artifacts:"
     ls $downloadLocation
@@ -53,7 +53,7 @@ try {
             "Extracting $fn into $myPublishPath..."
             7z e -y $path "-o$myPublishPath"
         }
-		if ($fn -eq $artifactPlugin) {
+        if ($fn -eq $artifactPlugin) {
             "Extracting $fn into $myPublishPathP..."
             7z e -y $path "-o$myPublishPathP"
         }
