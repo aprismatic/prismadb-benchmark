@@ -3,6 +3,71 @@
 
 Benchmark Test for PrismaDB.
 
-This test is mainly to test the max RPS of SQL DML operations, including `INSERT, SELECT, UPDATE, DELETE`. Each operation is test by `SINGLE` and `MULTIPLE` modes respectively. `MULTIPLE` means operate with decades(default set is 10) records at one time using one query. For `SELECT`, use different modes(`SELECT_WITH_JOIN, SELECT_WITH_ADDITION, SELECT_WITH_MULTIPLICATION, SELECT_WITH_COMPOUND`) to evaluate.
+This test is mainly to test the max RPS of SQL DML operations and the consumed time of each cryptographic functions.
 
-Moreover, this test measures the consumed time of each cryptographic functions like `EN/DECRYPTION` of `STORE, SEARCH, RANGE, ADDITION, MULTIPLICATION` and `WILDCARD`. Each cryptographic operation is base on 10000 records within one field.
+Two datasets (t1 & t2) are generated before doing the test, one is for SQL DML operations as there are some `DELETE` and `INSERT` queries which will change the size of dataset. Another one is created for cryptographic functions as the number of records always stays the same.
+
+**CREATE Query:**
+```sql
+CREATE TABLE t1
+                (
+                    a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
+                    b INT ENCRYPTED FOR(ADDITION),
+                    c INT ENCRYPTED FOR(MULTIPLICATION),
+                    d VARCHAR(30) ENCRYPTED FOR(SEARCH),
+                    e VARCHAR(30) ENCRYPTED FOR(WILDCARD)
+                );
+```
+Then DataTable in proxy looks like:
+
+| a  |  b | c  |  d |  e |
+| ------------ | ------------ | ------------ | ------------ | ------------ |
+|  1 |  2 | 3  | a  | b  |
+|  4 |  5 | 6  | c  | d  |
+|  ... |  ... | ...  | ...  | ...  |
+
+And DataTable in database looks like:
+
+| rowId |  a.Paillier.Enc | a.ElGamal.Enc  | a.Range  | a.Fingerprint  | b.Paillier.Enc  |  c.ElGamal.Enc | d.Store.Enc  | d.Fingerprint  | e.Wildcard  | e.Store.Enc  |  Common.Paillier.N | Common.ElGamal.N |
+| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
+| 1 | 0x323...  | 0x52A...   |  2544... | 1235  | 0x323...  | 0x52A...  | 0xE88...  | 1545  |  ZTkE3A==... | 0xD7A...  | 0x895...  | 0x0D5...  |
+| 2 | 0x673...  | 0x5A5...   |  2544... | 5454  | 0x389...  | 0x4D2...  | 0xF01...  | 848  |  74vnBQ==... | 0xE21...  | 0x895...  | 0x0D5...  |
+| ... | ...  | ...   |  ... | ...  | ...  | ...  | ...  | ...  |  ... | ...  | ...  | ...  |
+
+
+For `INSERT, SELECT, UPDATE, DELETE`, each operation is test by `SINGLE` and `MULTIPLE` modes respectively. `MULTIPLE` means operating with decades(default set is 10) records at one time using one query. For each dataset, size of dataset is set to `10000` (by inserting records using `INSERT` query) where `4000` is for `SINGLE` operations while `6000` is for `MULTIPLE`.
+
+**INSERT Query:**
+```sql
+INSERT INTO t1 (a,b,c,d,e) VALUES (1, 2, 3, a, b);
+INSERT INTO t1 (a,b,c,d,e) VALUES (1, 2, 3, a, b), (1, 2, 3, a, b), (1, 2, 3, a, b), (1, 2, 3, a, b), ...;
+```
+
+**SELECT Query:**
+```sql
+SELECT a FROM t1 WHERE a=1; --Simple Select
+SELECT a + b FROM t1 WHERE a=1; --Select with Addition
+SELECT a * c FROM t1 WHERE a=1; --Select with Multiplication
+SELECT a + a * c + b FROM t1 WHERE a=1; --Select with Compound
+SELECT t1.a, t1.b, t2.a, t2.b FROM t1 INNER JOIN t2 ON t1.a = t2.a WHERE t1.a=1; --Select with Join
+```
+
+**UPDATE Query:**
+```sql
+UPDATE t1 SET a=1, b=2, c=3, d="a", e="b" WHERE a=1;
+```
+
+**DELETE Query:**
+```sql
+DELETE FROM t1 WHERE a=1;
+```
+
+Time evaluation for cryptographic functions inculdes `EN/DECRYPTION` of `STORE`, `SEARCH`, `RANGE`, `ADDITION`, `MULTIPLICATION` and `WILDCARD`. For each operation, a check query is executed to check the status of EN/DECRYPTION.
+
+**EN/DECRYPTION Query:**
+```sql
+PRISMADB ENCRYPT t2.a FOR(STORE); --Encrypt for Store
+PRISMADB ENCRYPT t2.a FOR(STORE) STATUS; --Check Status
+PRISMADB DECRYPT t2.a; --Decrypt from Store
+PRISMADB DECRYPT t2.a STATUS; --Check Status
+```
