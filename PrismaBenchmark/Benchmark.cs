@@ -137,17 +137,20 @@ namespace PrismaBenchmark
                 ExecuteQuery(query);
             }
             // populate multiple range
-            int multiple_batch_size = multiple_size / conf.multiple;
+            int multiple_batch_size = 1000;
             for (int m = 0; m < conf.multiple; m++)
             {
-                string query = QueryConstructor.ConstructInsertQuery("t1",
-                    dataGen.GetDataRowsForSelect(single_size, batch_size: multiple_batch_size));
-                // execute query
-                ExecuteQuery(query);
-                query = QueryConstructor.ConstructInsertQuery("t2",
-                    dataGen.GetDataRowsForSelect(single_size, batch_size: multiple_batch_size));
-                // execute query
-                ExecuteQuery(query);
+                for (int i = 0; i < multiple_size / conf.multiple / 1000; i++)
+                {
+                    string query = QueryConstructor.ConstructInsertQuery("t1",
+                        dataGen.GetDataRowsForSelect(single_size + i * multiple_batch_size, batch_size: multiple_batch_size));
+                    // execute query
+                    ExecuteQuery(query);
+                    query = QueryConstructor.ConstructInsertQuery("t2",
+                        dataGen.GetDataRowsForSelect(single_size + i * multiple_batch_size, batch_size: multiple_batch_size));
+                    // execute query
+                    ExecuteQuery(query);
+                }
             }
         }
 

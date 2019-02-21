@@ -146,7 +146,8 @@ namespace PrismaBenchmark
             {
                 CommandText = query,
                 Connection = connection,
-                CommandType = CommandType.Text
+                CommandType = CommandType.Text,
+                CommandTimeout = 300
             };
             using (MySqlDataReader reader = cmd.ExecuteReader())
             {
