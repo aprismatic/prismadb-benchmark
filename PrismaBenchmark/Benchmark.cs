@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace PrismaBenchmark
 {
@@ -39,7 +42,7 @@ namespace PrismaBenchmark
                     b INT ENCRYPTED FOR(ADDITION),
                     c INT ENCRYPTED FOR(MULTIPLICATION),
                     d VARCHAR(30) ENCRYPTED FOR(SEARCH),
-                    e VARCHAR(30) ENCRYPTED FOR(WILDCARD)
+                    e VARCHAR(30)
                 );", tableName);
             }
             else
@@ -112,46 +115,54 @@ namespace PrismaBenchmark
             ds.Close();
         }
 
-        protected void Refresh()
-        {
-            ds.Close();
-            ds = new DataBase();
-        }
-
-        protected void SetupForSelect()
+        protected void SetupForSelect(int scaler = 1, string table = "t1")
             // populate tables with 500M rows
         {
+            ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
+
             // populate single range
-            int single_batch_size = 1000;
-            while (single_size % single_batch_size != 0)
-                single_batch_size /= 10;
-            for (int i = 0; i < single_size / single_batch_size; i++)
+            int batch_size = 1000;
+            while ((conf.rows / scaler) % batch_size != 0)
+                batch_size /= 10;
+
+            var watch = Stopwatch.StartNew();
+
+            for (int i = 0; i < single_size / (batch_size * scaler); i++)
             {
-                string query = QueryConstructor.ConstructInsertQuery("t1", 
-                    dataGen.GetDataRowsForSelect(i * single_batch_size, batch_size: single_batch_size));
+                string query = QueryConstructor.ConstructInsertQuery(table,
+                    dataGen.GetDataRowsForSelect(i * batch_size, batch_size: batch_size));
                 // execute query
-                ExecuteQuery(query);
-                query = QueryConstructor.ConstructInsertQuery("t2",
-                    dataGen.GetDataRowsForSelect(i * single_batch_size, batch_size: single_batch_size));
-                // execute query
-                ExecuteQuery(query);
+                cq.Enqueue(query);
             }
+
+            while ((multiple_size / conf.multiple / scaler) % batch_size != 0)
+                batch_size /= 10;
             // populate multiple range
-            int multiple_batch_size = 1000;
             for (int m = 0; m < conf.multiple; m++)
             {
-                for (int i = 0; i < multiple_size / conf.multiple / 1000; i++)
+                for (int i = 0; i < multiple_size / (conf.multiple * batch_size * scaler); i++)
                 {
-                    string query = QueryConstructor.ConstructInsertQuery("t1",
-                        dataGen.GetDataRowsForSelect(single_size + i * multiple_batch_size, batch_size: multiple_batch_size));
+                    string query = QueryConstructor.ConstructInsertQuery(table,
+                        dataGen.GetDataRowsForSelect((single_size / scaler) + i * batch_size, batch_size: batch_size));
                     // execute query
-                    ExecuteQuery(query);
-                    query = QueryConstructor.ConstructInsertQuery("t2",
-                        dataGen.GetDataRowsForSelect(single_size + i * multiple_batch_size, batch_size: multiple_batch_size));
-                    // execute query
-                    ExecuteQuery(query);
+                    cq.Enqueue(query);
                 }
             }
+
+            void startWorker()
+            {
+                DataBase database = new DataBase();
+                while (cq.TryDequeue(out string query))
+                {
+                    database.ExecuteQuery(query);
+                }
+                database.Close();
+            }
+
+            Parallel.For(0, 10, i => startWorker());
+
+            watch.Stop();
+            Console.WriteLine("====Time of INSERT {0} records: {1} ms====\n", conf.rows / scaler, watch.ElapsedMilliseconds);
         }
 
         protected string GenerateInsertQuery(int numberOfRecords)

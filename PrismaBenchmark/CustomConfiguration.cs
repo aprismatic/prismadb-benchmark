@@ -15,9 +15,11 @@ namespace PrismaBenchmark
                 .AddJsonFile("settings.json", true, false)
                 .AddEnvironmentVariables()
                 .Build();
+#if !DEBUG
             host = conf["host"];
-            port = conf["port"];
             dbhost = conf["dbhost"];
+#endif
+            port = conf["port"];
             dbport = conf["dbport"];
             userid = conf["userid"];
             password = conf["password"];
@@ -71,9 +73,9 @@ namespace PrismaBenchmark
         public readonly Boolean encrypt;
         public readonly Load load = null;
         public readonly Boolean useIndex;
-        public readonly string host;
+        public readonly string host = "localhost";
         public readonly string port;
-        public readonly string dbhost;
+        public readonly string dbhost = "localhost";
         public readonly string dbport;
         public readonly string userid;
         public readonly string password;

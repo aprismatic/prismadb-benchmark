@@ -156,6 +156,7 @@ namespace PrismaBenchmark
                     {
                         CreateTable("t1");
                         SetupForSelect();
+                        SetupForSelect(100, "t2");
                     }
                     if (queryTypeInt >= 15 && queryTypeInt <= 18)
                         RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal);
