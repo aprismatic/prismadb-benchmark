@@ -57,10 +57,13 @@ namespace PrismaBenchmark
                 );", tableName);
             }
 
+            string create_index = String.Format(@"CREATE INDEX i1 on {0} (a)", tableName);
+
             // execute query
             try
             {
                 ds.ExecuteQuery(query);
+                ds.ExecuteQuery(create_index);
             }
             catch (MySqlException e)
             {
