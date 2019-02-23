@@ -38,9 +38,9 @@ namespace PrismaBenchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
-                    b INT ENCRYPTED FOR(ADDITION),
-                    c INT ENCRYPTED FOR(MULTIPLICATION),
+                    a INT,
+                    b INT ENCRYPTED FOR(MULTIPLICATION, ADDITION),
+                    c INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
                     d VARCHAR(30) ENCRYPTED FOR(SEARCH),
                     e VARCHAR(30)
                 );", tableName);
@@ -49,7 +49,7 @@ namespace PrismaBenchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT ENCRYPTED FOR(SEARCH),
+                    a INT,
                     b INT,
                     c INT,
                     d VARCHAR(30),
@@ -182,16 +182,16 @@ namespace PrismaBenchmark
             switch (operationCase)
             {
                 case 2:
-                    operation = "a + b";
+                    operation = "b + c";
                     break;
                 case 3:
-                    operation = "a * c";
+                    operation = "b * c";
                     break;
                 case 4:
-                    operation = "a + a * c + b";
+                    operation = "b + b * c + c";
                     break;
                 default:
-                    operation = "a";
+                    operation = "c";
                     break;
             }
             return QueryConstructor.ConstructSelectQuery(operation, a);

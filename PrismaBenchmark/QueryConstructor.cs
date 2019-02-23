@@ -43,7 +43,7 @@ namespace PrismaBenchmark
 
         public static string ConstructSelectWithoutQuery(int targetA) // select on column a
         {
-            return String.Format("SELECT c FROM t2 WHERE c={0} LIMIT 5;", targetA);
+            return String.Format("SELECT a FROM t1 WHERE a={0} LIMIT 5;", targetA);
         }
 
         public static string ConstructSelectJoinQuery(int targetA) // select on column a
