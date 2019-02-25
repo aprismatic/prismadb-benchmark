@@ -27,10 +27,11 @@ namespace PrismaBenchmark
                 switch (test)
                 {
                     case "insert":
-                        queryTypeMap.Add("SINGLE_INSERT", 1);
-                        queryTypeMap.Add("MULTIPLE_INSERT", 2);
+                        queryTypeMap.Add("SINGLE_INSERT", 0);
+                        queryTypeMap.Add("MULTIPLE_INSERT", 1);
                         break;
                     case "select":
+                        queryTypeMap.Add("SELECT_LIMIT_ONE", 2);
                         queryTypeMap.Add("SINGLE_SELECT_WITHOUT_EN/DECRYPTION", 3);
                         queryTypeMap.Add("MULTIPLE_SELECT_WITHOUT_EN/DECRYPTION", 4);
                         queryTypeMap.Add("SINGLE_SELECT", 5);
@@ -74,8 +75,9 @@ namespace PrismaBenchmark
         private string ProduceQuery(int type)
         {
             switch (type){
-                case 1: return GenerateInsertQuery(1); // single insertion
-                case 2: return GenerateInsertQuery(10); // multiple insertion
+                case 0: return GenerateInsertQuery(1); // single insertion
+                case 1: return GenerateInsertQuery(10); // multiple insertion
+                case 2: return GenerateSelectLimitQuery(); // single selection without en/decryption
                 case 3: return GenerateSelectWithoutQuery(single: true); // single selection without en/decryption
                 case 4: return GenerateSelectWithoutQuery(single: false); // multiple selection without en/decryption
                 case 5: return GenerateSelectQuery(single: true); // single selection
@@ -152,7 +154,7 @@ namespace PrismaBenchmark
                 }
                 else
                 {
-                    if (queryTypeInt == 3)
+                    if (queryTypeInt == 2)
                     {
                         CreateTable("t1");
                         SetupForSelect();

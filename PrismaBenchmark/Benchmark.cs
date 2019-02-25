@@ -203,6 +203,11 @@ namespace PrismaBenchmark
             return QueryConstructor.ConstructSelectWithoutQuery(a);
         }
 
+        protected string GenerateSelectLimitQuery()
+        {
+            return "SELECT * FROM t1 LIMIT 1";
+        }
+
         protected string GenerateDeleteQuery(bool single = true)
         {
             int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
