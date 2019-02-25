@@ -38,9 +38,9 @@ namespace PrismaBenchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT,
-                    b INT ENCRYPTED FOR(MULTIPLICATION, ADDITION),
-                    c INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
+                    a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
+                    b INT ENCRYPTED FOR(ADDITION),
+                    c INT ENCRYPTED FOR(MULTIPLICATION),
                     d VARCHAR(30) ENCRYPTED FOR(SEARCH),
                     e VARCHAR(30)
                 );", tableName);
@@ -49,7 +49,7 @@ namespace PrismaBenchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT,
+                    a INT ENCRYPTED FOR(SEARCH),
                     b INT,
                     c INT,
                     d VARCHAR(30),
@@ -57,7 +57,7 @@ namespace PrismaBenchmark
                 );", tableName);
             }
 
-            string create_index = String.Format(@"CREATE INDEX i1 on {0} (a)", tableName);
+            string create_index = String.Format(@"CREATE INDEX i1 on {0} (`a.Fingerprint`)", tableName);
 
             // execute query
             try
@@ -182,16 +182,16 @@ namespace PrismaBenchmark
             switch (operationCase)
             {
                 case 2:
-                    operation = "b + c";
+                    operation = "a + b";
                     break;
                 case 3:
-                    operation = "b * c";
+                    operation = "a * c";
                     break;
                 case 4:
-                    operation = "b + b * c + c";
+                    operation = "a + a * c + b";
                     break;
                 default:
-                    operation = "c";
+                    operation = "a";
                     break;
             }
             return QueryConstructor.ConstructSelectQuery(operation, a);
