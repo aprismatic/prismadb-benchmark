@@ -20,7 +20,7 @@ namespace PrismaBenchmark
                 {
                     var value = tuple[j];
                     if (value.GetType().Equals("".GetType()))
-                        value = "\"" + value + "\"";
+                        value = "'" + value + "'";
                     queryTail.Append(value);
                     if (j == tuple.Count - 1)
                         queryTail.Append(")");
@@ -43,7 +43,7 @@ namespace PrismaBenchmark
 
         public static string ConstructSelectWithoutQuery(int targetA) // select on column a
         {
-            return String.Format("SELECT a FROM t1 WHERE a={0} LIMIT 5;", targetA);
+            return String.Format("SELECT TOP 5 a FROM t1 WHERE a={0};", targetA);
         }
 
         public static string ConstructSelectJoinQuery(int targetA) // select on column a
@@ -53,7 +53,7 @@ namespace PrismaBenchmark
 
         public static string ConstructUpdateQuery(int targetA, ArrayList tuple) // set all matches to the same values
         {
-            return String.Format("UPDATE t1 SET a={0}, b={1}, c={2}, d=\"{3}\", e=\"{4}\" WHERE a={0};", targetA, tuple[1], tuple[2], tuple[3], tuple[4]);
+            return String.Format("UPDATE t1 SET a={0}, b={1}, c={2}, d='{3}', e='{4}' WHERE a={0};", targetA, tuple[1], tuple[2], tuple[3], tuple[4]);
         }
 
         public static string ConstructDeleteQuery(int targetA) // select on column a

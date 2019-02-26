@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PrismaBenchmark
 {
@@ -60,7 +59,7 @@ namespace PrismaBenchmark
                     l = GetNextSingle();
                     r = l + 1;
                 }
-                for (var j = 0; j<copy; j++)
+                for (var j = 0; j < copy; j++)
                 {
                     data[j].Add(new ArrayList { rand.Next(l, r), rand.Next(1000), rand.Next(1000), RandomString(10), RandomString(10) });
                 }

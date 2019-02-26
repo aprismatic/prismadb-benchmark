@@ -1,13 +1,9 @@
 ﻿using System;
-using MySql.Data.MySqlClient;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace PrismaBenchmark
@@ -57,7 +53,7 @@ namespace PrismaBenchmark
                 );", tableName);
             }
 
-            string create_index = String.Format(@"CREATE INDEX i1 on {0} (`a.Fingerprint`)", tableName);
+            string create_index = String.Format(@"CREATE INDEX i1 on {0} ([a.Fingerprint])", tableName);
 
             // execute query
             try
@@ -65,9 +61,9 @@ namespace PrismaBenchmark
                 ds.ExecuteQuery(query);
                 ds.ExecuteQuery(create_index);
             }
-            catch (MySqlException e)
+            catch (SqlException e)
             {
-                if (e.Message == String.Format("Table '{0}' already exists", tableName))
+                if (e.Message == String.Format("There is already an object named '{0}' in the database.", tableName))
                     if (overwrite)
                     {
                         DropTable(tableName);
@@ -93,7 +89,7 @@ namespace PrismaBenchmark
             {
                 return ds.ExecuteQuery(query);
             }
-            catch (MySqlException e)
+            catch (SqlException e)
             {
                 Console.WriteLine("Query caused error: {0}", e.Message);
                 return  -1;
@@ -106,7 +102,7 @@ namespace PrismaBenchmark
             {
                 return ds.ExecuteReader(query);
             }
-            catch (MySqlException e)
+            catch (SqlException e)
             {
                 Console.WriteLine("Query caused error: {0}", e.Message);
                 return null;
@@ -205,7 +201,7 @@ namespace PrismaBenchmark
 
         protected string GenerateSelectLimitQuery()
         {
-            return "SELECT * FROM t1 LIMIT 1";
+            return "SELECT TOP 1 * FROM t1";
         }
 
         protected string GenerateDeleteQuery(bool single = true)

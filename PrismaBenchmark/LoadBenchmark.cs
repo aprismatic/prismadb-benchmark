@@ -231,8 +231,15 @@ namespace PrismaBenchmark
                 {
                     if (cq.TryDequeue(out query))
                     {
-                        database.ExecuteQuery(query);
-                        Interlocked.Add(ref info.processed, 1);
+                        try
+                        {
+                            database.ExecuteQuery(query);
+                            Interlocked.Add(ref info.processed, 1);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
                     }
                 }
                 database.Close();
