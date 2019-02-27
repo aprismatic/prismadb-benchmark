@@ -15,7 +15,7 @@ build_script:
   - ps: ./build-mysql.ps1
 test_script:
   - ps: ./test.ps1
-deploy_scripts:
+deploy_script:
   - ps: ./deploy-mssql.ps1
   - ps: ./deploy-mysql.ps1
 on_finish:
