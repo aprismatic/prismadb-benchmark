@@ -48,7 +48,7 @@ namespace PrismaBenchmark
 
         public static string ConstructSelectJoinQuery(int targetA) // select on column a
         {
-            return String.Format("SELECT t1.a, t1.b, t2.a, t2.b FROM t1 INNER JOIN t2 ON t1.a = t2.a WHERE t1.a={0};", targetA);
+            return String.Format("SELECT t1.a, t1.b, t2.d, t2.e FROM t1 INNER JOIN t2 ON t1.a = t2.a WHERE t1.a={0};", targetA);
         }
 
         public static string ConstructUpdateQuery(int targetA, ArrayList tuple) // set all matches to the same values

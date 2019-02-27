@@ -212,8 +212,10 @@ namespace PrismaBenchmark
             return QueryConstructor.ConstructDeleteQuery(a);
         }
 
-        protected string GenerateSelectJoinQuery(bool single = true)
+        protected string GenerateSelectJoinQuery(int size, bool single = true)
         {
+            int single_size = 4 * size / 10;
+            int multiple_size = 4 * size / 10;
             int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
             return QueryConstructor.ConstructSelectJoinQuery(a);
         }

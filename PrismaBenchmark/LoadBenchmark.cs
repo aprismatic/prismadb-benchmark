@@ -16,9 +16,11 @@ namespace PrismaBenchmark
         private static Dictionary<string, int> queryTypeMap = new Dictionary<string, int>();
         private static List<ArrayList> benchaMark = new List<ArrayList>();
         private static string dateTime;
+        private readonly int prisma_size;
 
         public LoadBenchmark(): base()
         {
+            prisma_size = 10000;
             dateTime = DateTime.Now.ToString();
             foreach (var test in conf.load.Operations)
             {
@@ -86,8 +88,8 @@ namespace PrismaBenchmark
                 case 10: return GenerateSelectQuery(single: false, operationCase: 3); // multiple selection a*c
                 case 11: return GenerateSelectQuery(single: true, operationCase: 4); // single selection a+a*c+b
                 case 12: return GenerateSelectQuery(single: false, operationCase: 4); // multiple selection a+a*c+b
-                case 13: return GenerateSelectJoinQuery(true); // single selection with join
-                case 14: return GenerateSelectJoinQuery(false); // multiple selection with join
+                case 13: return GenerateSelectJoinQuery(prisma_size, true); // single selection with join
+                case 14: return GenerateSelectJoinQuery(prisma_size, false); // multiple selection with join
                 case 15: return GenerateUpdateQuery(true); // update single row
                 case 16: return GenerateUpdateQuery(false); // update multiple rows
                 case 17: return GenerateDeleteQuery(true); // delete single row
@@ -128,10 +130,11 @@ namespace PrismaBenchmark
         public override void RunBenchMark()
         {
             var benchmarkTime = Stopwatch.StartNew();
+            List<int> sizes = new List<int>() { 10000, 100000, 1000000 };
+
             CreateTable("t1");
             CreateTable("t2", encrypt: false);
-
-            List<int> sizes = new List<int>() { 10000, 100000, 1000000 };
+            SetupForSelect(prisma_size, "t2");
 
             Console.WriteLine("\nStart Load Benchmarking ... \n");
 
@@ -167,8 +170,6 @@ namespace PrismaBenchmark
                 }
             }
 
-            var prisma_size = 10000;
-            SetupForSelect(prisma_size, "t2");
             foreach (var entry in queryTypeMap)
             {
                 string queryType = entry.Key;
