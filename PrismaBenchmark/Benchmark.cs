@@ -51,13 +51,15 @@ namespace PrismaBenchmark
                 );", tableName);
             }
 
-            string create_index = String.Format(@"CREATE INDEX i1 on {0} ([a.Fingerprint])", tableName);
+            string create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} ([a.Fingerprint])", tableName);
+            string create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} ([d])", tableName);
 
             // execute query
             try
             {
                 ds.ExecuteQuery(query);
-                ds.ExecuteQuery(create_index);
+                ds.ExecuteQuery(create_index_i1);
+                ds.ExecuteQuery(create_index_i2);
             }
             catch (SqlException e)
             {
@@ -161,7 +163,7 @@ namespace PrismaBenchmark
             Parallel.For(0, 10, i => startWorker());
 
             watch.Stop();
-            Console.WriteLine("====Time of INSERT {0} records: {1} ms====\n", size, watch.ElapsedMilliseconds);
+            Console.WriteLine("====Time of INSERT {0} records: {1}====\n", size, watch.Elapsed.ToString(@"hh\:mm\:ss\:fff"));
         }
 
         protected string GenerateInsertQuery(int numberOfRecords)
