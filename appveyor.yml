@@ -4,10 +4,20 @@ branches:
   only:
     - master
 image: "Visual Studio 2017"
+init:
+  - ps: $env:AzureRegistryPassword | docker login -u $env:AzureRegistryLogin --password-stdin aprismatic.azurecr.io
 before_build:
-  - ps: ./pull.ps1
+  - ps: Switch-DockerLinux # Test docker linux switch before continuing
+  - ps: ./pull-mssql.ps1
+  - ps: ./pull-mysql.ps1
 build_script:
-  - ps: ./build.ps1
+  - ps: ./build-mssql.ps1
+  - ps: ./build-mysql.ps1
+test_script:
+  - ps: ./test.ps1
+deploy_scripts:
+  - ps: ./deploy-mssql.ps1
+  - ps: ./deploy-mysql.ps1
 on_finish:
   - ps: ./kill.ps1
 environment:
@@ -19,4 +29,8 @@ environment:
     secure: Tk+kQ8w/Xy+Z3xzIH03Ml4lw+5LL3eXvFwV3fXilBTVD+R/JrgUH9VgGnVazoU1HcvFjcpQ8Tlmg37E/hqHfcocPQoxmRpCcEzeanBITYeU=
   SqlPassword:
     secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
+  AzureRegistryLogin:
+    secure: 2zeN4N4JCwJCC5uLlvSzlomqVrX/Il7WhVFRcCtpcH3Kr34dA726SNVk+8QBn/3K
+  AzureRegistryPassword:
+    secure: b63+6f1lGXPoDDW3omA144Lt/vJZ3Eex+ViqcLPJXbGn3nO96/uj01WHqwjDAH74
 version: "0.2.8.{build}"

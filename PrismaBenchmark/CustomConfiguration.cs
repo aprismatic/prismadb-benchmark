@@ -23,6 +23,7 @@ namespace PrismaBenchmark
             userid = conf["userid"];
             password = conf["password"];
             SqlPassword = conf["SqlPassword"];
+            BuildNumber = conf["BuildNumber"];
             database = conf["database"];
             if (!Boolean.TryParse(conf["useProxy"], out useProxy))
                 useProxy = true; // default
@@ -77,6 +78,7 @@ namespace PrismaBenchmark
         public readonly string userid;
         public readonly string password;
         public readonly string SqlPassword;
+        public readonly string BuildNumber;
         public readonly string database;
         public readonly int multiple;
         public readonly int startSpeed;

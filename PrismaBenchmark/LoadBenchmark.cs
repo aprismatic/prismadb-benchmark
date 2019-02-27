@@ -15,13 +15,13 @@ namespace PrismaBenchmark
     {
         private static Dictionary<string, int> queryTypeMap = new Dictionary<string, int>();
         private static List<ArrayList> benchaMark = new List<ArrayList>();
-        private static string dateTime;
+        private static string buildnumber;
         private readonly int prisma_size;
 
         public LoadBenchmark(): base()
         {
             prisma_size = 10000;
-            dateTime = DateTime.Now.ToString();
+            buildnumber = conf.BuildNumber;
             foreach (var test in conf.load.Operations)
             {
                 switch (test)
@@ -196,7 +196,7 @@ namespace PrismaBenchmark
             dataGen.ResetNextSingle();
             Close();
             benchmarkTime.Stop();
-            benchaMark.Add(new ArrayList { "TOTAL_BENCHMARK_TIME", null, benchmarkTime.ElapsedMilliseconds, null, dateTime });
+            benchaMark.Add(new ArrayList { "TOTAL_BENCHMARK_TIME", null, benchmarkTime.ElapsedMilliseconds, null, buildnumber });
             SavetoDB();
             Console.WriteLine("====Total Time of Benchmarking: {0}====\n", benchmarkTime.Elapsed.ToString(@"hh\:mm\:ss\:fff"));
             Console.WriteLine("Finish Load Benchmarking ... ");
@@ -219,7 +219,7 @@ namespace PrismaBenchmark
             } while (result != "Completed");
 
             watch.Stop();
-            benchaMark.Add(new ArrayList { queryType, null, watch.ElapsedMilliseconds, size, dateTime });
+            benchaMark.Add(new ArrayList { queryType, null, watch.ElapsedMilliseconds, size, buildnumber });
             Console.WriteLine("====Time of {0}: {1}====\n", queryType, watch.Elapsed.ToString(@"hh\:mm\:ss\:fff"));
         }
 
@@ -242,7 +242,7 @@ namespace PrismaBenchmark
 
             if (threadInfo.verbal >= 1)
                 Console.WriteLine("\nDone processing!");
-            benchaMark.Add(new ArrayList { queryType, threadInfo.rps, null, size, dateTime });
+            benchaMark.Add(new ArrayList { queryType, threadInfo.rps, null, size, buildnumber });
             Console.WriteLine("====Max RPS of {0}: {1}====\n", queryType, threadInfo.rps);
         }
 
@@ -334,7 +334,7 @@ namespace PrismaBenchmark
         private void SavetoDB()
         {
             StringBuilder query = new StringBuilder();
-            query.Append("INSERT INTO Benchmark (Query, RPS, Time, Records, Date) VALUES ");
+            query.Append("INSERT INTO Benchmark (Query, RPS, Time, Records, BuildNumber) VALUES ");
             for (var i = 0; i < benchaMark.Count(); i++)
             {
                 var tuple = benchaMark[i];

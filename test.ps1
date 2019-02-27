@@ -1,7 +1,6 @@
 Push-Location $PSScriptRoot
 
 try {
-
     $DigitalOceanToken = $env:DOTokenSecure
     $DockerMachine = 'BenchmarkTest'
 	
@@ -15,6 +14,8 @@ try {
     docker-machine env --shell powershell $DockerMachine | Invoke-Expression
     #see which is active
     docker-machine active
+	
+	docker load -i prismadb-proxy-mssql.tar
 	
     docker-compose up -d --build prismadb prismaproxy
     docker-compose up --build prismabenchmark

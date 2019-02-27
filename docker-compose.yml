@@ -12,6 +12,7 @@ services:
             - prisma
         environment:
             SqlPassword: ${SqlPassword}
+            BuildNumber: ${APPVEYOR_BUILD_NUMBER}
         
     prismadb:
         image: cheziyi/mssql-server-linux-developer-fulltext:latest
@@ -25,10 +26,7 @@ services:
             ACCEPT_EULA: "Y"
 
     prismaproxy:
-        build:
-            context: ./
-            dockerfile: Dockerfile-Proxy
-        image: prismadb/prismadb-mssql-proxy
+        image: aprismatic.azurecr.io/prismadb-proxy-mssql:latest-alpine
         container_name: PrismaDB_SQL_Server_Proxy
         networks:
             - prisma
