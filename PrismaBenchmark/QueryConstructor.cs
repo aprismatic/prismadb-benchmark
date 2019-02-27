@@ -43,7 +43,7 @@ namespace PrismaBenchmark
 
         public static string ConstructSelectWithoutQuery(int targetA) // select on column a
         {
-            return String.Format("SELECT TOP 5 a FROM t1 WHERE a={0};", targetA);
+            return String.Format("SELECT TOP 5 d FROM t1 WHERE d={0};", targetA);
         }
 
         public static string ConstructSelectJoinQuery(int targetA) // select on column a
@@ -53,7 +53,7 @@ namespace PrismaBenchmark
 
         public static string ConstructUpdateQuery(int targetA, ArrayList tuple) // set all matches to the same values
         {
-            return String.Format("UPDATE t1 SET a={0}, b={1}, c={2}, d='{3}', e='{4}' WHERE a={0};", targetA, tuple[1], tuple[2], tuple[3], tuple[4]);
+            return String.Format("UPDATE t1 SET a={0}, b={1}, c={2}, d={3}, e='{4}' WHERE a={0};", targetA, tuple[1], tuple[2], tuple[3], tuple[4]);
         }
 
         public static string ConstructDeleteQuery(int targetA) // select on column a
@@ -63,12 +63,12 @@ namespace PrismaBenchmark
 
         public static string ConstructDecryptQuery(bool check, bool str) // select on column a
         {
-            return String.Format("PRISMADB DECRYPT t2.{1} {0};", check? "STATUS" : "", str ? "d" : "b");
+            return String.Format("PRISMADB DECRYPT t2.{1} {0};", check? "STATUS" : "", str ? "e" : "b");
         }
 
         public static string ConstructEncryptQuery(bool check, string type) // select on column a
         {
-            return String.Format("PRISMADB ENCRYPT t2.{2} FOR({1}) {0};", check ? "STATUS" : "", type, type == "WILDCARD" ? "d" : "b");
+            return String.Format("PRISMADB ENCRYPT t2.{2} FOR({1}) {0};", check ? "STATUS" : "", type, type == "WILDCARD" ? "e" : "b");
         }
 
         public static string ConstructUpdateKeyQuery(bool check) // select on column a

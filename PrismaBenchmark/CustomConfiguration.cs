@@ -34,8 +34,6 @@ namespace PrismaBenchmark
             }
             if (!Boolean.TryParse(conf["useIndex"], out useIndex))
                 useIndex = true; // default
-            if (!Int32.TryParse(conf["rows"], out rows))
-                rows = 500000; // default
             List<string> temp = new List<string>();
             foreach (var setting in conf.GetSection("Operations").GetChildren())
             {
@@ -80,7 +78,6 @@ namespace PrismaBenchmark
         public readonly string password;
         public readonly string SqlPassword;
         public readonly string database;
-        public readonly int rows;
         public readonly int multiple;
         public readonly int startSpeed;
         public readonly int stride;

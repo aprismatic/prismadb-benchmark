@@ -19,8 +19,6 @@ namespace PrismaBenchmark
 
         public LoadBenchmark(): base()
         {
-            CreateTable("t1");
-            CreateTable("t2", encrypt: false);
             dateTime = DateTime.Now.ToString();
             foreach (var test in conf.load.Operations)
             {
@@ -60,10 +58,10 @@ namespace PrismaBenchmark
                         queryTypeMap.Add("ENCRYPT_STORE", 20);
                         queryTypeMap.Add("ENCRYPT_SEARCH", 21);
                         queryTypeMap.Add("ENCRYPT_RANGE", 22);
-                        queryTypeMap.Add("ENCRYPT_WILDCARD", 23);
-                        queryTypeMap.Add("ENCRYPT_ADDITION", 24);
-                        queryTypeMap.Add("ENCRYPT_MULTIPLICATION", 25);
-                        queryTypeMap.Add("ENCRYPT_ALL", 26);
+                        queryTypeMap.Add("ENCRYPT_ADDITION", 23);
+                        queryTypeMap.Add("ENCRYPT_MULTIPLICATION", 24);
+                        queryTypeMap.Add("ENCRYPT_ALL", 25);
+                        queryTypeMap.Add("ENCRYPT_WILDCARD", 26);
                         break;
                     case "updatekey":
                         queryTypeMap.Add("UPDATE_KEY", 27);
@@ -129,8 +127,46 @@ namespace PrismaBenchmark
 
         public override void RunBenchMark()
         {
+            CreateTable("t1");
+            CreateTable("t2", encrypt: false);
+
+            List<int> sizes = new List<int>() { 5000, 10000, 50000, 100000, 500000, 1000000 };
+
             Console.WriteLine("\nStart Load Benchmarking ... \n");
 
+            foreach (var entry in queryTypeMap)
+            {
+                string queryType = entry.Key;
+                int queryTypeInt = entry.Value;
+                if (queryTypeInt < 2)
+                {
+                    RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.threads, conf.verbal);
+                }
+            }
+
+            foreach (var size in sizes)
+            {
+                Console.WriteLine("\nBenchmarking with {0} Records... \n", size);
+                foreach (var entry in queryTypeMap)
+                {
+                    string queryType = entry.Key;
+                    int queryTypeInt = entry.Value;
+                    if (queryTypeInt >= 2 && queryTypeInt <= 18)
+                    {
+                        if (queryTypeInt == 2)
+                        {
+                            CreateTable("t1");
+                            SetupForSelect(size);
+                        }
+                        if (queryTypeInt >= 15 && queryTypeInt <= 18)
+                            RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal);
+                        else
+                            RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.threads, conf.verbal);
+                    }
+                }
+            }
+
+            SetupForSelect(10000, "t2");
             foreach (var entry in queryTypeMap)
             {
                 string queryType = entry.Key;
@@ -146,29 +182,17 @@ namespace PrismaBenchmark
                     // Decrypt the column after Encrypt
                     if (queryTypeInt >= 20 && queryTypeInt <= 26)
                     {
-                        if (queryTypeInt == 23)
+                        if (queryTypeInt == 26)
                             RunTime(29, "DECRYPT_" + queryType.Split("_")[1]);
                         else
                             RunTime(19, "DECRYPT_" + queryType.Split("_")[1]);
                     }
                 }
-                else
-                {
-                    if (queryTypeInt == 2)
-                    {
-                        CreateTable("t1");
-                        SetupForSelect();
-                        SetupForSelect(100, "t2");
-                    }
-                    if (queryTypeInt >= 15 && queryTypeInt <= 18)
-                        RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal);
-                    else
-                        RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.threads, conf.verbal);
-                }
             }
+
             dataGen.ResetNextSingle();
             Close();
-            SavetoDB();
+            //SavetoDB();
             Console.WriteLine("Finish Load Benchmarking ... ");
         }
 

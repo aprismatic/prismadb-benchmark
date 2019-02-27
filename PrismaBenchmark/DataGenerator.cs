@@ -61,7 +61,7 @@ namespace PrismaBenchmark
                 }
                 for (var j = 0; j < copy; j++)
                 {
-                    data[j].Add(new ArrayList { rand.Next(l, r), rand.Next(1000), rand.Next(1000), RandomString(10), RandomString(10) });
+                    data[j].Add(new ArrayList { rand.Next(l, r), rand.Next(1000), rand.Next(1000), rand.Next(1000), RandomString(10) });
                 }
                 
             }
@@ -80,7 +80,7 @@ namespace PrismaBenchmark
             // init data with List<ArrayList>
             for (var i = start; i < start + batch_size; i++)
             {
-                data.Add(new ArrayList { i, rand.Next(1000), i, RandomString(10), RandomString(10) });
+                data.Add(new ArrayList { i, rand.Next(1000), rand.Next(1000), i, RandomString(10) });
             }
             return data;
         }

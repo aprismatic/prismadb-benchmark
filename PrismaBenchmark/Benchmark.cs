@@ -14,15 +14,13 @@ namespace PrismaBenchmark
         protected DataBase ds;
         protected static Random rand = new Random();
         protected static DataGenerator dataGen = DataGenerator.Instance(rand);
-        private readonly int single_size;
-        private readonly int multiple_size;
+        private int single_size;
+        private int multiple_size;
 
         public Benchmark()
         {
             conf = CustomConfiguration.LoadConfiguration(); // might be used for other configurations
             ds = new DataBase(); // DataStore take care of db config
-            single_size = 4 * conf.rows / 10;
-            multiple_size = 6 * conf.rows / 10;
 
         }
 
@@ -37,8 +35,8 @@ namespace PrismaBenchmark
                     a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
                     b INT ENCRYPTED FOR(ADDITION),
                     c INT ENCRYPTED FOR(MULTIPLICATION),
-                    d VARCHAR(30) ENCRYPTED FOR(SEARCH),
-                    e VARCHAR(30)
+                    d INT,
+                    e VARCHAR(30) ENCRYPTED FOR(SEARCH)
                 );", tableName);
             }
             else
@@ -48,7 +46,7 @@ namespace PrismaBenchmark
                     a INT ENCRYPTED FOR(SEARCH),
                     b INT,
                     c INT,
-                    d VARCHAR(30),
+                    d INT,
                     e VARCHAR(30)
                 );", tableName);
             }
@@ -114,19 +112,21 @@ namespace PrismaBenchmark
             ds.Close();
         }
 
-        protected void SetupForSelect(int scaler = 1, string table = "t1")
-            // populate tables with 500M rows
+        protected void SetupForSelect(int size, string table = "t1")
+        // populate tables with 500M rows
         {
+            single_size = 4 * size / 10;
+            multiple_size = 6 * size / 10;
             ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
 
             // populate single range
             int batch_size = 1000;
-            while ((conf.rows / scaler) % batch_size != 0)
+            while (size % batch_size != 0)
                 batch_size /= 10;
 
             var watch = Stopwatch.StartNew();
 
-            for (int i = 0; i < single_size / (batch_size * scaler); i++)
+            for (int i = 0; i < single_size / batch_size; i++)
             {
                 string query = QueryConstructor.ConstructInsertQuery(table,
                     dataGen.GetDataRowsForSelect(i * batch_size, batch_size: batch_size));
@@ -134,15 +134,15 @@ namespace PrismaBenchmark
                 cq.Enqueue(query);
             }
 
-            while ((multiple_size / conf.multiple / scaler) % batch_size != 0)
+            while ((multiple_size / conf.multiple ) % batch_size != 0)
                 batch_size /= 10;
             // populate multiple range
             for (int m = 0; m < conf.multiple; m++)
             {
-                for (int i = 0; i < multiple_size / (conf.multiple * batch_size * scaler); i++)
+                for (int i = 0; i < multiple_size / (conf.multiple * batch_size); i++)
                 {
                     string query = QueryConstructor.ConstructInsertQuery(table,
-                        dataGen.GetDataRowsForSelect((single_size / scaler) + i * batch_size, batch_size: batch_size));
+                        dataGen.GetDataRowsForSelect(single_size + i * batch_size, batch_size: batch_size));
                     // execute query
                     cq.Enqueue(query);
                 }
@@ -161,7 +161,7 @@ namespace PrismaBenchmark
             Parallel.For(0, 10, i => startWorker());
 
             watch.Stop();
-            Console.WriteLine("====Time of INSERT {0} records: {1} ms====\n", conf.rows / scaler, watch.ElapsedMilliseconds);
+            Console.WriteLine("====Time of INSERT {0} records: {1} ms====\n", size, watch.ElapsedMilliseconds);
         }
 
         protected string GenerateInsertQuery(int numberOfRecords)
@@ -173,7 +173,7 @@ namespace PrismaBenchmark
 
         protected string GenerateSelectQuery(bool single = true, int operationCase = 1)
         {
-            int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size/conf.multiple);
+            int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
             string operation;
             switch (operationCase)
             {
@@ -243,16 +243,16 @@ namespace PrismaBenchmark
                     type = "RANGE";
                     break;
                 case 4:
-                    type = "WILDCARD";
-                    break;
-                case 5:
                     type = "ADDITION";
                     break;
-                case 6:
+                case 5:
                     type = "MULTIPLICATION";
                     break;
-                case 7:
+                case 6:
                     type = "SEARCH, STORE, RANGE, ADDITION, MULTIPLICATION";
+                    break;
+                case 7:
+                    type = "WILDCARD";
                     break;
                 default:
                     type = "STORE";

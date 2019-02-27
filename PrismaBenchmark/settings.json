@@ -9,7 +9,6 @@
     "useProxy": true,
     "encrypt": true,
     "useIndex": false,
-    "rows": 1500000,
     "operations": [
         "insert",
         "select",
