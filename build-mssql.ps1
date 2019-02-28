@@ -26,7 +26,7 @@ try {
                 -t aprismatic.azurecr.io/prismadb-proxy-mssql:latest-alpine-debug `
                 -f "Dockerfile-mssql-$linrt-debug"  .
 				
-  docker save -o prismadb-proxy-mssql.tar aprismatic.azurecr.io/prismadb-proxy-mssql:latest-alpine
+  docker save -o "$PSScriptRoot/prismadb-proxy-mssql.tar" aprismatic.azurecr.io/prismadb-proxy-mssql:latest-alpine
 }
 finally {
   if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
