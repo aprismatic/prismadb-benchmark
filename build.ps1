@@ -6,6 +6,8 @@ try {
   docker build  --platform=linux `
                 -t aprismatic.azurecr.io/prismadb-proxy-mssql:latest-alpine `
                 -f "Dockerfile-mssql-$linrt"  .
+				
+  docker save -o "$PSScriptRoot/prismadb-proxy-mssql.tar" "aprismatic.azurecr.io/prismadb-proxy-mssql:latest-alpine"
 }
 finally {
   if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
