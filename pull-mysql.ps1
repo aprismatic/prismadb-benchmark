@@ -37,7 +37,7 @@ try {
     }
 
     "Listing downloaded artifacts:"
-    ls $downloadLocation
+    Get-ChildItem $downloadLocation
 
     foreach ($file in Get-ChildItem $downloadLocation) {
         $fn = $file.Name

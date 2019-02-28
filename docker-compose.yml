@@ -12,7 +12,7 @@ services:
             - prisma
         environment:
             SqlPassword: ${SqlPassword}
-            BuildNumber: ${APPVEYOR_BUILD_NUMBER}
+            BuildVersion: ${APPVEYOR_BUILD_VERSION}
         
     prismadb:
         image: cheziyi/mssql-server-linux-developer-fulltext:latest

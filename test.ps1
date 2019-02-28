@@ -4,7 +4,7 @@ try {
     $DigitalOceanToken = $env:DOTokenSecure
     $DockerMachine = 'BenchmarkTest'
 	
-    cd PrismaBenchmark | dotnet restore | dotnet publish -c Release -o out
+    Set-Location PrismaBenchmark | dotnet restore | dotnet publish -c Release -o out
 
     docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
         --digitalocean-region='nyc3' --digitalocean-size='c-32' $DockerMachine

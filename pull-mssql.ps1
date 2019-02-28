@@ -37,7 +37,7 @@ try {
     }
 
     "Listing downloaded artifacts:"
-    ls $downloadLocation
+    Get-ChildItem $downloadLocation
 
     foreach ($file in Get-ChildItem $downloadLocation) {
         $fn = $file.Name
@@ -45,12 +45,12 @@ try {
         if ($fn -eq "PrismaDB-Plugin-MSSQL.zip") {
             "Extracting $fn into $msPublishPath..."
             7z e -y $path "-o$msPublishPath"
-            rm $msPublishPath\sni.dll
+            Remove-Item $msPublishPath\sni.dll
         }
         if ($fn -eq "PrismaDB-Plugin-MSSQL-debug.zip") {
             "Extracting $fn into $msPublishPathD..."
             7z e -y $path "-o$msPublishPathD"
-            rm $msPublishPathD\sni.dll
+            Remove-Item $msPublishPathD\sni.dll
         }
     }
 }
