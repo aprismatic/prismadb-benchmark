@@ -6,13 +6,14 @@ services:
         build:
             context: ./
             dockerfile: Dockerfile-Benchmark
-        image: prismadb/prismadb-benchmark
+        image: aprismatic.azurecr.io/prismadb-benchmark-test:latest-alpine
         container_name: PrismaDB_SQL_Benchmark
         networks:
             - prisma
         environment:
             SqlPassword: ${SqlPassword}
             BuildVersion: ${APPVEYOR_BUILD_VERSION}
+            ServerType: ${ServerType}
         
     prismadb:
         image: cheziyi/mssql-server-linux-developer-fulltext:latest
@@ -26,7 +27,7 @@ services:
             ACCEPT_EULA: "Y"
 
     prismaproxy:
-        image: aprismatic.azurecr.io/prismadb-proxy-mssql:latest-alpine
+        image: "aprismatic.azurecr.io/prismadb-proxy-${ServerType}:latest-alpine"
         container_name: PrismaDB_SQL_Server_Proxy
         networks:
             - prisma

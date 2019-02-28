@@ -3,7 +3,6 @@ Push-Location $PSScriptRoot
 
 try {
     $msPublishPath = "$PSScriptRoot/PrismaDB-Plugin-MSSQL"
-    $msPublishPathD = "$PSScriptRoot/PrismaDB-Plugin-MSSQL-debug"
 
     $apiUrl = 'https://ci.appveyor.com/api'
     $token = $env:AuthTokenSecure
@@ -46,11 +45,6 @@ try {
             "Extracting $fn into $msPublishPath..."
             7z e -y $path "-o$msPublishPath"
             Remove-Item $msPublishPath\sni.dll
-        }
-        if ($fn -eq "PrismaDB-Plugin-MSSQL-debug.zip") {
-            "Extracting $fn into $msPublishPathD..."
-            7z e -y $path "-o$msPublishPathD"
-            Remove-Item $msPublishPathD\sni.dll
         }
     }
 }

@@ -1,9 +1,8 @@
 {
     "host": "prismaproxy",
-    "dbhost": "prismadb",
     "port": "4000",
-    "dbport": "1433",
-    "userid": "sa",
+    "msuserid": "sa",
+    "myuserid": "root",
     "password": "saPwd123",
     "database": "testdb",
     "useProxy": true,

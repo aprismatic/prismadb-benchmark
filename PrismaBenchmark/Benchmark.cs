@@ -16,6 +16,8 @@ namespace PrismaBenchmark
         protected static DataGenerator dataGen = DataGenerator.Instance(rand);
         private int single_size;
         private int multiple_size;
+        private const string MSSQL = "mssql";
+        private const string MYSQL = "mysql";
 
         public Benchmark()
         {
@@ -51,8 +53,18 @@ namespace PrismaBenchmark
                 );", tableName);
             }
 
-            string create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} ([a.Fingerprint])", tableName);
-            string create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} ([d])", tableName);
+            string create_index_i1 = "", create_index_i2 = "";
+            switch (conf.ServerType)
+            {
+                case MSSQL:
+                    create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} ([a.Fingerprint])", tableName);
+                    create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} ([d])", tableName);
+                    break;
+                case MYSQL:
+                    create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} (`a.Fingerprint`)", tableName);
+                    create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} (`d`)", tableName);
+                    break;
+            }
 
             // execute query
             try
@@ -61,9 +73,10 @@ namespace PrismaBenchmark
                 ds.ExecuteQuery(create_index_i1);
                 ds.ExecuteQuery(create_index_i2);
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
-                if (e.Message == String.Format("There is already an object named '{0}' in the database.", tableName))
+                if (e.Message == String.Format("There is already an object named '{0}' in the database.", tableName) ||
+                    e.Message == String.Format("Table '{0}' already exists", tableName))
                     if (overwrite)
                     {
                         DropTable(tableName);
@@ -160,10 +173,10 @@ namespace PrismaBenchmark
                 database.Close();
             }
 
-            Parallel.For(0, 10, i => startWorker());
+            Parallel.For(0, 5, i => startWorker());
 
             watch.Stop();
-            Console.WriteLine("====Time of INSERT {0} records: {1}====\n", size, watch.Elapsed.ToString(@"hh\:mm\:ss\:fff"));
+            Console.WriteLine("====Time of INSERT {0} records: {1}====\n", size, watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
         }
 
         protected string GenerateInsertQuery(int numberOfRecords)
@@ -198,12 +211,26 @@ namespace PrismaBenchmark
         protected string GenerateSelectWithoutQuery(bool single = true)
         {
             int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
-            return QueryConstructor.ConstructSelectWithoutQuery(a);
+            switch (conf.ServerType)
+            {
+                case MSSQL:
+                    return QueryConstructor.ConstructMsSelectWithoutQuery(a);
+                case MYSQL:
+                    return QueryConstructor.ConstructMySelectWithoutQuery(a);
+            }
+            return null;
         }
 
         protected string GenerateSelectLimitQuery()
         {
-            return "SELECT TOP 1 * FROM t1";
+            switch(conf.ServerType)
+            {
+                case MSSQL:
+                    return "SELECT TOP 1 * FROM t1";
+                case MYSQL:
+                    return "SELECT * FROM t1 LIMIT 1";
+            }
+            return null;
         }
 
         protected string GenerateDeleteQuery(bool single = true)

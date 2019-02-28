@@ -16,14 +16,22 @@ namespace PrismaBenchmark
                 .Build();
 #if !DEBUG
             host = conf["host"];
-            dbhost = conf["dbhost"];
 #endif
             port = conf["port"];
-            dbport = conf["dbport"];
             userid = conf["userid"];
             password = conf["password"];
             SqlPassword = conf["SqlPassword"];
             BuildVersion = conf["BuildVersion"];
+            ServerType = conf["ServerType"];
+            switch(ServerType)
+            {
+                case "mssql":
+                    userid = conf["msuserid"];
+                    break;
+                case "mysql":
+                    userid = conf["myuserid"];
+                    break;
+            }
             database = conf["database"];
             if (!Boolean.TryParse(conf["useProxy"], out useProxy))
                 useProxy = true; // default
@@ -73,13 +81,12 @@ namespace PrismaBenchmark
         public readonly Boolean useIndex;
         public readonly string host = "localhost";
         public readonly string port;
-        public readonly string dbhost = "localhost";
-        public readonly string dbport;
         public readonly string userid;
         public readonly string password;
         public readonly string SqlPassword;
         public readonly string BuildVersion;
         public readonly string database;
+        public readonly string ServerType;
         public readonly int multiple;
         public readonly int startSpeed;
         public readonly int stride;

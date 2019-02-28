@@ -1,5 +1,0 @@
-FROM aprismatic.azurecr.io/sqlpeek-mssql:latest-win-sac2016
-
-COPY ./PrismaDB-Plugin-MSSQL/  C:/app/Plugins/
-
-ENTRYPOINT ["dotnet", "C:/app/PrismaDB-Proxy-MSSQL.dll"]

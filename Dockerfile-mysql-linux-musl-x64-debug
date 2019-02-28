@@ -1,5 +1,0 @@
-FROM aprismatic.azurecr.io/sqlpeek-mysql:latest-alpine-debug
-
-COPY ./PrismaDB-Plugin-MySQL-debug/   /app/Plugins/
-
-ENTRYPOINT ["dotnet", "/app/PrismaDB-Proxy-MySQL.dll"]

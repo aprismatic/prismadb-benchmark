@@ -1,0 +1,867 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.1",
+    "signature": "14d687a200af4e65beb402c30394fdd4daeae685"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.1": {
+      "PrismaDB-Plugin-MSSQL/0.1.0.58": {
+        "dependencies": {
+          "PrismaDB": "0.2.8.262",
+          "PrismaDB-Driver-MSSQL": "0.2.8.166",
+          "PrismaDB-Proxy-PluginInterface-MSSQL": "0.1.0.25",
+          "PrismaDB-QueryParser-MSSQL": "0.2.8.151"
+        },
+        "runtime": {
+          "PrismaDB-Plugin-MSSQL.dll": {}
+        }
+      },
+      "BigFraction/0.1.0.12": {
+        "runtime": {
+          "lib/netstandard1.1/BigFraction.dll": {
+            "assemblyVersion": "0.1.0.12",
+            "fileVersion": "0.1.0.12"
+          }
+        }
+      },
+      "BigIntegerExt/0.1.3.10": {
+        "runtime": {
+          "lib/netstandard2.0/BigIntegerExt.dll": {
+            "assemblyVersion": "0.1.3.10",
+            "fileVersion": "0.1.3.10"
+          }
+        }
+      },
+      "Crc32.NET/1.2.0": {
+        "runtime": {
+          "lib/netstandard2.0/Crc32.NET.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.2.0.5"
+          }
+        }
+      },
+      "ElGamalExt/0.10.0.33": {
+        "dependencies": {
+          "BigFraction": "0.1.0.12",
+          "BigIntegerExt": "0.1.3.10",
+          "ElGamalExt-Homomorphism": "0.10.0.23"
+        },
+        "runtime": {
+          "lib/netstandard2.0/ElGamalExt.dll": {
+            "assemblyVersion": "0.10.0.33",
+            "fileVersion": "0.10.0.33"
+          }
+        }
+      },
+      "ElGamalExt-Homomorphism/0.10.0.23": {
+        "runtime": {
+          "lib/netstandard1.1/ElGamalExt-Homomorphism.dll": {
+            "assemblyVersion": "0.10.0.23",
+            "fileVersion": "0.10.0.23"
+          }
+        }
+      },
+      "Irony.NetCore/1.0.11": {
+        "dependencies": {
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Emit.Lightweight": "4.3.0",
+          "System.Reflection.Extensions": "4.3.0",
+          "System.Reflection.TypeExtensions": "4.3.0",
+          "System.Runtime.Numerics": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.6/Irony.dll": {
+            "assemblyVersion": "1.0.11.0",
+            "fileVersion": "1.0.11.0"
+          }
+        }
+      },
+      "Microsoft.Extensions.Configuration/2.2.0": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "2.2.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.dll": {
+            "assemblyVersion": "2.2.0.0",
+            "fileVersion": "2.2.0.18315"
+          }
+        }
+      },
+      "Microsoft.Extensions.Configuration.Abstractions/2.2.0": {
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "2.2.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Configuration.Abstractions.dll": {
+            "assemblyVersion": "2.2.0.0",
+            "fileVersion": "2.2.0.18315"
+          }
+        }
+      },
+      "Microsoft.Extensions.Primitives/2.2.0": {
+        "dependencies": {
+          "System.Memory": "4.5.1",
+          "System.Runtime.CompilerServices.Unsafe": "4.5.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll": {
+            "assemblyVersion": "2.2.0.0",
+            "fileVersion": "2.2.0.18315"
+          }
+        }
+      },
+      "Microsoft.Win32.Registry/4.5.0": {
+        "dependencies": {
+          "System.Security.AccessControl": "4.5.0",
+          "System.Security.Principal.Windows": "4.5.0"
+        },
+        "runtimeTargets": {
+          "runtime/unix/lib/_._": {
+            "rid": "unix",
+            "assetType": "runtime"
+          },
+          "runtime/win/lib/_._": {
+            "rid": "win",
+            "assetType": "runtime"
+          }
+        }
+      },
+      "Newtonsoft.Json/12.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.1.22727"
+          }
+        }
+      },
+      "PaillierExt/0.10.0.24": {
+        "dependencies": {
+          "BigFraction": "0.1.0.12",
+          "BigIntegerExt": "0.1.3.10",
+          "PaillierExt-Homomorphism": "0.10.0.20"
+        },
+        "runtime": {
+          "lib/netstandard2.0/PaillierExt.dll": {
+            "assemblyVersion": "0.10.0.24",
+            "fileVersion": "0.10.0.24"
+          }
+        }
+      },
+      "PaillierExt-Homomorphism/0.10.0.20": {
+        "runtime": {
+          "lib/netstandard1.1/PaillierExt-Homomorphism.dll": {
+            "assemblyVersion": "0.10.0.20",
+            "fileVersion": "0.10.0.20"
+          }
+        }
+      },
+      "PrismaDB/0.2.8.262": {
+        "dependencies": {
+          "ElGamalExt": "0.10.0.33",
+          "PaillierExt": "0.10.0.24",
+          "PrismaDB-DatabaseInterface": "0.0.1.8",
+          "PrismaDB-OrderPreservingBucketing": "0.0.1.18",
+          "PrismaDB-QueryAST": "0.2.8.241",
+          "PrismaDB-WildcardSearch": "0.1.0.18"
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/PrismaDB.dll": {
+            "assemblyVersion": "0.2.8.262",
+            "fileVersion": "0.2.8.262"
+          }
+        }
+      },
+      "PrismaDB-Commons/0.1.8": {
+        "runtime": {
+          "lib/netstandard1.0/PrismaDB-Commons.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          }
+        }
+      },
+      "PrismaDB-DatabaseInterface/0.0.1.8": {
+        "dependencies": {
+          "System.Data.Common": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.2/PrismaDB-DatabaseInterface.dll": {
+            "assemblyVersion": "0.0.1.8",
+            "fileVersion": "0.0.1.8"
+          }
+        }
+      },
+      "PrismaDB-Driver-MSSQL/0.2.8.166": {
+        "dependencies": {
+          "ElGamalExt-Homomorphism": "0.10.0.23",
+          "PaillierExt-Homomorphism": "0.10.0.20",
+          "PrismaDB-DatabaseInterface": "0.0.1.8",
+          "PrismaDB-MSSQL-AggregateUDFs": "0.0.1.24",
+          "PrismaDB-QueryAST": "0.2.8.241",
+          "System.Data.SqlClient": "4.6.0"
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/PrismaDB-Driver-MSSQL.dll": {
+            "assemblyVersion": "0.2.8.166",
+            "fileVersion": "0.2.8.166"
+          }
+        }
+      },
+      "PrismaDB-MSSQL-AggregateUDFs/0.0.1.24": {
+        "runtime": {
+          "lib/net461/PrismaDB-MSSQL-AggregateUDFs.dll": {
+            "assemblyVersion": "0.0.1.24",
+            "fileVersion": "0.0.1.24"
+          }
+        }
+      },
+      "PrismaDB-OrderPreservingBucketing/0.0.1.18": {
+        "runtime": {
+          "lib/netstandard2.0/PrismaDB-OrderPreservingBucketing.dll": {
+            "assemblyVersion": "0.0.1.18",
+            "fileVersion": "0.0.1.18"
+          }
+        }
+      },
+      "PrismaDB-Proxy-PluginInterface-MSSQL/0.1.0.25": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "2.2.0",
+          "PrismaDB-Result": "0.1.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/PrismaDB-Proxy-PluginInterface-MSSQL.dll": {
+            "assemblyVersion": "0.1.0.25",
+            "fileVersion": "0.1.0.25"
+          }
+        }
+      },
+      "PrismaDB-QueryAST/0.2.8.241": {
+        "dependencies": {
+          "PrismaDB-Commons": "0.1.8",
+          "PrismaDB-Result": "0.1.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/PrismaDB-QueryAST.dll": {
+            "assemblyVersion": "0.2.8.241",
+            "fileVersion": "0.2.8.241"
+          }
+        }
+      },
+      "PrismaDB-QueryParser-MSSQL/0.2.8.151": {
+        "dependencies": {
+          "Irony.NetCore": "1.0.11",
+          "PrismaDB-QueryAST": "0.2.8.241"
+        },
+        "runtime": {
+          "lib/netstandard2.0/PrismaDB-QueryParser-MSSQL.dll": {
+            "assemblyVersion": "0.2.8.151",
+            "fileVersion": "0.2.8.151"
+          }
+        }
+      },
+      "PrismaDB-Result/0.1.0.1": {
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/PrismaDB-Result.dll": {
+            "assemblyVersion": "0.1.0.1",
+            "fileVersion": "0.1.0.1"
+          }
+        }
+      },
+      "PrismaDB-WildcardSearch/0.1.0.18": {
+        "dependencies": {
+          "Crc32.NET": "1.2.0"
+        },
+        "runtime": {
+          "lib/netstandard1.6/PrismaDB-WildcardSearch.dll": {
+            "assemblyVersion": "0.1.0.18",
+            "fileVersion": "0.1.0.18"
+          }
+        }
+      },
+      "runtime.native.System.Data.SqlClient.sni/4.5.0": {
+        "dependencies": {
+          "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni": "4.4.0",
+          "runtime.win-x64.runtime.native.System.Data.SqlClient.sni": "4.4.0",
+          "runtime.win-x86.runtime.native.System.Data.SqlClient.sni": "4.4.0"
+        }
+      },
+      "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+        "runtimeTargets": {
+          "runtimes/win-arm64/native/sni.dll": {
+            "rid": "win-arm64",
+            "assetType": "native",
+            "fileVersion": "4.6.25512.1"
+          }
+        }
+      },
+      "runtime.win-x64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+        "runtimeTargets": {
+          "runtimes/win-x64/native/sni.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "4.6.25512.1"
+          }
+        }
+      },
+      "runtime.win-x86.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+        "runtimeTargets": {
+          "runtimes/win-x86/native/sni.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "4.6.25512.1"
+          }
+        }
+      },
+      "System.Collections/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Data.Common/4.3.0": {
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.Globalization": "4.3.0",
+          "System.IO": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0",
+          "System.Text.RegularExpressions": "4.3.0",
+          "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.Data.SqlClient/4.6.0": {
+        "dependencies": {
+          "Microsoft.Win32.Registry": "4.5.0",
+          "System.Security.Principal.Windows": "4.5.0",
+          "System.Text.Encoding.CodePages": "4.5.0",
+          "runtime.native.System.Data.SqlClient.sni": "4.5.0"
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/System.Data.SqlClient.dll": {
+            "assemblyVersion": "4.5.0.0",
+            "fileVersion": "4.6.27110.4"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netcoreapp2.1/System.Data.SqlClient.dll": {
+            "rid": "unix",
+            "assetType": "runtime",
+            "assemblyVersion": "4.5.0.0",
+            "fileVersion": "4.6.27110.4"
+          },
+          "runtimes/win/lib/netcoreapp2.1/System.Data.SqlClient.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "4.5.0.0",
+            "fileVersion": "4.6.27110.4"
+          }
+        }
+      },
+      "System.Globalization/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.IO/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0",
+          "System.Text.Encoding": "4.3.0",
+          "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.Memory/4.5.1": {},
+      "System.Reflection/4.3.0": {
+        "dependencies": {
+          "System.IO": "4.3.0",
+          "System.Reflection.Primitives": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Reflection.Emit.ILGeneration/4.3.0": {
+        "dependencies": {
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Primitives": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Reflection.Emit.Lightweight/4.3.0": {
+        "dependencies": {
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Emit.ILGeneration": "4.3.0",
+          "System.Reflection.Primitives": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Reflection.Extensions/4.3.0": {
+        "dependencies": {
+          "System.Reflection": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Reflection.Primitives/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Reflection.TypeExtensions/4.3.0": {
+        "dependencies": {
+          "System.Reflection": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Resources.ResourceManager/4.3.0": {
+        "dependencies": {
+          "System.Globalization": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Runtime/4.3.0": {},
+      "System.Runtime.CompilerServices.Unsafe/4.5.1": {
+        "runtime": {
+          "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "assemblyVersion": "4.0.4.0",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "System.Runtime.Extensions/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Runtime.Numerics/4.3.0": {
+        "dependencies": {
+          "System.Globalization": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0"
+        }
+      },
+      "System.Security.AccessControl/4.5.0": {
+        "dependencies": {
+          "System.Security.Principal.Windows": "4.5.0"
+        },
+        "runtimeTargets": {
+          "runtime/win/lib/_._": {
+            "rid": "win",
+            "assetType": "runtime"
+          }
+        }
+      },
+      "System.Security.Principal.Windows/4.5.0": {
+        "runtimeTargets": {
+          "runtime/unix/lib/_._": {
+            "rid": "unix",
+            "assetType": "runtime"
+          },
+          "runtime/win/lib/_._": {
+            "rid": "win",
+            "assetType": "runtime"
+          }
+        }
+      },
+      "System.Text.Encoding/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Text.Encoding.CodePages/4.5.0": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.5.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Text.Encoding.CodePages.dll": {
+            "assemblyVersion": "4.1.1.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/netcoreapp2.0/System.Text.Encoding.CodePages.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "4.1.1.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        }
+      },
+      "System.Text.RegularExpressions/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Threading.Tasks/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PrismaDB-Plugin-MSSQL/0.1.0.58": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BigFraction/0.1.0.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-XS8ALAGzxANp5iA0Bktrx38QEGMNTQAyl41uoUljm+9Cz7Ocexeuqc8+CmSYVOW5GC9BtcQaPImB9OBp2ChgWQ==",
+      "path": "bigfraction/0.1.0.12",
+      "hashPath": "bigfraction.0.1.0.12.nupkg.sha512"
+    },
+    "BigIntegerExt/0.1.3.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ILvHa7bPcffsa3WJbb862ni5V739q1l5rIwMAnPT48++KT5zzU0c2SvVZS0GolrFlekte/70q1Zi5PUGGyxHEw==",
+      "path": "bigintegerext/0.1.3.10",
+      "hashPath": "bigintegerext.0.1.3.10.nupkg.sha512"
+    },
+    "Crc32.NET/1.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-fY0ikUSd/D+rNvPz3uSNzHaRmOnKXmxosGV+8bzLTKsSogA3Tg3/v0KF0ILoAWrSLbPpZDGlvVn+WyodW+qRIw==",
+      "path": "crc32.net/1.2.0",
+      "hashPath": "crc32.net.1.2.0.nupkg.sha512"
+    },
+    "ElGamalExt/0.10.0.33": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-l9oK0XJwFz5K7KcFiYM80C/423lHBNpSy6YQZbHwE8R+Eez3HyWFAvPWe1CLp5ac7egtliHD7Snm1Uf5LPS78w==",
+      "path": "elgamalext/0.10.0.33",
+      "hashPath": "elgamalext.0.10.0.33.nupkg.sha512"
+    },
+    "ElGamalExt-Homomorphism/0.10.0.23": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ZtF0w10+S1SL0BCa+5vCURRSV1HcIv1ME0nryHSJCZiwscOeXtn96ObccLkZ2PTb9OMxgoL6hQPHtu+0drTDnA==",
+      "path": "elgamalext-homomorphism/0.10.0.23",
+      "hashPath": "elgamalext-homomorphism.0.10.0.23.nupkg.sha512"
+    },
+    "Irony.NetCore/1.0.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/2MCkqdhEjPiSTZKYXg6u9AO9o3m68biqcFHAnM28WdnrcZii2vYbmKPzT5ejByyV72FUlygOtHBMt8SLnUyNw==",
+      "path": "irony.netcore/1.0.11",
+      "hashPath": "irony.netcore.1.0.11.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Configuration/2.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Be1LEgclOQthHN7tksm79bGbXNJ0yuewEBiIzPSePwDwt2AGqLLx5iXv6BfjVZGztxKQCngz+X8IRw/kOz+CwA==",
+      "path": "microsoft.extensions.configuration/2.2.0",
+      "hashPath": "microsoft.extensions.configuration.2.2.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Configuration.Abstractions/2.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HT/cMUOHvJ29Z5VIlWp6Zd1F63k5CbpGisNk8ayP35GwKwX5IDsJL8hWMoBesz5WPK8ZfW4f47kyVAhfCD/PAw==",
+      "path": "microsoft.extensions.configuration.abstractions/2.2.0",
+      "hashPath": "microsoft.extensions.configuration.abstractions.2.2.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Primitives/2.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vpH+o7f8obVx65PiEtBXxTwL5RosK60fNIMy/y8WGE4/r4IvAqQGukOzMhxsp//Accvd7kmukyQTVkqVYdaDyA==",
+      "path": "microsoft.extensions.primitives/2.2.0",
+      "hashPath": "microsoft.extensions.primitives.2.2.0.nupkg.sha512"
+    },
+    "Microsoft.Win32.Registry/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nt8HW2YtCF3xGObHXtCAn5tzuZpjy5YMPftzyrjF6Ek5RyLUFU4cSw4yGWV2+dyftDXjDpytdLPrgSttC9ZePA==",
+      "path": "microsoft.win32.registry/4.5.0",
+      "hashPath": "microsoft.win32.registry.4.5.0.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jmVyoEyk0In8r+AObYQyFKVFm7uSRzE0XSHSbEtBJcZDMV6DqJoyB4FLcHwprPVhAh826so0db3DIKXVnpGoPA==",
+      "path": "newtonsoft.json/12.0.1",
+      "hashPath": "newtonsoft.json.12.0.1.nupkg.sha512"
+    },
+    "PaillierExt/0.10.0.24": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KCmDOdjALl3+NYOQLLBFt+4d6fEmHd+imV+ZymJjwDbGtkCILLjXEc8VO0vxRDeZcPc0Vlx4VKT6Ma2f0RhozQ==",
+      "path": "paillierext/0.10.0.24",
+      "hashPath": "paillierext.0.10.0.24.nupkg.sha512"
+    },
+    "PaillierExt-Homomorphism/0.10.0.20": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-NHD2LoQDJ+4ZVkOi/QF9MA130wSehuQzO8YK6P7pcyZSaSyKmrMZuvrrB6cQ8g2KSw7H5Nh9Drqva8WYEzRWiw==",
+      "path": "paillierext-homomorphism/0.10.0.20",
+      "hashPath": "paillierext-homomorphism.0.10.0.20.nupkg.sha512"
+    },
+    "PrismaDB/0.2.8.262": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4UU/wR2ACK1lJDIAc97oRjHJ7dUdf0gwDY4FN6yNOsCAqTPVHvGipOcQKnaq1tGIIAHNlNnfvpqJQ7Vz/o8DCA==",
+      "path": "prismadb/0.2.8.262",
+      "hashPath": "prismadb.0.2.8.262.nupkg.sha512"
+    },
+    "PrismaDB-Commons/0.1.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8JQQzRiN+np13b5SaMk6hcrrBsZHN0RiJ9qqPbR7kaD0kYyc4OCcf4FEfl73fUtOWku55fftpSvOeeoGvAVQXQ==",
+      "path": "prismadb-commons/0.1.8",
+      "hashPath": "prismadb-commons.0.1.8.nupkg.sha512"
+    },
+    "PrismaDB-DatabaseInterface/0.0.1.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-O8bdHHz0undZ9SeRP3KtD1R5r4mJpbjA7ACsiL7/hEamGDdmTJ+N05/cigTtGsowUHG/0oGIGMKSS3TTTqY5yw==",
+      "path": "prismadb-databaseinterface/0.0.1.8",
+      "hashPath": "prismadb-databaseinterface.0.0.1.8.nupkg.sha512"
+    },
+    "PrismaDB-Driver-MSSQL/0.2.8.166": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0fTl3Ul12bZUJdF946i17vsksNuXUHrmzzaJFI9AggNCStGf1N65QIbnbqAOnikLWe34n7OlfO8nu0xZILphFQ==",
+      "path": "prismadb-driver-mssql/0.2.8.166",
+      "hashPath": "prismadb-driver-mssql.0.2.8.166.nupkg.sha512"
+    },
+    "PrismaDB-MSSQL-AggregateUDFs/0.0.1.24": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-oTJqPF56OML8Nbbn78u1ziXgggFxyK9U9gq5gBT/UuEHzH3b4og4htXshYg6iWvC7Z5R2j8Ytvj+rQrs3lM4gQ==",
+      "path": "prismadb-mssql-aggregateudfs/0.0.1.24",
+      "hashPath": "prismadb-mssql-aggregateudfs.0.0.1.24.nupkg.sha512"
+    },
+    "PrismaDB-OrderPreservingBucketing/0.0.1.18": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/lKBg9sNmsW4OBxljBckM/wqG16qwHbdXnqDQtcIxTaiE74webaeYdHIANwuF6wWUOxefCK9fj1I/A28m2HSkQ==",
+      "path": "prismadb-orderpreservingbucketing/0.0.1.18",
+      "hashPath": "prismadb-orderpreservingbucketing.0.0.1.18.nupkg.sha512"
+    },
+    "PrismaDB-Proxy-PluginInterface-MSSQL/0.1.0.25": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Juy5H+/oiet/uSc3yn2NUQUWZ69nsItGLncymJQOEZLPUHwoPMhVXyEgEBTwKpszd2CpzAArDDHqAIy2zoh37A==",
+      "path": "prismadb-proxy-plugininterface-mssql/0.1.0.25",
+      "hashPath": "prismadb-proxy-plugininterface-mssql.0.1.0.25.nupkg.sha512"
+    },
+    "PrismaDB-QueryAST/0.2.8.241": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ORbv26ZTzjEQPgAiu3Rwu8nCjOUMTFU+PGL24oJ7KlWpfiu8y3smKCIEFe7q43UIcRFfoqSmL4B1ZYWyBfwKvQ==",
+      "path": "prismadb-queryast/0.2.8.241",
+      "hashPath": "prismadb-queryast.0.2.8.241.nupkg.sha512"
+    },
+    "PrismaDB-QueryParser-MSSQL/0.2.8.151": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hY4umsEo7XHpd53Udwblu7/Kp76KMTLrRfaWTyO8+ncs9zL1SEAbFnwx5el977lA4itjFVqSua34uzLAp1udUQ==",
+      "path": "prismadb-queryparser-mssql/0.2.8.151",
+      "hashPath": "prismadb-queryparser-mssql.0.2.8.151.nupkg.sha512"
+    },
+    "PrismaDB-Result/0.1.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UCBmbuSxpTqT2KLsIgbos4Y8JgTNOJzOWMQSWUrVXCdQEjEtY40fLdyU+EbOEnPzRcUtedllIYqbi3Lyw/h65Q==",
+      "path": "prismadb-result/0.1.0.1",
+      "hashPath": "prismadb-result.0.1.0.1.nupkg.sha512"
+    },
+    "PrismaDB-WildcardSearch/0.1.0.18": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-C4ANYPjc/FmhzavOM312nRCwe/6wBxVOEVO7vYrXCV/5knTt7kxnpD6q0SyRu0ltkGKnZf/NcOZU1fHVKpl2oA==",
+      "path": "prismadb-wildcardsearch/0.1.0.18",
+      "hashPath": "prismadb-wildcardsearch.0.1.0.18.nupkg.sha512"
+    },
+    "runtime.native.System.Data.SqlClient.sni/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zmr7mxqvG7M7qWzPTHQEF0jIOo65vqsnaJ2s7AyZ9JQaSJ3rfXZ7vPGszw1EbvRATu6zsFMdpQeq1g7oaNocOg==",
+      "path": "runtime.native.system.data.sqlclient.sni/4.5.0",
+      "hashPath": "runtime.native.system.data.sqlclient.sni.4.5.0.nupkg.sha512"
+    },
+    "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LbrynESTp3bm5O/+jGL8v0Qg5SJlTV08lpIpFesXjF6uGNMWqFnUQbYBJwZTeua6E/Y7FIM1C54Ey1btLWupdg==",
+      "path": "runtime.win-arm64.runtime.native.system.data.sqlclient.sni/4.4.0",
+      "hashPath": "runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "runtime.win-x64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-38ugOfkYJqJoX9g6EYRlZB5U2ZJH51UP8ptxZgdpS07FgOEToV+lS11ouNK2PM12Pr6X/PpT5jK82G3DwH/SxQ==",
+      "path": "runtime.win-x64.runtime.native.system.data.sqlclient.sni/4.4.0",
+      "hashPath": "runtime.win-x64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "runtime.win-x86.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YhEdSQUsTx+C8m8Bw7ar5/VesXvCFMItyZF7G1AUY+OM0VPZUOeAVpJ4Wl6fydBGUYZxojTDR3I6Bj/+BPkJNA==",
+      "path": "runtime.win-x86.runtime.native.system.data.sqlclient.sni/4.4.0",
+      "hashPath": "runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "System.Collections/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-IBm+Q1J1tm1WL8i75kHNGMciYO++PKuUCG5t+mjcZ7bseyz553hk+eMzDCj7PA4KBxH231a/9WYb8lhrDv1iRw==",
+      "path": "system.collections/4.3.0",
+      "hashPath": "system.collections.4.3.0.nupkg.sha512"
+    },
+    "System.Data.Common/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dbKcJI+r5ri3r+aU/rVqN574fErx+ja8wPqeqamATb3t2LiSvYpkEqS9qlLKWmaqXfjieNXxzSptAuwvpDwVhA==",
+      "path": "system.data.common/4.3.0",
+      "hashPath": "system.data.common.4.3.0.nupkg.sha512"
+    },
+    "System.Data.SqlClient/4.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DLhg881ETdy/OmlbBCjfXGVU2Xlm9x5yHwhcl33SAfCIG05hAbgMcvHUZruIG1sBJolGzDhes7R7hAKPS1SOqw==",
+      "path": "system.data.sqlclient/4.6.0",
+      "hashPath": "system.data.sqlclient.4.6.0.nupkg.sha512"
+    },
+    "System.Globalization/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5ay4bV2/N1RP5XY8xUjQ/qjcdwxkb4vlpuoafj74xrohY6sh6jkNWCWmfycZE4/5qlOxZdtF3wL+KLYdp+7irw==",
+      "path": "system.globalization/4.3.0",
+      "hashPath": "system.globalization.4.3.0.nupkg.sha512"
+    },
+    "System.IO/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-L5YORr8xPIUjmF7mvHMtxTePiHKxsTUckAACjt7fzhHYJPih4WaJwptI9ZyInkdRaOCVjVCoIogsLSR2uWkwsw==",
+      "path": "system.io/4.3.0",
+      "hashPath": "system.io.4.3.0.nupkg.sha512"
+    },
+    "System.Memory/4.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vcG3/MbfpxznMkkkaAblJi7RHOmuP7kawQMhDgLSuA1tRpRQYsFSCTxRSINDUgn2QNn2jWeLxv8er5BXbyACkw==",
+      "path": "system.memory/4.5.1",
+      "hashPath": "system.memory.4.5.1.nupkg.sha512"
+    },
+    "System.Reflection/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qT7GlIYUEz3NmWBtF06oUbjQMrbtDcw4hCjhKDz3wjHbHMuVvkBKZztn64sJ1AwgtmWLmD7Bn7QHTLooiaXSPw==",
+      "path": "system.reflection/4.3.0",
+      "hashPath": "system.reflection.4.3.0.nupkg.sha512"
+    },
+    "System.Reflection.Emit.ILGeneration/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6G4nJb+/mmQSngUQGK/4xlVWYKgAyQPiMP9QAEG/ZKCY41FNcFixPC719nEe4pCvU4fTigTyUQpR1KSIbReYHw==",
+      "path": "system.reflection.emit.ilgeneration/4.3.0",
+      "hashPath": "system.reflection.emit.ilgeneration.4.3.0.nupkg.sha512"
+    },
+    "System.Reflection.Emit.Lightweight/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uoqB3X+WPxzMh1UoPwDlWgTGulmh1OkhGQQeQVMH6l/fq6scQnOfN1WGctzXGWVSOyLlgn1mUyfkPbBfPIvXBg==",
+      "path": "system.reflection.emit.lightweight/4.3.0",
+      "hashPath": "system.reflection.emit.lightweight.4.3.0.nupkg.sha512"
+    },
+    "System.Reflection.Extensions/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YbRxNhNYsk4f6G+5/9Ne+v6sWczhWjARfaEGPzZcmdVuOKGt05DI1Z6TfGKZTLVqocGQjh+iQuiKem7jtSpu0g==",
+      "path": "system.reflection.extensions/4.3.0",
+      "hashPath": "system.reflection.extensions.4.3.0.nupkg.sha512"
+    },
+    "System.Reflection.Primitives/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ix3iL33E9DdpLwJa087WQTvan+QuEfwHQZqf+2hjb58Gn4Vi/qVaOCo7tNnb5+l8szXKywSSM0//ucUIyF870g==",
+      "path": "system.reflection.primitives/4.3.0",
+      "hashPath": "system.reflection.primitives.4.3.0.nupkg.sha512"
+    },
+    "System.Reflection.TypeExtensions/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7j4nPW7N4I3i08NuKE6ZYhENaF0nXrrukVQpSG+Cbn5iLHU4jrDAHHu/3Cgjj+pZgYORy7RCnXDOeAaIg2pqmg==",
+      "path": "system.reflection.typeextensions/4.3.0",
+      "hashPath": "system.reflection.typeextensions.4.3.0.nupkg.sha512"
+    },
+    "System.Resources.ResourceManager/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zCYivSL6Sp67gMkcczNln8WYw7Y1dGa8CPVTs385VbB25g11Kk5xoO8TytK6Qb5HO8n0AHCNsp6Ltv7EEazh1Q==",
+      "path": "system.resources.resourcemanager/4.3.0",
+      "hashPath": "system.resources.resourcemanager.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KijrInhiP+YGs4ZKcT1sGdgrftjfH4gZrBRKJfKsTvvqFclaA6hGeWzXLU2XJ2nNy3P7htJ4g9UDE+KjLANTCQ==",
+      "path": "system.runtime/4.3.0",
+      "hashPath": "system.runtime.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime.CompilerServices.Unsafe/4.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qUJMNWhbm9oZ3XaMFiEMiYmRPszbnXIkRIi7+4b2Md2xZ6JUOepf0/kY3S85qistRohl9OdMe4PsO+RdG2kTIQ==",
+      "path": "system.runtime.compilerservices.unsafe/4.5.1",
+      "hashPath": "system.runtime.compilerservices.unsafe.4.5.1.nupkg.sha512"
+    },
+    "System.Runtime.Extensions/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-FbMqvUhS2mHvUrBQdje6QnAf7SPmnx48CN9iuBJ18+E5TKA+Tn5eFxvkVIUZjkIkeepYm4Ap5Rq5BTnVG5jHnA==",
+      "path": "system.runtime.extensions/4.3.0",
+      "hashPath": "system.runtime.extensions.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime.Numerics/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pIzda6H/tQVF+2tBGxpVdoHeOFM5bFEQaT+7mEgntJqCdvAv+pB7F4dDkOtBHR/Ci0uc+XKdV89XI5zVdoa9iw==",
+      "path": "system.runtime.numerics/4.3.0",
+      "hashPath": "system.runtime.numerics.4.3.0.nupkg.sha512"
+    },
+    "System.Security.AccessControl/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aVjTe36YkO8FzfNhMLoPEzv3gF9rphoW9ngFhG/MH4zzEPLx07sNrgCLwMP4Wx2leI6qarMrGv21OwQXYUKLmw==",
+      "path": "system.security.accesscontrol/4.5.0",
+      "hashPath": "system.security.accesscontrol.4.5.0.nupkg.sha512"
+    },
+    "System.Security.Principal.Windows/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aEFuhlWINOa6KnKeFqQNzmtOeyCCyIJY4CS5DI9keDNXgVzqVsK46axp8Rpkx46S+QlNTqGgdx/O/mzrC1GA5A==",
+      "path": "system.security.principal.windows/4.5.0",
+      "hashPath": "system.security.principal.windows.4.5.0.nupkg.sha512"
+    },
+    "System.Text.Encoding/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SzIbqxzENo10YtPeMhvqI0dfCqE4Q+Fud7YF7jEP4MuZ3Nza9w+QGOFQJ+hyg7WIDtRKsN0cnkodSW5//6kqVw==",
+      "path": "system.text.encoding/4.3.0",
+      "hashPath": "system.text.encoding.4.3.0.nupkg.sha512"
+    },
+    "System.Text.Encoding.CodePages/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-16EVkWmNnoH3/Yj9c5s5VuLK5Uv/Dnkc3P2kMmnD7wJcUuvcHVvM2IhVJanf2hHRZUitH+cIkPCPHrBoCXc7Rw==",
+      "path": "system.text.encoding.codepages/4.5.0",
+      "hashPath": "system.text.encoding.codepages.4.5.0.nupkg.sha512"
+    },
+    "System.Text.RegularExpressions/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bP8xKEESq6EOKFvRYGUwPkLGtZre1Y3QQKLmY21WgNLTxDs8Aff0AeKEXZL0TgkL8SrIkE7lCnXFTi9MqdAHMg==",
+      "path": "system.text.regularexpressions/4.3.0",
+      "hashPath": "system.text.regularexpressions.4.3.0.nupkg.sha512"
+    },
+    "System.Threading.Tasks/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9Mdk6qutu+3TRSWxzJaC9Sdm3BNYX34FJ2g2Oct/be/BT46JMGexURivTZbkQxL48W4RxvTtG0CZHMRnmbi+Dg==",
+      "path": "system.threading.tasks/4.3.0",
+      "hashPath": "system.threading.tasks.4.3.0.nupkg.sha512"
+    }
+  }
+}
