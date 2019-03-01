@@ -336,7 +336,7 @@ namespace PrismaBenchmark
         private void SavetoDB()
         {
             StringBuilder query = new StringBuilder();
-            query.Append("INSERT INTO Benchmark (Query, RPS, Time, Records, SQLServer, BuildVersion, Date) VALUES ");
+            query.Append("INSERT INTO Benchmark (Query, RPS, Time, Records, ServerType, BuildVersion, Date) VALUES ");
             for (var i = 0; i < benchaMark.Count(); i++)
             {
                 var tuple = benchaMark[i];
