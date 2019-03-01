@@ -1,4 +1,4 @@
-FROM aprismatic.azurecr.io/sqlpeek-mssql:latest-alpine
+FROM aprismatic.azurecr.io/sqlpeek-mssql:alpine
 
 COPY ./PrismaDB-Plugin-MSSQL/   /app/Plugins/
 

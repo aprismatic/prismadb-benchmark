@@ -29,10 +29,10 @@ namespace PrismaBenchmark
             switch (servertype)
             {
                 case MSSQL:
-                    IsMSSQLConnected();
+                    IsMSConnected();
                     break;
                 case MYSQL:
-                    IsMYSQLConnected();
+                    IsMYConnected();
                     break;
             }
         }
@@ -55,9 +55,9 @@ namespace PrismaBenchmark
             switch (servertype)
             {
                 case MSSQL:
-                    return MsExecuteQuery(query);
+                    return MSExecuteQuery(query);
                 case MYSQL:
-                    return MyExecuteQuery(query);
+                    return MYExecuteQuery(query);
             }
             return 0;
         }
@@ -67,9 +67,9 @@ namespace PrismaBenchmark
             switch (servertype)
             {
                 case MSSQL:
-                    return MsExecuteReader(query);
+                    return MSExecuteReader(query);
                 case MYSQL:
-                    return MyExecuteReader(query);
+                    return MYExecuteReader(query);
             }
             return null;
         }
@@ -145,7 +145,7 @@ namespace PrismaBenchmark
             return true;
         }
 
-        private void IsMSSQLConnected()
+        private void IsMSConnected()
         {
             int attempt = 0;
             bool isConnected = false;
@@ -158,7 +158,7 @@ namespace PrismaBenchmark
             };
             while (!isConnected)
             {
-                if (attempt < 5)
+                if (attempt < 10)
                 {
                     using (var l_oConnection = new SqlConnection(bldr.ConnectionString))
                     {
@@ -184,7 +184,7 @@ namespace PrismaBenchmark
             }
         }
 
-        private void IsMYSQLConnected()
+        private void IsMYConnected()
         {
             InitDatabase();
             int attempt = 0;
@@ -199,7 +199,7 @@ namespace PrismaBenchmark
             };
             while (!isConnected)
             {
-                if (attempt < 5)
+                if (attempt < 10)
                 {
                     using (var l_oConnection = new MySqlConnection(mybldr.ConnectionString))
                     {
@@ -260,7 +260,7 @@ namespace PrismaBenchmark
             }
         }
 
-        private long MsExecuteQuery(string query)
+        private long MSExecuteQuery(string query)
         {
             if (msconnection == null)
             {
@@ -287,7 +287,7 @@ namespace PrismaBenchmark
             return 0;
         }
 
-        private long MyExecuteQuery(string query)
+        private long MYExecuteQuery(string query)
         {
             if (myconnection == null)
             {
@@ -314,7 +314,7 @@ namespace PrismaBenchmark
             return 0;
         }
 
-        private string MsExecuteReader(string query)
+        private string MSExecuteReader(string query)
         {
             if (msconnection == null)
                 return null;
@@ -333,7 +333,7 @@ namespace PrismaBenchmark
             return null;
         }
 
-        private string MyExecuteReader(string query)
+        private string MYExecuteReader(string query)
         {
             if (myconnection == null)
                 return null;
