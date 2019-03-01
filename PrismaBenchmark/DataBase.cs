@@ -1,101 +1,134 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using System.Text;
-using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
 namespace PrismaBenchmark
 {
     class DataBase
     {
         protected static CustomConfiguration conf;
-        private MySqlConnection connection = null;
+        private SqlConnection msconnection = null;
+        private MySqlConnection myconnection = null;
+        private static string servertype;
+        private const string MSSQL = "mssql";
+        private const string MYSQL = "mysql";
 
         public DataBase(bool first = false)
         {
             conf = CustomConfiguration.LoadConfiguration();
+            servertype = conf.ServerType;
             if (first)
-                InitDataBase();
+                IsServerConnected();
             else
                 Connect();
         }
 
-        private void InitDataBase()
+        public void IsServerConnected()
         {
-            while (!IsServerConnected()) System.Threading.Thread.Sleep(5000);
-            var bldr = new MySqlConnectionStringBuilder
+            switch (servertype)
             {
-                ["user id"] = "init",
-                ["password"] = "init",
-                ["server"] = conf.host,
-                ["port"] = conf.port,//conf.useProxy ? "4000" : "3306", // proxy
-                ["database"] = conf.database,
+                case MSSQL:
+                    IsMSConnected();
+                    break;
+                case MYSQL:
+                    IsMYConnected();
+                    break;
+            }
+        }
+
+        public void Connect()
+        {
+            switch (servertype)
+            {
+                case MSSQL:
+                    MSConnect();
+                    break;
+                case MYSQL:
+                    MYConnect();
+                    break;
+            }
+        }
+
+        public long ExecuteQuery(string query)
+        {
+            switch (servertype)
+            {
+                case MSSQL:
+                    return MSExecuteQuery(query);
+                case MYSQL:
+                    return MYExecuteQuery(query);
+            }
+            return 0;
+        }
+
+        public string ExecuteReader(string query)
+        {
+            switch (servertype)
+            {
+                case MSSQL:
+                    return MSExecuteReader(query);
+                case MYSQL:
+                    return MYExecuteReader(query);
+            }
+            return null;
+        }
+
+        public void Close()
+        {
+            switch (servertype)
+            {
+                case MSSQL:
+                    msconnection.Close();
+                    msconnection = null;
+                    break;
+                case MYSQL:
+                    myconnection.Close();
+                    myconnection = null;
+                    break;
+            }
+        }
+
+        private void MSConnect()
+        {
+            var msbldr = new SqlConnectionStringBuilder
+            {
+                UserID = conf.userid,
+                Password = conf.password,
+                DataSource = conf.host + "," + conf.port,
+                InitialCatalog = conf.database
             };
             try
             {
-                connection = new MySqlConnection(bldr.ConnectionString);
-                connection.Open();
-                string Register = $"PRISMADB REGISTER USER '{conf.userid}' PASS '{conf.password}';";
-                ExecuteQuery(Register);
-                connection.Close();
-                //Console.WriteLine("Connected!");
+                msconnection = new SqlConnection(msbldr.ConnectionString);
+                msconnection.Open();
             }
-            catch (MySqlException ex)
+            catch (SqlException e)
             {
-                if (ex.Message != "Couldn't connect to server")
-                    Console.WriteLine("Cannot init connection:\n" + ex.Message);
+                Console.WriteLine("Cannot create connection:\n" + e.Message);
+                msconnection = null;
             }
-            connection = null;
         }
 
-        private void Connect()
+        private void MYConnect()
         {
-            var bldr = new MySqlConnectionStringBuilder
+            var mybldr = new MySqlConnectionStringBuilder
             {
                 ["user id"] = conf.userid,
                 ["password"] = conf.password,
                 ["server"] = conf.host,
-                ["port"] = conf.port,//conf.useProxy ? "4000" : "3306", // proxy
+                ["port"] = conf.port,
                 ["database"] = conf.database,
             };
             try
             {
-                connection = new MySqlConnection(bldr.ConnectionString);
-                connection.Open();
-                //Console.WriteLine("Connected!");
+                myconnection = new MySqlConnection(mybldr.ConnectionString);
+                myconnection.Open();
             }
             catch (MySqlException e)
             {
                 Console.WriteLine("Cannot create connection:\n" + e.Message);
-                connection = null;
-            }
-        }
-
-        public bool IsServerConnected()
-        {
-            var bldr = new MySqlConnectionStringBuilder
-            {
-                ["user id"] = conf.userid,
-                ["password"] = conf.password,
-                ["server"] = conf.dbhost,
-                ["port"] = conf.dbport,//conf.useProxy ? "4000" : "3306", // proxy
-            };
-            using (var l_oConnection = new MySqlConnection(bldr.ConnectionString))
-            {
-                try
-                {
-                    l_oConnection.Open();
-                    return true;
-                }
-                catch (MySqlException)
-                {
-                    return false;
-                }
+                myconnection = null;
             }
         }
 
@@ -108,13 +141,155 @@ namespace PrismaBenchmark
                 retry++;
                 Console.WriteLine("Trying to reconnect the {0} time ... ", retry);
                 Connect();
-            } while (connection == null);
+            } while (msconnection == null && myconnection == null);
             return true;
         }
 
-        public long ExecuteQuery(string query)
+        private void IsMSConnected()
         {
-            if (connection == null)
+            int attempt = 0;
+            bool isConnected = false;
+            var bldr = new SqlConnectionStringBuilder
+            {
+                UserID = conf.userid,
+                Password = conf.password,
+                DataSource = conf.host + "," + conf.port,
+                InitialCatalog = conf.database
+            };
+            while (!isConnected)
+            {
+                if (attempt < 10)
+                {
+                    using (var l_oConnection = new SqlConnection(bldr.ConnectionString))
+                    {
+                        try
+                        {
+                            l_oConnection.Open();
+                            isConnected = true;
+                        }
+                        catch (SqlException)
+                        {
+                            isConnected = false;
+                        }
+                    }
+                    attempt++;
+                    System.Threading.Thread.Sleep(5000);
+                }
+                else
+                {
+                    Console.WriteLine("Connect failed. Press any key to exit ...");
+                    Console.ReadLine();
+                    Environment.Exit(1);
+                }
+            }
+        }
+
+        private void IsMYConnected()
+        {
+            InitDatabase();
+            int attempt = 0;
+            bool isConnected = false;
+            var mybldr = new MySqlConnectionStringBuilder
+            {
+                ["user id"] = conf.userid,
+                ["password"] = conf.password,
+                ["server"] = conf.host,
+                ["port"] = conf.port,
+                ["database"] = conf.database,
+            };
+            while (!isConnected)
+            {
+                if (attempt < 10)
+                {
+                    using (var l_oConnection = new MySqlConnection(mybldr.ConnectionString))
+                    {
+                        try
+                        {
+                            l_oConnection.Open();
+                            isConnected = true;
+                        }
+                        catch (MySqlException)
+                        {
+                            isConnected = false;
+                        }
+                    }
+                    attempt++;
+                    System.Threading.Thread.Sleep(5000);
+                }
+                else
+                {
+                    Console.WriteLine("Connect failed. Press any key to exit ...");
+                    Console.ReadLine();
+                    Environment.Exit(1);
+                }
+            }
+        }
+
+        private void InitDatabase()
+        {
+            var mybldr = new MySqlConnectionStringBuilder
+            {
+                ["user id"] = "init",
+                ["password"] = "init",
+                ["server"] = conf.host,
+                ["port"] = conf.port,
+                ["database"] = conf.database,
+            };
+            using (var l_oConnection = new MySqlConnection(mybldr.ConnectionString))
+            {
+                try
+                {
+                    l_oConnection.Open();
+                    string Register = $"PRISMADB REGISTER USER '{conf.userid}' PASS '{conf.password}';";
+                    MySqlCommand cmd = new MySqlCommand
+                    {
+                        CommandText = Register,
+                        Connection = l_oConnection,
+                        CommandType = CommandType.Text,
+                        CommandTimeout = 300
+                    };
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        reader.Close();
+                    }
+                }
+                catch (MySqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
+
+        private long MSExecuteQuery(string query)
+        {
+            if (msconnection == null)
+            {
+                Console.WriteLine("There is no connection!");
+                if (!Retry())
+                {
+                    Console.WriteLine("Connect failed. Press any key to exit ...");
+                    Console.ReadLine();
+                    Environment.Exit(1);
+                }
+            }
+            // execute query
+            SqlCommand cmd = new SqlCommand
+            {
+                CommandText = query,
+                Connection = msconnection,
+                CommandType = CommandType.Text,
+                CommandTimeout = 300
+            };
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                reader.Close();
+            }
+            return 0;
+        }
+
+        private long MYExecuteQuery(string query)
+        {
+            if (myconnection == null)
             {
                 Console.WriteLine("There is no connection!");
                 if (!Retry())
@@ -128,8 +303,9 @@ namespace PrismaBenchmark
             MySqlCommand cmd = new MySqlCommand
             {
                 CommandText = query,
-                Connection = connection,
-                CommandType = CommandType.Text
+                Connection = myconnection,
+                CommandType = CommandType.Text,
+                CommandTimeout = 300
             };
             using (MySqlDataReader reader = cmd.ExecuteReader())
             {
@@ -138,17 +314,18 @@ namespace PrismaBenchmark
             return 0;
         }
 
-        public string ExecuteReader(string query)
+        private string MSExecuteReader(string query)
         {
-            if (connection == null)
+            if (msconnection == null)
                 return null;
-            MySqlCommand cmd = new MySqlCommand
+            SqlCommand cmd = new SqlCommand
             {
                 CommandText = query,
-                Connection = connection,
-                CommandType = CommandType.Text
+                Connection = msconnection,
+                CommandType = CommandType.Text,
+                CommandTimeout = 300
             };
-            using (MySqlDataReader reader = cmd.ExecuteReader())
+            using (SqlDataReader reader = cmd.ExecuteReader())
             {
                 while(reader.Read())
                     return reader[1].ToString();
@@ -156,10 +333,23 @@ namespace PrismaBenchmark
             return null;
         }
 
-        public void Close()
+        private string MYExecuteReader(string query)
         {
-            connection.Close();
-            connection = null;
+            if (myconnection == null)
+                return null;
+            MySqlCommand cmd = new MySqlCommand
+            {
+                CommandText = query,
+                Connection = myconnection,
+                CommandType = CommandType.Text,
+                CommandTimeout = 300
+            };
+            using (MySqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                    return reader[1].ToString();
+            }
+            return null;
         }
     }
 }

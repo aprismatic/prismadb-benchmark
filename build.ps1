@@ -1,23 +1,15 @@
 Push-Location $PSScriptRoot
 
+$linrt = ($env:linrt, "linux-musl-x64" -ne $null)[0]
+
 try {
-
-	$DigitalOceanToken = $env:DOTokenSecure
-	$DockerMachine = "BenchmarkTest"
-
-	docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
-						--digitalocean-region sgp1 --digitalocean-size s-4vcpu-8gb $DockerMachine
-
-	docker-machine env $DockerMachine | Invoke-Expression
-
-	docker-compose up -d --build prismadb prismaproxy
-	docker-compose up --build prismabenchmark
-	
-	docker-machine stop $DockerMachine
-	echo "y" | docker-machine rm $DockerMachine
-	
+  docker build  --platform=linux `
+                -t aprismatic.azurecr.io/prismadb-proxy-mssql:alpine `
+                -f "Dockerfile-mssql-$linrt"  .
+				
+  docker save -o "$PSScriptRoot/prismadb-proxy-mssql.tar" "aprismatic.azurecr.io/prismadb-proxy-mssql:alpine"
 }
 finally {
-	if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
-	Pop-Location
+  if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+  Pop-Location
 }

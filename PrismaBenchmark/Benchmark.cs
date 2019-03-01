@@ -1,11 +1,10 @@
 ﻿using System;
-using MySql.Data.MySqlClient;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace PrismaBenchmark
 {
@@ -15,15 +14,15 @@ namespace PrismaBenchmark
         protected DataBase ds;
         protected static Random rand = new Random();
         protected static DataGenerator dataGen = DataGenerator.Instance(rand);
-        private readonly int single_size;
-        private readonly int multiple_size;
+        private int single_size;
+        private int multiple_size;
+        private const string MSSQL = "mssql";
+        private const string MYSQL = "mysql";
 
         public Benchmark()
         {
             conf = CustomConfiguration.LoadConfiguration(); // might be used for other configurations
             ds = new DataBase(); // DataStore take care of db config
-            single_size = 4 * conf.rows / 10;
-            multiple_size = 6 * conf.rows / 10;
 
         }
 
@@ -38,8 +37,8 @@ namespace PrismaBenchmark
                     a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
                     b INT ENCRYPTED FOR(ADDITION),
                     c INT ENCRYPTED FOR(MULTIPLICATION),
-                    d VARCHAR(30) ENCRYPTED FOR(SEARCH),
-                    e VARCHAR(30) ENCRYPTED FOR(WILDCARD)
+                    d INT,
+                    e VARCHAR(30) ENCRYPTED FOR(SEARCH)
                 );", tableName);
             }
             else
@@ -49,19 +48,35 @@ namespace PrismaBenchmark
                     a INT ENCRYPTED FOR(SEARCH),
                     b INT,
                     c INT,
-                    d VARCHAR(30),
+                    d INT,
                     e VARCHAR(30)
                 );", tableName);
+            }
+
+            string create_index_i1 = "", create_index_i2 = "";
+            switch (conf.ServerType)
+            {
+                case MSSQL:
+                    create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} ([a.Fingerprint])", tableName);
+                    create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} ([d])", tableName);
+                    break;
+                case MYSQL:
+                    create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} (`a.Fingerprint`)", tableName);
+                    create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} (`d`)", tableName);
+                    break;
             }
 
             // execute query
             try
             {
                 ds.ExecuteQuery(query);
+                ds.ExecuteQuery(create_index_i1);
+                ds.ExecuteQuery(create_index_i2);
             }
-            catch (MySqlException e)
+            catch (Exception e)
             {
-                if (e.Message == String.Format("Table '{0}' already exists", tableName))
+                if (e.Message == String.Format("There is already an object named '{0}' in the database.", tableName) ||
+                    e.Message == String.Format("Table '{0}' already exists", tableName))
                     if (overwrite)
                     {
                         DropTable(tableName);
@@ -87,7 +102,7 @@ namespace PrismaBenchmark
             {
                 return ds.ExecuteQuery(query);
             }
-            catch (MySqlException e)
+            catch (SqlException e)
             {
                 Console.WriteLine("Query caused error: {0}", e.Message);
                 return  -1;
@@ -100,7 +115,7 @@ namespace PrismaBenchmark
             {
                 return ds.ExecuteReader(query);
             }
-            catch (MySqlException e)
+            catch (SqlException e)
             {
                 Console.WriteLine("Query caused error: {0}", e.Message);
                 return null;
@@ -112,43 +127,56 @@ namespace PrismaBenchmark
             ds.Close();
         }
 
-        protected void Refresh()
+        protected void SetupForSelect(int size, string table = "t1")
+        // populate tables with 500M rows
         {
-            ds.Close();
-            ds = new DataBase();
-        }
+            single_size = 4 * size / 10;
+            multiple_size = 6 * size / 10;
+            ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
 
-        protected void SetupForSelect()
-            // populate tables with 500M rows
-        {
             // populate single range
-            int single_batch_size = 1000;
-            while (single_size % single_batch_size != 0)
-                single_batch_size /= 10;
-            for (int i = 0; i < single_size / single_batch_size; i++)
+            int batch_size = 1000;
+            while (size % batch_size != 0)
+                batch_size /= 10;
+
+            var watch = Stopwatch.StartNew();
+
+            for (int i = 0; i < single_size / batch_size; i++)
             {
-                string query = QueryConstructor.ConstructInsertQuery("t1", 
-                    dataGen.GetDataRowsForSelect(i * single_batch_size, batch_size: single_batch_size));
+                string query = QueryConstructor.ConstructInsertQuery(table,
+                    dataGen.GetDataRowsForSelect(i * batch_size, batch_size: batch_size));
                 // execute query
-                ExecuteQuery(query);
-                query = QueryConstructor.ConstructInsertQuery("t2",
-                    dataGen.GetDataRowsForSelect(i * single_batch_size, batch_size: single_batch_size));
-                // execute query
-                ExecuteQuery(query);
+                cq.Enqueue(query);
             }
+
+            while ((multiple_size / conf.multiple ) % batch_size != 0)
+                batch_size /= 10;
             // populate multiple range
-            int multiple_batch_size = multiple_size / conf.multiple;
             for (int m = 0; m < conf.multiple; m++)
             {
-                string query = QueryConstructor.ConstructInsertQuery("t1",
-                    dataGen.GetDataRowsForSelect(single_size, batch_size: multiple_batch_size));
-                // execute query
-                ExecuteQuery(query);
-                query = QueryConstructor.ConstructInsertQuery("t2",
-                    dataGen.GetDataRowsForSelect(single_size, batch_size: multiple_batch_size));
-                // execute query
-                ExecuteQuery(query);
+                for (int i = 0; i < multiple_size / (conf.multiple * batch_size); i++)
+                {
+                    string query = QueryConstructor.ConstructInsertQuery(table,
+                        dataGen.GetDataRowsForSelect(single_size + i * batch_size, batch_size: batch_size));
+                    // execute query
+                    cq.Enqueue(query);
+                }
             }
+
+            void startWorker()
+            {
+                DataBase database = new DataBase();
+                while (cq.TryDequeue(out string query))
+                {
+                    database.ExecuteQuery(query);
+                }
+                database.Close();
+            }
+
+            Parallel.For(0, 5, i => startWorker());
+
+            watch.Stop();
+            Console.WriteLine("====Time of INSERT {0} records: {1}====\n", size, watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
         }
 
         protected string GenerateInsertQuery(int numberOfRecords)
@@ -160,7 +188,7 @@ namespace PrismaBenchmark
 
         protected string GenerateSelectQuery(bool single = true, int operationCase = 1)
         {
-            int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size/conf.multiple);
+            int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
             string operation;
             switch (operationCase)
             {
@@ -183,7 +211,26 @@ namespace PrismaBenchmark
         protected string GenerateSelectWithoutQuery(bool single = true)
         {
             int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
-            return QueryConstructor.ConstructSelectWithoutQuery(a);
+            switch (conf.ServerType)
+            {
+                case MSSQL:
+                    return QueryConstructor.ConstructMsSelectWithoutQuery(a);
+                case MYSQL:
+                    return QueryConstructor.ConstructMySelectWithoutQuery(a);
+            }
+            return null;
+        }
+
+        protected string GenerateSelectLimitQuery()
+        {
+            switch(conf.ServerType)
+            {
+                case MSSQL:
+                    return "SELECT TOP 1 * FROM t1";
+                case MYSQL:
+                    return "SELECT * FROM t1 LIMIT 1";
+            }
+            return null;
         }
 
         protected string GenerateDeleteQuery(bool single = true)
@@ -192,8 +239,10 @@ namespace PrismaBenchmark
             return QueryConstructor.ConstructDeleteQuery(a);
         }
 
-        protected string GenerateSelectJoinQuery(bool single = true)
+        protected string GenerateSelectJoinQuery(int size, bool single = true)
         {
+            int single_size = 4 * size / 10;
+            int multiple_size = 4 * size / 10;
             int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
             return QueryConstructor.ConstructSelectJoinQuery(a);
         }
@@ -225,16 +274,16 @@ namespace PrismaBenchmark
                     type = "RANGE";
                     break;
                 case 4:
-                    type = "WILDCARD";
-                    break;
-                case 5:
                     type = "ADDITION";
                     break;
-                case 6:
+                case 5:
                     type = "MULTIPLICATION";
                     break;
-                case 7:
+                case 6:
                     type = "SEARCH, STORE, RANGE, ADDITION, MULTIPLICATION";
+                    break;
+                case 7:
+                    type = "WILDCARD";
                     break;
                 default:
                     type = "STORE";

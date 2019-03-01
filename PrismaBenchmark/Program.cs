@@ -5,9 +5,11 @@ namespace PrismaBenchmark
     
     class Program
     {
-        private static CustomConfiguration conf = CustomConfiguration.LoadConfiguration();
+        private static CustomConfiguration conf;
+
         static void Main(string[] args)
         {
+            conf = CustomConfiguration.LoadConfiguration();
             var db = new DataBase(true);
             /*if (conf.latency != null)
             {

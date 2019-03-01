@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.6'
 
 services:
 
@@ -6,29 +6,28 @@ services:
         build:
             context: ./
             dockerfile: Dockerfile-Benchmark
-        image: prismadb/prismadb-benchmark
+        image: aprismatic.azurecr.io/prismadb-benchmark:alpine
         container_name: PrismaDB_SQL_Benchmark
         networks:
             - prisma
-        depends_on:
-            - prismadb
-            - prismaproxy
+        environment:
+            SqlPassword: ${SqlPassword}
+            BuildVersion: ${APPVEYOR_BUILD_VERSION}
+            ServerType: ${ServerType}
         
     prismadb:
-        image: bazzilic/prismadb-mysql
+        image: cheziyi/mssql-server-linux-developer-fulltext:latest
         container_name: PrismaDB_SQL_Server
         networks:
             - prisma
         ports:
-            - 3306:3306
+            - 1433:1433
         environment:
-            MYSQL_ROOT_PASSWORD: "toor"
+            SA_PASSWORD: "saPwd123"
+            ACCEPT_EULA: "Y"
 
     prismaproxy:
-        build:
-            context: ./
-            dockerfile: Dockerfile-Proxy
-        image: prismadb/prismadb-mysql-proxy
+        image: "aprismatic.azurecr.io/prismadb-proxy-${ServerType}:alpine"
         container_name: PrismaDB_SQL_Server_Proxy
         networks:
             - prisma
@@ -38,9 +37,8 @@ services:
             - prismadb
         environment:
             ListenPort: "4000"
-            ServerAddress: "prismadb"
-            ServerPort: "3306"
-            Database: "testdb"
+            DataSource: "prismadb"
+            InitialCatalog: "testdb"
     
 networks:
     prisma:

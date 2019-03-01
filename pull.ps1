@@ -2,66 +2,52 @@
 Push-Location $PSScriptRoot
 
 try {
-    $myPublishPath = "$PSScriptRoot/Prisma-Mysql-Proxy"
-    $myPublishPathP = "$myPublishPath/Plugins"
+    $msPublishPath = "$PSScriptRoot/PrismaDB-Plugin-MSSQL"
 
     $apiUrl = 'https://ci.appveyor.com/api'
-    $token = 'obv75bsvkg8y6wjjqm2k'
-    #$token = $env:AuthTokenSecure
+    $token = $env:AuthTokenSecure
     $headers = @{
         "Authorization" = "Bearer $token"
         "Content-type" = "application/json"
     }
-    #$accountName = $env:AccountNameSecure
-    $accountName = 'bazzilic'
-    $projectSlugMyPeek = 'PrismaDB-Proxy-MySQL'
-    $projectSlugMyPlugin = 'PrismaDB-Plugin-MySQL'
+    $accountName = $env:AccountNameSecure
+    $projectSlugMS = 'PrismaDB-Plugin-MSSQL'
 
     $downloadLocation = "$PSScriptRoot/Downloads"
     mkdir -Force $downloadLocation | Out-Null
 
     # get project with last build details
-    $projectMyPeek = Invoke-RestMethod -Method Get -Headers $headers `
-									   -Uri "$apiUrl/projects/$accountName/$projectSlugMyPeek"
-    $projectMyPlugin = Invoke-RestMethod -Method Get -Headers $headers `
-										 -Uri "$apiUrl/projects/$accountName/$projectSlugMyPlugin"
+    $projectMS = Invoke-RestMethod -Method Get -Uri "$apiUrl/projects/$accountName/$projectSlugMS" -Headers $headers
 
     # we assume here that build has a single job
     # get this job id
-    $jobIdMyPeek = $projectMyPeek.build.jobs[0].jobId
-    $jobIdMyPlugin = $projectMyPlugin.build.jobs[0].jobId
+    $jobIdMS = $projectMS.build.jobs[0].jobId
 
-    "Downloading artifacts for MySQL Proxy..."
-	$artifactPeek = 'sqlpeek-MySQL-linux-musl-x64.zip'
-	$ArtifactPathPeek = "$downloadLocation\$artifactPeek"
+    # get job artifacts (just to see what we've got)
+    $artifactsMS = Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMS/artifacts" -Headers $headers
 
-	Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMyPeek/artifacts/$artifactPeek" `
-					  -OutFile $ArtifactPathPeek -Headers @{ "Authorization" = "Bearer $token" }
-					
-    "Downloading artifacts for MySQL Proxy Plugins..."					
-	$artifactPlugin = 'PrismaDB-Plugin-MySQL.zip'
-	$ArtifactPathPlugin = "$downloadLocation\$artifactPlugin"
+    "Downloading artifacts for MSSQL Plugin..."
+    foreach ($artifact in $artifactsMS) {
+        $artifactFileName = $artifact.fileName
+        $localArtifactPath = "$downloadLocation\$artifactFileName"
 
-	Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMyPlugin/artifacts/$artifactPlugin" `
-					  -OutFile $ArtifactPathPlugin -Headers @{ "Authorization" = "Bearer $token" }
-					  
+        Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMS/artifacts/$artifactFileName" `
+                          -OutFile $localArtifactPath -Headers @{ "Authorization" = "Bearer $token" }
+    }
+
     "Listing downloaded artifacts:"
-    ls $downloadLocation
+    Get-ChildItem $downloadLocation
 
     foreach ($file in Get-ChildItem $downloadLocation) {
         $fn = $file.Name
         $path = $file.FullName
-        if ($fn -eq $artifactPeek) {
-            "Extracting $fn into $myPublishPath..."
-            7z e -y $path "-o$myPublishPath"
-        }
-		if ($fn -eq $artifactPlugin) {
-            "Extracting $fn into $myPublishPathP..."
-            7z e -y $path "-o$myPublishPathP"
+        if ($fn -eq "PrismaDB-Plugin-MSSQL.zip") {
+            "Extracting $fn into $msPublishPath..."
+            7z e -y $path "-o$msPublishPath"
+            Remove-Item $msPublishPath\sni.dll
         }
     }
 }
-
 finally {
     if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
     Pop-Location
