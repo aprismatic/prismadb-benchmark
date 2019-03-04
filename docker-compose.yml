@@ -16,7 +16,7 @@ services:
             ServerType: ${ServerType}
         
     prismadb:
-        image: aprismatic/mssql-server-linux-developer-fulltext:latest
+        image: aprismatic/mssql-server-linux-fulltext:latest
         container_name: PrismaDB_SQL_Server
         networks:
             - prisma
