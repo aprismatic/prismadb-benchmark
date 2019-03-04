@@ -31,4 +31,4 @@ environment:
     secure: 2zeN4N4JCwJCC5uLlvSzlomqVrX/Il7WhVFRcCtpcH3Kr34dA726SNVk+8QBn/3K
   AzureRegistryPassword:
     secure: b63+6f1lGXPoDDW3omA144Lt/vJZ3Eex+ViqcLPJXbGn3nO96/uj01WHqwjDAH74
-version: "0.2.8.{build}"
+version: "0.3.0.{build}"
