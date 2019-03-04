@@ -17,11 +17,9 @@ namespace PrismaBenchmark
         private static List<ArrayList> benchaMark = new List<ArrayList>();
         private readonly string servertype;
         private static string dateTime;
-        private readonly int prisma_size;
 
         public LoadBenchmark(): base()
         {
-            prisma_size = 10000;
             dateTime = DateTime.Now.ToString();
             servertype = conf.ServerType;
             foreach (var test in conf.load.Operations)
@@ -90,8 +88,8 @@ namespace PrismaBenchmark
                 case 10: return GenerateSelectQuery(single: false, operationCase: 3); // multiple selection a*c
                 case 11: return GenerateSelectQuery(single: true, operationCase: 4); // single selection a+a*c+b
                 case 12: return GenerateSelectQuery(single: false, operationCase: 4); // multiple selection a+a*c+b
-                case 13: return GenerateSelectJoinQuery(prisma_size, true); // single selection with join
-                case 14: return GenerateSelectJoinQuery(prisma_size, false); // multiple selection with join
+                case 13: return GenerateSelectJoinQuery(conf.sizes[0], true); // single selection with join
+                case 14: return GenerateSelectJoinQuery(conf.sizes[0], false); // multiple selection with join
                 case 15: return GenerateUpdateQuery(true); // update single row
                 case 16: return GenerateUpdateQuery(false); // update multiple rows
                 case 17: return GenerateDeleteQuery(true); // delete single row
@@ -132,11 +130,10 @@ namespace PrismaBenchmark
         public override void RunBenchMark()
         {
             var benchmarkTime = Stopwatch.StartNew();
-            List<int> sizes = new List<int>() { 10000, 100000, 1000000 };
 
             CreateTable("t1");
             CreateTable("t2", encrypt: false);
-            SetupForSelect(prisma_size, "t2");
+            SetupForSelect(conf.sizes[0], "t2");
 
             Console.WriteLine("\nStart Load Benchmarking ... \n");
 
@@ -150,7 +147,7 @@ namespace PrismaBenchmark
                 }
             }
 
-            foreach (var size in sizes)
+            foreach (var size in conf.sizes)
             {
                 Console.WriteLine("\nBenchmarking with {0} Records... ", size);
                 foreach (var entry in queryTypeMap)
@@ -186,15 +183,15 @@ namespace PrismaBenchmark
                     if (queryTypeInt == 27)
                         DropTable("t1");
 
-                    RunTime(queryTypeInt, queryType, prisma_size);
+                    RunTime(queryTypeInt, queryType);
 
                     // Decrypt the column after Encrypt
                     if (queryTypeInt >= 20 && queryTypeInt <= 26)
                     {
                         if (queryTypeInt == 26)
-                            RunTime(29, "DECRYPT_" + queryType.Split("_")[1], prisma_size);
+                            RunTime(29, "DECRYPT_" + queryType.Split("_")[1]);
                         else
-                            RunTime(19, "DECRYPT_" + queryType.Split("_")[1], prisma_size);
+                            RunTime(19, "DECRYPT_" + queryType.Split("_")[1]);
                     }
                 }
             }
@@ -208,7 +205,7 @@ namespace PrismaBenchmark
             Console.WriteLine("Finish Load Benchmarking ... ");
         }
 
-        private void RunTime(int queryTypeInt, string queryType, int size)
+        private void RunTime(int queryTypeInt, string queryType)
         {
             Console.WriteLine("Benchmarking load {0}...", queryType);
             string query = ProduceQuery(queryTypeInt);
@@ -225,7 +222,7 @@ namespace PrismaBenchmark
             } while (result != "Completed");
 
             watch.Stop();
-            benchaMark.Add(new ArrayList { queryType, null, watch.ElapsedMilliseconds, size, 1, servertype, conf.BuildVersion, dateTime });
+            benchaMark.Add(new ArrayList { queryType, null, watch.ElapsedMilliseconds, conf.sizes[0], 1, servertype, conf.BuildVersion, dateTime });
             Console.WriteLine("====Time of {0}: {1}====\n", queryType, watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
         }
 

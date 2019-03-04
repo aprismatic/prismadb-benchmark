@@ -44,11 +44,15 @@ namespace PrismaBenchmark
             if (!Boolean.TryParse(conf["useIndex"], out useIndex))
                 useIndex = true; // default
             List<string> temp = new List<string>();
-            foreach (var setting in conf.GetSection("Operations").GetChildren())
+            foreach (var setting in conf.GetSection("operations").GetChildren())
             {
                 temp.Add(setting.Value);
             };
             load = new Load(temp);
+            foreach (var setting in conf.GetSection("sizes").GetChildren())
+            {
+                sizes.Add(Int32.TryParse(setting.Value, out int size)? size : 10000);
+            };
             //// loadTest variables
             if (!Int32.TryParse(conf["multiple"], out multiple))
                 multiple = 10; // default
@@ -78,6 +82,7 @@ namespace PrismaBenchmark
         public readonly Boolean useProxy;
         public readonly Boolean encrypt;
         public readonly Load load = null;
+        public readonly List<int> sizes = null;
         public readonly Boolean useIndex;
         public readonly string host = "localhost";
         public readonly string port;
