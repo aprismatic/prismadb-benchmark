@@ -15,6 +15,11 @@
         "delete",
         "encrypt"
     ],
+    "sizes": [
+        10000,
+        100000,
+        1000000
+    ],
     "startSpeed": 3,
     "multiple": 10,
     "stride": 1,
