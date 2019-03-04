@@ -21,7 +21,7 @@ namespace PrismaBenchmark
             userid = conf["userid"];
             password = conf["password"];
             SqlPassword = conf["SqlPassword"];
-            BuildVersion = conf["PluginVersion"];
+            BuildVersion = conf["BuildVersion"];
             ServerType = conf["ServerType"];
             switch(ServerType)
             {

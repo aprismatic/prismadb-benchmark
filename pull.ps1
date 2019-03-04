@@ -24,8 +24,8 @@ try {
     $jobIdMS = $projectMS.build.jobs[0].jobId
 
     # get version of plugin to save to db
-    $env:PluginVersion = $projectMS.build.version+"-test"
-    "MS SQL build version: $env:PluginVersion"
+    $env:BuildVersion = $projectMS.build.version+"-test"
+    "MS SQL build version: $env:BuildVersion"
 
     # get job artifacts (just to see what we've got)
     $artifactsMS = Invoke-RestMethod -Method Get -Uri "$apiUrl/buildjobs/$jobIdMS/artifacts" -Headers $headers
