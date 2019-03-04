@@ -82,7 +82,7 @@ namespace PrismaBenchmark
         public readonly Boolean useProxy;
         public readonly Boolean encrypt;
         public readonly Load load = null;
-        public readonly List<int> sizes = null;
+        public readonly List<int> sizes = new List<int>();
         public readonly Boolean useIndex;
         public readonly string host = "localhost";
         public readonly string port;
