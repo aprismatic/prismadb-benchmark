@@ -18,6 +18,7 @@ try {
     docker load -i "$PSScriptRoot/prismadb-proxy-mssql.tar"
 	
     docker-compose up -d --build prismadb prismaproxy
+    Start-Sleep -s 300
     docker-compose up --build prismabenchmark
 }
 finally {
