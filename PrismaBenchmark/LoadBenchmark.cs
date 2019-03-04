@@ -199,7 +199,7 @@ namespace PrismaBenchmark
             dataGen.ResetNextSingle();
             Close();
             benchmarkTime.Stop();
-            benchaMark.Add(new ArrayList { "TOTAL_BENCHMARK_TIME", null, benchmarkTime.ElapsedMilliseconds, null, 1, servertype, conf.BuildVersion, dateTime });
+            benchaMark.Add(new ArrayList { "TOTAL_BENCHMARK_TIME", null, benchmarkTime.ElapsedMilliseconds, null, null, servertype, conf.BuildVersion, dateTime });
             SavetoDB();
             Console.WriteLine("====Total Time of Benchmarking: {0}====\n", benchmarkTime.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
             Console.WriteLine("Finish Load Benchmarking ... ");
