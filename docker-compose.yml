@@ -25,6 +25,10 @@ services:
         environment:
             SA_PASSWORD: "saPwd123"
             ACCEPT_EULA: "Y"
+        deploy:
+            resources:
+                reservations:
+                    memory: 24G
 
     prismaproxy:
         image: "aprismatic.azurecr.io/prismadb-proxy-${ServerType}:alpine"
@@ -39,6 +43,11 @@ services:
             ListenPort: "4000"
             DataSource: "prismadb"
             InitialCatalog: "testdb"
+        deploy:
+            resources:
+                reservations:
+                    cpus: '0.50'
+                    memory: 24G
     
 networks:
     prisma:
