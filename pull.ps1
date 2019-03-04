@@ -24,7 +24,7 @@ try {
     $jobIdMS = $projectMS.build.jobs[0].jobId
 
     # get version of plugin to save to db
-    $env:PluginVersion = $projectMS.build.version
+    $env:PluginVersion = $projectMS.build.version+"-test"
     "MS SQL build version: $env:PluginVersion"
 
     # get job artifacts (just to see what we've got)
