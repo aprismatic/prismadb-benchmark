@@ -143,6 +143,7 @@ namespace PrismaBenchmark
                 int queryTypeInt = entry.Value;
                 if (queryTypeInt < 2)
                 {
+                    RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal, 0);
                     RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.threads, conf.verbal, 0);
                 }
             }
