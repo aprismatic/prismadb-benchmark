@@ -12,7 +12,7 @@ services:
             - prisma
         environment:
             SqlPassword: ${SqlPassword}
-            BuildVersion: ${APPVEYOR_BUILD_VERSION}
+            BuildVersion: ${BuildVersion}
             ServerType: ${ServerType}
         
     prismadb:
