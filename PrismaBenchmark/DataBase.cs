@@ -240,7 +240,7 @@ namespace PrismaBenchmark
                 try
                 {
                     l_oConnection.Open();
-                    string Register = $"PRISMADB REGISTER USER '{conf.userid}' PASS '{conf.password}';";
+                    string Register = $"PRISMADB REGISTER USER '{conf.userid}' PASSWORD '{conf.password}';";
                     MySqlCommand cmd = new MySqlCommand
                     {
                         CommandText = Register,
