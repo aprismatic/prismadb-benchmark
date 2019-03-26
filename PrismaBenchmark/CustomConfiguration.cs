@@ -31,6 +31,9 @@ namespace PrismaBenchmark
                 case "mysql":
                     userid = conf["myuserid"];
                     break;
+                case "postgres":
+                    userid = conf["myuserid"];
+                    break;
             }
             database = conf["database"];
             if (!Boolean.TryParse(conf["useProxy"], out useProxy))
@@ -56,10 +59,6 @@ namespace PrismaBenchmark
             //// loadTest variables
             if (!Int32.TryParse(conf["multiple"], out multiple))
                 multiple = 10; // default
-            if (!Int32.TryParse(conf["startSpeed"], out startSpeed))
-                startSpeed = 10; // default
-            if (!Int32.TryParse(conf["stride"], out stride))
-                stride = 1; // default
             if (!Int32.TryParse(conf["threads"], out threads))
                 threads = 1; // default
 #if !DEBUG
@@ -84,7 +83,7 @@ namespace PrismaBenchmark
         public readonly Load load = null;
         public readonly List<int> sizes = new List<int>();
         public readonly Boolean useIndex;
-        public readonly string host = "localhost";
+        public readonly string host = "127.0.0.1";
         public readonly string port;
         public readonly string userid;
         public readonly string password;
@@ -93,8 +92,6 @@ namespace PrismaBenchmark
         public readonly string database;
         public readonly string ServerType;
         public readonly int multiple;
-        public readonly int startSpeed;
-        public readonly int stride;
         public readonly int threads;
         public readonly int verbal = 1;
         public readonly int connectionTime;
