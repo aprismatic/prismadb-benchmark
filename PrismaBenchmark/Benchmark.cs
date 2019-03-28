@@ -13,7 +13,6 @@ namespace PrismaBenchmark
         public static CustomConfiguration conf;
         protected DataBase ds;
         protected static Random rand = new Random();
-        protected static DataGenerator dataGen = DataGenerator.Instance(rand);
         private int single_size;
         private int multiple_size;
         private const string MSSQL = "mssql";
@@ -23,7 +22,6 @@ namespace PrismaBenchmark
         {
             conf = CustomConfiguration.LoadConfiguration(); // might be used for other configurations
             ds = new DataBase(); // DataStore take care of db config
-
         }
 
         protected void CreateTable(string tableName, bool overwrite = true, bool encrypt = true)
@@ -69,9 +67,9 @@ namespace PrismaBenchmark
             // execute query
             try
             {
-                ds.ExecuteQuery(query);
-                ds.ExecuteQuery(create_index_i1);
-                ds.ExecuteQuery(create_index_i2);
+                ds.ExecuteNonQuery(query);
+                ds.ExecuteNonQuery(create_index_i1);
+                ds.ExecuteNonQuery(create_index_i2);
             }
             catch (Exception e)
             {
@@ -100,7 +98,7 @@ namespace PrismaBenchmark
         {
             try
             {
-                return ds.ExecuteQuery(query);
+                return ds.ExecuteNonQuery(query);
             }
             catch (SqlException e)
             {
@@ -144,7 +142,7 @@ namespace PrismaBenchmark
             for (int i = 0; i < single_size / batch_size; i++)
             {
                 string query = QueryConstructor.ConstructInsertQuery(table,
-                    dataGen.GetDataRowsForSelect(i * batch_size, batch_size: batch_size));
+                    DataGenerator.GetDataRowsForSelect(i * batch_size, batch_size: batch_size));
                 // execute query
                 cq.Enqueue(query);
             }
@@ -157,7 +155,7 @@ namespace PrismaBenchmark
                 for (int i = 0; i < multiple_size / (conf.multiple * batch_size); i++)
                 {
                     string query = QueryConstructor.ConstructInsertQuery(table,
-                        dataGen.GetDataRowsForSelect(single_size + i * batch_size, batch_size: batch_size));
+                        DataGenerator.GetDataRowsForSelect(single_size + i * batch_size, batch_size: batch_size));
                     // execute query
                     cq.Enqueue(query);
                 }
@@ -168,12 +166,12 @@ namespace PrismaBenchmark
                 DataBase database = new DataBase();
                 while (cq.TryDequeue(out string query))
                 {
-                    database.ExecuteQuery(query);
+                    database.ExecuteNonQuery(query);
                 }
                 database.Close();
             }
 
-            Parallel.For(0, 5, i => startWorker());
+            Parallel.For(0, 10, i => startWorker());
 
             watch.Stop();
             Console.WriteLine("====Time of INSERT {0} records: {1}====\n", size, watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
@@ -181,7 +179,7 @@ namespace PrismaBenchmark
 
         protected string GenerateInsertQuery(int numberOfRecords)
         {
-            List<ArrayList> data = dataGen.GetDataRows(numberOfRecords, range: 0, copy: 1)[0];
+            List<ArrayList> data = DataGenerator.GetDataRows(numberOfRecords);
             string query = QueryConstructor.ConstructInsertQuery("t1", data);
             return query;
         }
@@ -249,8 +247,8 @@ namespace PrismaBenchmark
 
         protected string GenerateUpdateQuery(bool single = true)
         {
-            int a = single ? rand.Next(20, 100) : rand.Next(10, 20);
-            ArrayList data = dataGen.GetDataRows(1, range: 0)[0][0]; // get from random range as we update a to the same value
+            int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
+            ArrayList data = DataGenerator.GetDataRows(1)[0]; // get from random range as we update a to the same value
             return QueryConstructor.ConstructUpdateQuery(a, data);
         }
 

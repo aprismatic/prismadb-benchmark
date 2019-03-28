@@ -50,14 +50,14 @@ namespace PrismaBenchmark
             }
         }
 
-        public long ExecuteQuery(string query)
+        public long ExecuteNonQuery(string query)
         {
             switch (servertype)
             {
                 case MSSQL:
-                    return MSExecuteQuery(query);
+                    return MSExecuteNonQuery(query);
                 case MYSQL:
-                    return MYExecuteQuery(query);
+                    return MYExecuteNonQuery(query);
             }
             return 0;
         }
@@ -260,7 +260,7 @@ namespace PrismaBenchmark
             }
         }
 
-        private long MSExecuteQuery(string query)
+        private long MSExecuteNonQuery(string query)
         {
             if (msconnection == null)
             {
@@ -280,14 +280,10 @@ namespace PrismaBenchmark
                 CommandType = CommandType.Text,
                 CommandTimeout = 300
             };
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                reader.Close();
-            }
-            return 0;
+            return cmd.ExecuteNonQuery();
         }
 
-        private long MYExecuteQuery(string query)
+        private long MYExecuteNonQuery(string query)
         {
             if (myconnection == null)
             {
@@ -307,11 +303,7 @@ namespace PrismaBenchmark
                 CommandType = CommandType.Text,
                 CommandTimeout = 300
             };
-            using (MySqlDataReader reader = cmd.ExecuteReader())
-            {
-                reader.Close();
-            }
-            return 0;
+            return cmd.ExecuteNonQuery();
         }
 
         private string MSExecuteReader(string query)

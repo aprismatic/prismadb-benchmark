@@ -17,6 +17,7 @@ namespace PrismaBenchmark
         private static List<ArrayList> benchaMark = new List<ArrayList>();
         private readonly string servertype;
         private static string dateTime;
+        private const int duration = 5;
 
         public LoadBenchmark(): base()
         {
@@ -197,7 +198,6 @@ namespace PrismaBenchmark
                 }
             }
 
-            dataGen.ResetNextSingle();
             Close();
             benchmarkTime.Stop();
             benchaMark.Add(new ArrayList { "TOTAL_BENCHMARK_TIME", null, benchmarkTime.ElapsedMilliseconds, null, null, servertype, conf.BuildVersion, dateTime });
@@ -208,6 +208,7 @@ namespace PrismaBenchmark
 
         private void RunTime(int queryTypeInt, string queryType)
         {
+            GC.Collect();
             Console.WriteLine("Benchmarking load {0}...", queryType);
             string query = ProduceQuery(queryTypeInt);
             string queryCheck = CheckQuery(queryTypeInt);
@@ -229,6 +230,7 @@ namespace PrismaBenchmark
 
         protected void RunLoad(Func<int, string> ProduceQuery, string queryType, int workers, int verbal, int size)
         {
+            GC.Collect();
             Console.WriteLine("Benchmarking load {0}...", queryType);
 
             ThreadInfo threadInfo;
@@ -262,7 +264,7 @@ namespace PrismaBenchmark
                     {
                         try
                         {
-                            database.ExecuteQuery(query);
+                            database.ExecuteNonQuery(query);
                             if (info.couting)
                                 Interlocked.Add(ref info.processed, 1);
                         }
@@ -286,15 +288,21 @@ namespace PrismaBenchmark
 
             void action()
             {
+                Parallel.For(0, 10, i => {
+                    for (var j = 0; j < duration * info.numberOfWorkers * 1000; j++)
+                    {
+                        string query = info.produceQuery(info.queryType); // type of query
+                        cq.Enqueue(query);
+                    }
+                });
                 var watch = Stopwatch.StartNew();
-                while (watch.ElapsedMilliseconds <= 3000)
+                while (watch.ElapsedMilliseconds <= duration * 1000)
                 {
-                    string query = info.produceQuery(info.queryType); // type of query
-                    cq.Enqueue(query);
                     if (watch.ElapsedMilliseconds > 1000)
                         info.couting = true;
                 }
-                info.rps = info.processed / 2;
+                info.rps = info.processed / (duration - 1) + 1;
+                cq.Clear();
                 watch.Stop();
             }
 
