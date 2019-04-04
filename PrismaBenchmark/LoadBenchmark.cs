@@ -17,7 +17,7 @@ namespace PrismaBenchmark
         private static List<ArrayList> benchaMark = new List<ArrayList>();
         private readonly string servertype;
         private static string dateTime;
-        private const int duration = 5;
+        private const int duration = 10;
 
         public LoadBenchmark(): base()
         {
@@ -258,7 +258,7 @@ namespace PrismaBenchmark
             void startWorker()
             {
                 DataBase database = new DataBase();
-                while (info.rps == 0)
+                while (info.rps == -1)
                 {
                     if (cq.TryDequeue(out string query))
                     {
@@ -301,7 +301,7 @@ namespace PrismaBenchmark
                     if (watch.ElapsedMilliseconds > 1000)
                         info.couting = true;
                 }
-                info.rps = info.processed / (duration - 1) + 1;
+                info.rps += info.processed / (duration - 1) + 1;
                 cq.Clear();
                 watch.Stop();
             }
@@ -377,7 +377,7 @@ namespace PrismaBenchmark
         }
 
         public int processed = 0;
-        public int rps = 0;
+        public int rps = -1;
         public ConcurrentQueue<string> cq;
         public bool couting = false;
         public readonly int numberOfWorkers;

@@ -32,7 +32,7 @@ namespace PrismaBenchmark
                     userid = conf["myuserid"];
                     break;
                 case "postgres":
-                    userid = conf["myuserid"];
+                    userid = conf["pguserid"];
                     break;
             }
             database = conf["database"];

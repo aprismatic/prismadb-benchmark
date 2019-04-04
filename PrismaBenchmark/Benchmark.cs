@@ -17,6 +17,7 @@ namespace PrismaBenchmark
         private int multiple_size;
         private const string MSSQL = "mssql";
         private const string MYSQL = "mysql";
+        private const string PGSQL = "postgres";
 
         public Benchmark()
         {
@@ -55,12 +56,16 @@ namespace PrismaBenchmark
             switch (conf.ServerType)
             {
                 case MSSQL:
-                    create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} ([a.Fingerprint])", tableName);
-                    create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} ([d])", tableName);
+                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} ([a.Fingerprint])", tableName);
+                    create_index_i2 = String.Format(@"CREATE INDEX {0}_i2 on {0} ([d])", tableName);
                     break;
                 case MYSQL:
-                    create_index_i1 = String.Format(@"CREATE INDEX i1 on {0} (`a.Fingerprint`)", tableName);
-                    create_index_i2 = String.Format(@"CREATE INDEX i2 on {0} (`d`)", tableName);
+                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} (`a.Fingerprint`)", tableName);
+                    create_index_i2 = String.Format(@"CREATE INDEX {0}_i2 on {0} (`d`)", tableName);
+                    break;
+                case PGSQL:
+                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} (""a.Fingerprint"")", tableName);
+                    create_index_i2 = String.Format(@"CREATE INDEX {0}_i2 on {0} (""d"")", tableName);
                     break;
             }
 
@@ -73,8 +78,7 @@ namespace PrismaBenchmark
             }
             catch (Exception e)
             {
-                if (e.Message == String.Format("There is already an object named '{0}' in the database.", tableName) ||
-                    e.Message == String.Format("Table '{0}' already exists", tableName))
+                if (e.Message.Contains("already"))
                     if (overwrite)
                     {
                         DropTable(tableName);
@@ -171,7 +175,7 @@ namespace PrismaBenchmark
                 database.Close();
             }
 
-            Parallel.For(0, 10, i => startWorker());
+            Parallel.For(0, 5, i => startWorker());
 
             watch.Stop();
             Console.WriteLine("====Time of INSERT {0} records: {1}====\n", size, watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
@@ -214,6 +218,7 @@ namespace PrismaBenchmark
                 case MSSQL:
                     return QueryConstructor.ConstructMsSelectWithoutQuery(a);
                 case MYSQL:
+                case PGSQL:
                     return QueryConstructor.ConstructMySelectWithoutQuery(a);
             }
             return null;
@@ -226,6 +231,7 @@ namespace PrismaBenchmark
                 case MSSQL:
                     return "SELECT TOP 1 * FROM t1";
                 case MYSQL:
+                case PGSQL:
                     return "SELECT * FROM t1 LIMIT 1";
             }
             return null;
