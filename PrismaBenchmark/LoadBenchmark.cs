@@ -17,7 +17,7 @@ namespace PrismaBenchmark
         private static List<ArrayList> benchaMark = new List<ArrayList>();
         private readonly string servertype;
         private static string dateTime;
-        private const int duration = 10;
+        private const int duration = 5;
 
         public LoadBenchmark(): base()
         {
