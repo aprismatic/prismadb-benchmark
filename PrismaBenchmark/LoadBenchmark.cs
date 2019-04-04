@@ -17,6 +17,7 @@ namespace PrismaBenchmark
         private static List<ArrayList> benchaMark = new List<ArrayList>();
         private readonly string servertype;
         private static string dateTime;
+        private const int duration = 5;
 
         public LoadBenchmark(): base()
         {
@@ -143,8 +144,8 @@ namespace PrismaBenchmark
                 int queryTypeInt = entry.Value;
                 if (queryTypeInt < 2)
                 {
-                    RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal, 0);
-                    RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.threads, conf.verbal, 0);
+                    RunLoad(ProduceQuery, queryType, 1, conf.verbal, 0);
+                    RunLoad(ProduceQuery, queryType, conf.threads, conf.verbal, 0);
                 }
             }
 
@@ -163,12 +164,12 @@ namespace PrismaBenchmark
                             SetupForSelect(size);
                         }
                         if (queryTypeInt >= 15 && queryTypeInt <= 18)
-                            RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal, size);
+                            RunLoad(ProduceQuery, queryType, 1, conf.verbal, size);
                         else
                         {
                             if (size == 10000)
-                                RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, 1, conf.verbal, size);
-                            RunLoad(ProduceQuery, queryType, conf.startSpeed, conf.stride, conf.threads, conf.verbal, size);
+                                RunLoad(ProduceQuery, queryType, 1, conf.verbal, size);
+                            RunLoad(ProduceQuery, queryType, conf.threads, conf.verbal, size);
                         }
                     }
                 }
@@ -197,7 +198,6 @@ namespace PrismaBenchmark
                 }
             }
 
-            dataGen.ResetNextSingle();
             Close();
             benchmarkTime.Stop();
             benchaMark.Add(new ArrayList { "TOTAL_BENCHMARK_TIME", null, benchmarkTime.ElapsedMilliseconds, null, null, servertype, conf.BuildVersion, dateTime });
@@ -208,6 +208,7 @@ namespace PrismaBenchmark
 
         private void RunTime(int queryTypeInt, string queryType)
         {
+            GC.Collect();
             Console.WriteLine("Benchmarking load {0}...", queryType);
             string query = ProduceQuery(queryTypeInt);
             string queryCheck = CheckQuery(queryTypeInt);
@@ -227,18 +228,16 @@ namespace PrismaBenchmark
             Console.WriteLine("====Time of {0}: {1}====\n", queryType, watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
         }
 
-        protected void RunLoad(Func<int, string> ProduceQuery, string queryType, int startSpeed, int stride, int workers, int verbal, int size)
+        protected void RunLoad(Func<int, string> ProduceQuery, string queryType, int workers, int verbal, int size)
         {
+            GC.Collect();
             Console.WriteLine("Benchmarking load {0}...", queryType);
 
             ThreadInfo threadInfo;
-            int v = startSpeed;
             int queryTypeInt = queryTypeMap.TryGetValue(queryType, out queryTypeInt)? queryTypeInt: 1;
-            if (verbal >= 1)
-                Console.WriteLine("Start Speed: {0}", v);
 
             ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
-            threadInfo = new ThreadInfo(cq, ProduceQuery, queryTypeInt, v:v, stride:stride, numberOfWorkers:workers, verbal: verbal);
+            threadInfo = new ThreadInfo(cq, ProduceQuery, queryTypeInt, numberOfWorkers:workers, verbal: verbal);
             Task master = Task.Run(() => MasterProc(threadInfo));
             Task worker = Task.Run(() => WorkerProc(threadInfo));
             Task[] tasks = new Task[2] { worker, master };
@@ -254,21 +253,20 @@ namespace PrismaBenchmark
         {
             ThreadInfo info = threadInfo as ThreadInfo;
             ConcurrentQueue<string> cq = info.cq;
-
-            int v = info.v;
+            
             // An action to consume the ConcurrentQueue.
             void startWorker()
             {
                 DataBase database = new DataBase();
-                string query;
-                while (info.rps == 0)
+                while (info.rps == -1)
                 {
-                    if (cq.TryDequeue(out query))
+                    if (cq.TryDequeue(out string query))
                     {
                         try
                         {
-                            database.ExecuteQuery(query);
-                            Interlocked.Add(ref info.processed, 1);
+                            database.ExecuteNonQuery(query);
+                            if (info.couting)
+                                Interlocked.Add(ref info.processed, 1);
                         }
                         catch (Exception e)
                         {
@@ -287,49 +285,25 @@ namespace PrismaBenchmark
             ThreadInfo info = threadInfo as ThreadInfo;
             Thread.Sleep(conf.connectionTime); // wait for workers to connect to db
             ConcurrentQueue<string> cq = info.cq;
-            int v = info.v;
-            int floor = v;
-            int ceil = -1;
 
             void action()
             {
-                do
-                {
-                    if (info.verbal >= 1)
-                        Console.Write("\rSpeed: {0}  ", v); // extra space at the end to make sure to overwrite the previously written line
-                    long elapsed = 0;
-                    var watch = Stopwatch.StartNew();
-                    Parallel.For(0, v, i => {
+                Parallel.For(0, 10, i => {
+                    for (var j = 0; j < duration * info.numberOfWorkers * 1000; j++)
+                    {
                         string query = info.produceQuery(info.queryType); // type of query
                         cq.Enqueue(query);
-                    });
-                    Interlocked.Add(ref info.produced, v);
-                    //if (info.verbal >= 2)
-                    //    Console.Write("\rQueue now have: {0}", cq.Count);
-                    do
-                    {
-                        elapsed = watch.ElapsedMilliseconds;
-                    } while (elapsed < 1000); // each pulse last 1s
-                    if (cq.Count > 0 || ceil != -1)
-                    {
-                        if (cq.Count > 0)
-                            ceil = v;
-                        else
-                            floor = v;
-                        v = (floor + ceil) / 2;
-                        while (cq.Count > 0) { } // wait for the queue to clear off
                     }
-                    else
-                    {   // change strategy to doubling speed every cycle
-                        floor = v;
-                        v *= 2;
-                    }
-                    if (ceil <= floor + 1 && ceil != -1)
-                    {
-                        info.rps = ceil; // only 1 master thread write to info.rps -> no need lock
-                    }
-                    watch.Stop();
-                } while (info.rps == 0);
+                });
+                var watch = Stopwatch.StartNew();
+                while (watch.ElapsedMilliseconds <= duration * 1000)
+                {
+                    if (watch.ElapsedMilliseconds > 1000)
+                        info.couting = true;
+                }
+                info.rps += info.processed / (duration - 1) + 1;
+                cq.Clear();
+                watch.Stop();
             }
 
             Parallel.Invoke(action);
@@ -393,22 +367,19 @@ namespace PrismaBenchmark
 
     class ThreadInfo
     {
-        public ThreadInfo(ConcurrentQueue<string> cq, Func<int, string> produceQuery, int queryType, int v = 100, int stride=1, int numberOfWorkers = 1, int verbal=0)
+        public ThreadInfo(ConcurrentQueue<string> cq, Func<int, string> produceQuery, int queryType, int numberOfWorkers = 1, int verbal=0)
         {
             this.cq = cq;
-            this.v = v;
             this.numberOfWorkers = numberOfWorkers;
             this.verbal = verbal;
             this.produceQuery = produceQuery;
             this.queryType = queryType;
-            this.stride = stride;
         }
+
         public int processed = 0;
-        public int produced = 0;
-        public int rps = 0;
+        public int rps = -1;
         public ConcurrentQueue<string> cq;
-        public readonly int v;
-        public readonly int stride;
+        public bool couting = false;
         public readonly int numberOfWorkers;
         public readonly int verbal;
         public readonly Func<int, string> produceQuery;

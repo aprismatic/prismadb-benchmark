@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Npgsql;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,9 +11,11 @@ namespace PrismaBenchmark
         protected static CustomConfiguration conf;
         private SqlConnection msconnection = null;
         private MySqlConnection myconnection = null;
+        private NpgsqlConnection pgconnection = null;
         private static string servertype;
         private const string MSSQL = "mssql";
         private const string MYSQL = "mysql";
+        private const string PGSQL = "postgres";
 
         public DataBase(bool first = false)
         {
@@ -34,6 +37,9 @@ namespace PrismaBenchmark
                 case MYSQL:
                     IsMYConnected();
                     break;
+                case PGSQL:
+                    IsPGConnected();
+                    break;
             }
         }
 
@@ -47,17 +53,22 @@ namespace PrismaBenchmark
                 case MYSQL:
                     MYConnect();
                     break;
+                case PGSQL:
+                    PGConnect();
+                    break;
             }
         }
 
-        public long ExecuteQuery(string query)
+        public long ExecuteNonQuery(string query)
         {
             switch (servertype)
             {
                 case MSSQL:
-                    return MSExecuteQuery(query);
+                    return MSExecuteNonQuery(query);
                 case MYSQL:
-                    return MYExecuteQuery(query);
+                    return MYExecuteNonQuery(query);
+                case PGSQL:
+                    return PGExecuteNonQuery(query);
             }
             return 0;
         }
@@ -70,6 +81,8 @@ namespace PrismaBenchmark
                     return MSExecuteReader(query);
                 case MYSQL:
                     return MYExecuteReader(query);
+                case PGSQL:
+                    return PGExecuteReader(query);
             }
             return null;
         }
@@ -85,6 +98,10 @@ namespace PrismaBenchmark
                 case MYSQL:
                     myconnection.Close();
                     myconnection = null;
+                    break;
+                case PGSQL:
+                    pgconnection.Close();
+                    pgconnection = null;
                     break;
             }
         }
@@ -126,6 +143,29 @@ namespace PrismaBenchmark
                 myconnection.Open();
             }
             catch (MySqlException e)
+            {
+                Console.WriteLine("Cannot create connection:\n" + e.Message);
+                myconnection = null;
+            }
+        }
+
+        private void PGConnect()
+        {
+            var pgbldr = new NpgsqlConnectionStringBuilder
+            {
+                Username = conf.userid,
+                Password = conf.password,
+                Host = conf.host,
+                Port = Int32.Parse(conf.port),
+                Database = conf.database,
+                ServerCompatibilityMode = ServerCompatibilityMode.NoTypeLoading
+            };
+            try
+            {
+                pgconnection = new NpgsqlConnection(pgbldr.ConnectionString);
+                pgconnection.Open();
+            }
+            catch (NpgsqlException e)
             {
                 Console.WriteLine("Cannot create connection:\n" + e.Message);
                 myconnection = null;
@@ -260,7 +300,49 @@ namespace PrismaBenchmark
             }
         }
 
-        private long MSExecuteQuery(string query)
+        private void IsPGConnected()
+        {
+            int attempt = 0;
+            bool isConnected = false;
+            var bldr = new NpgsqlConnectionStringBuilder
+            {
+                Username = conf.userid,
+                Password = conf.password,
+                Host = conf.host,
+                Port = Int32.Parse(conf.port),
+                Database = conf.database,
+                ServerCompatibilityMode = ServerCompatibilityMode.NoTypeLoading
+
+            };
+            while (!isConnected)
+            {
+                if (attempt < 10)
+                {
+                    using (var l_oConnection = new NpgsqlConnection(bldr.ConnectionString))
+                    {
+                        try
+                        {
+                            l_oConnection.Open();
+                            isConnected = true;
+                        }
+                        catch (NpgsqlException)
+                        {
+                            isConnected = false;
+                        }
+                    }
+                    attempt++;
+                    System.Threading.Thread.Sleep(5000);
+                }
+                else
+                {
+                    Console.WriteLine("Connect failed. Press any key to exit ...");
+                    Console.ReadLine();
+                    Environment.Exit(1);
+                }
+            }
+        }
+
+        private long MSExecuteNonQuery(string query)
         {
             if (msconnection == null)
             {
@@ -280,14 +362,10 @@ namespace PrismaBenchmark
                 CommandType = CommandType.Text,
                 CommandTimeout = 300
             };
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                reader.Close();
-            }
-            return 0;
+            return cmd.ExecuteNonQuery();
         }
 
-        private long MYExecuteQuery(string query)
+        private long MYExecuteNonQuery(string query)
         {
             if (myconnection == null)
             {
@@ -307,11 +385,30 @@ namespace PrismaBenchmark
                 CommandType = CommandType.Text,
                 CommandTimeout = 300
             };
-            using (MySqlDataReader reader = cmd.ExecuteReader())
+            return cmd.ExecuteNonQuery();
+        }
+
+        private long PGExecuteNonQuery(string query)
+        {
+            if (pgconnection == null)
             {
-                reader.Close();
+                Console.WriteLine("There is no connection!");
+                if (!Retry())
+                {
+                    Console.WriteLine("Connect failed. Press any key to exit ...");
+                    Console.ReadLine();
+                    Environment.Exit(1);
+                }
             }
-            return 0;
+            // execute query
+            NpgsqlCommand cmd = new NpgsqlCommand
+            {
+                CommandText = query,
+                Connection = pgconnection,
+                CommandType = CommandType.Text,
+                CommandTimeout = 300
+            };
+            return cmd.ExecuteNonQuery();
         }
 
         private string MSExecuteReader(string query)
@@ -345,6 +442,25 @@ namespace PrismaBenchmark
                 CommandTimeout = 300
             };
             using (MySqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                    return reader[1].ToString();
+            }
+            return null;
+        }
+
+        private string PGExecuteReader(string query)
+        {
+            if (pgconnection == null)
+                return null;
+            NpgsqlCommand cmd = new NpgsqlCommand
+            {
+                CommandText = query,
+                Connection = pgconnection,
+                CommandType = CommandType.Text,
+                CommandTimeout = 300
+            };
+            using (NpgsqlDataReader reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                     return reader[1].ToString();
