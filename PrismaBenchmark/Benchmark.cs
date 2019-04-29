@@ -94,11 +94,11 @@ namespace PrismaBenchmark
         protected void DropTable(string tableName)
         {
             string query = String.Format("DROP TABLE {0}", tableName);
-            if(ExecuteQuery(query) != -1)
+            if (ExecuteQuery(query) != null)
                 Console.WriteLine(String.Format("Table {0} dropped.", tableName));
         }
 
-        protected long ExecuteQuery(string query)
+        protected long? ExecuteQuery(string query)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace PrismaBenchmark
             catch (SqlException e)
             {
                 Console.WriteLine("Query caused error: {0}", e.Message);
-                return  -1;
+                return null;
             }
         }
 
@@ -151,7 +151,7 @@ namespace PrismaBenchmark
                 cq.Enqueue(query);
             }
 
-            while ((multiple_size / conf.multiple ) % batch_size != 0)
+            while ((multiple_size / conf.multiple) % batch_size != 0)
                 batch_size /= 10;
             // populate multiple range
             for (int m = 0; m < conf.multiple; m++)
@@ -226,7 +226,7 @@ namespace PrismaBenchmark
 
         protected string GenerateSelectLimitQuery()
         {
-            switch(conf.ServerType)
+            switch (conf.ServerType)
             {
                 case MSSQL:
                     return "SELECT TOP 1 * FROM t1";
