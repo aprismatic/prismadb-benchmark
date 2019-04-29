@@ -1,7 +1,7 @@
 Push-Location $PSScriptRoot
 
 try {
-    $DockerMachine = 'BenchmarkTest'
+    $DockerMachine = 'PrismaDB-BenchmarkTest'
 
     docker-machine stop $DockerMachine
     Write-Output "y" | docker-machine rm $DockerMachine

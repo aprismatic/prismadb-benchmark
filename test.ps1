@@ -2,7 +2,7 @@ Push-Location $PSScriptRoot
 
 try {
     $DigitalOceanToken = $env:DOTokenSecure
-    $DockerMachine = 'BenchmarkTest'
+    $DockerMachine = 'PrismaDB-BenchmarkTest'
 	
     Set-Location PrismaBenchmark | dotnet restore | dotnet publish -c Release -o out
 
@@ -17,9 +17,8 @@ try {
 	
     docker load -i "$PSScriptRoot/prismadb-proxy-mssql.tar"
 	
-    docker-compose up -d --build prismadb prismaproxy
-    Start-Sleep -s 300
-    docker-compose up --build prismabenchmark
+    docker-compose up -d --no-color prismadb prismaproxy
+    docker-compose up --no-color --exit-code-from prismabenchmark --build prismabenchmark
 }
 finally {
     if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
