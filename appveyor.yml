@@ -3,7 +3,7 @@ skip_tags: true
 branches:
   only:
     - master
-image: "Visual Studio 2017"
+image: "Windows Server 2019"
 init:
   - ps: $env:AzureRegistryPassword | docker login -u $env:AzureRegistryLogin --password-stdin aprismatic.azurecr.io
 before_build:
