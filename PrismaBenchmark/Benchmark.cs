@@ -164,6 +164,7 @@ namespace PrismaBenchmark
             }
 
             var watch = Stopwatch.StartNew();
+            var insertCount = 0;
 
             void startWorker()
             {
@@ -171,7 +172,11 @@ namespace PrismaBenchmark
                 while (cq.TryDequeue(out string query))
                 {
                     database.ExecuteNonQuery(query);
-                    Console.Out.Flush();
+                    insertCount++;
+
+                    // To keep alive the terminal
+                    if (insertCount % 50 == 0)
+                        Console.WriteLine("-");
                 }
                 database.Close();
             }
