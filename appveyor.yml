@@ -5,6 +5,7 @@ branches:
     - master
 image: "Windows Server 2019"
 init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: $env:AzureRegistryPassword | docker login -u $env:AzureRegistryLogin --password-stdin aprismatic.azurecr.io
 before_build:
   - ps: Switch-DockerLinux # Test docker linux switch before continuing
