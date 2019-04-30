@@ -2,14 +2,12 @@ Push-Location $PSScriptRoot
 
 try {
     $DigitalOceanToken = $env:DOTokenSecure
-    $DockerMachine = 'prismadb-benchmarktest'
+    $DockerMachine = 'PrismaDB-BenchmarkTest'
 	
     Set-Location PrismaBenchmark | dotnet restore | dotnet publish -c Release -o out
 
-    docker-machine create --driver azure --azure-subscription-id $DigitalOceanToken `
-        --azure-location='northcentralus' --azure-size='Standard_F16s_v2' `
-        --azure-resource-group='PrismaDB-Benchmark' --azure-subnet='prismadb-benchmark' `
-        --azure-vnet='prismadb-benchmark' $DockerMachine
+    docker-machine create --driver digitalocean --digitalocean-access-token $DigitalOceanToken `
+        --digitalocean-region='nyc3' --digitalocean-size='c-32' $DockerMachine
 	
     docker-machine ls
     docker-machine env --shell powershell $DockerMachine
