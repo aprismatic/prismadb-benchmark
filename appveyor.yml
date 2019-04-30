@@ -13,7 +13,7 @@ before_build:
 build_script:
   - ps: ./build.ps1
 test_script:
-  - echo "SKIPPING TEST UNTIL DOCKER MACHINE OUTPUT TIMEOUT IS RESOLVED" # ps: ./test.ps1
+  - ps: ./test.ps1
 deploy_script:
   - ps: ./deploy.ps1
 on_finish:
