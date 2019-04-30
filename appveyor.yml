@@ -5,7 +5,6 @@ branches:
     - master
 image: "Windows Server 2019"
 init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: $env:AzureRegistryPassword | docker login -u $env:AzureRegistryLogin --password-stdin aprismatic.azurecr.io
 before_build:
   - ps: Switch-DockerLinux # Test docker linux switch before continuing
@@ -24,7 +23,7 @@ environment:
   AccountNameSecure:
     secure: tjnWYxXSiCBP/XN3tEYtKg==
   DOTokenSecure:
-    secure: Tk+kQ8w/Xy+Z3xzIH03Ml4lw+5LL3eXvFwV3fXilBTVD+R/JrgUH9VgGnVazoU1HcvFjcpQ8Tlmg37E/hqHfcocPQoxmRpCcEzeanBITYeU=
+    secure: eQ4iS6WHAORSUgds2D3S0p6Kc4oU6oXKxAsCFbWB7ru+VycfCxAv6zaHcYiDjrc9
   SqlPassword:
     secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
   ServerType: mssql
