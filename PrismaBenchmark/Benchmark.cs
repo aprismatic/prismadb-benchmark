@@ -141,8 +141,6 @@ namespace PrismaBenchmark
             while (size % batch_size != 0)
                 batch_size /= 10;
 
-            var watch = Stopwatch.StartNew();
-
             for (int i = 0; i < single_size / batch_size; i++)
             {
                 string query = QueryConstructor.ConstructInsertQuery(table,
@@ -165,13 +163,15 @@ namespace PrismaBenchmark
                 }
             }
 
+            var watch = Stopwatch.StartNew();
+
             void startWorker()
             {
                 DataBase database = new DataBase();
                 while (cq.TryDequeue(out string query))
                 {
                     database.ExecuteNonQuery(query);
-                    Console.WriteLine("- Inserted 1000 rows -");
+                    Console.Out.Flush();
                 }
                 database.Close();
             }
