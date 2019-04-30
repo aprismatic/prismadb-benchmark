@@ -171,6 +171,7 @@ namespace PrismaBenchmark
                 while (cq.TryDequeue(out string query))
                 {
                     database.ExecuteNonQuery(query);
+                    Console.WriteLine("- Inserted 1000 rows -");
                 }
                 database.Close();
             }

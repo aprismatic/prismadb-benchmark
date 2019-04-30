@@ -17,8 +17,8 @@ try {
 	
     docker load -i "$PSScriptRoot/prismadb-proxy-mssql.tar"
 	
-    docker-compose up -d --build --exit-code-from prismabenchmark prismadb prismaproxy prismabenchmark
-    docker-compose logs -f prismabenchmark
+    docker-compose up -d prismadb prismaproxy
+    docker-compose up --exit-code-from prismabenchmark --build prismabenchmark
 }
 finally {
     if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
