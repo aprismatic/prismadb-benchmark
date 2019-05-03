@@ -1,0 +1,6 @@
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2-alpine
+
+COPY ./PrismaDB-Proxy-MySQL/  /app/
+
+ENTRYPOINT ["dotnet", "/app/PrismaDB-Proxy-MySQL.dll"]
+

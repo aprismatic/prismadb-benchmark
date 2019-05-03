@@ -26,7 +26,7 @@ environment:
     secure: Tk+kQ8w/Xy+Z3xzIH03Ml4lw+5LL3eXvFwV3fXilBTVD+R/JrgUH9VgGnVazoU1HcvFjcpQ8Tlmg37E/hqHfcocPQoxmRpCcEzeanBITYeU=
   SqlPassword:
     secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
-  ServerType: mssql
+  ServerType: mysql
   AzureRegistryLogin:
     secure: 2zeN4N4JCwJCC5uLlvSzlomqVrX/Il7WhVFRcCtpcH3Kr34dA726SNVk+8QBn/3K
   AzureRegistryPassword:

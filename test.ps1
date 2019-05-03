@@ -15,7 +15,7 @@ try {
     #see which is active
     docker-machine active
 	
-    docker load -i "$PSScriptRoot/prismadb-proxy-mssql.tar"
+    docker load -i "$PSScriptRoot/prismadb-proxy-mysql.tar"
 	
     docker-compose up -d prismadb prismaproxy
     docker-compose up --exit-code-from prismabenchmark --build prismabenchmark
