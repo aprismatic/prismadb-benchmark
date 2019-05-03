@@ -4,7 +4,8 @@ Push-Location $PSScriptRoot
 try {
     $myPublishPath = "$PSScriptRoot/PrismaDB-Proxy-MySQL"
     $downloadLocation = "$PSScriptRoot/Downloads"
-    $artifactFileName = "prismadb-proxy-test-4jg8dfk3.zip"
+    mkdir -Force $downloadLocation | Out-Null
+    $artifactFileName = "prismadb-proxy-test-WnPMFIAh3Uad.zip"
     $localArtifactPath = "$downloadLocation\$artifactFileName"
 
     Invoke-RestMethod -Method Get -Uri "http://aoa.cczy.my/stuff/$artifactFileName" `

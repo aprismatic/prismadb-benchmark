@@ -12,7 +12,7 @@ services:
             - prisma
         environment:
             SqlPassword: ${SqlPassword}
-            BuildVersion: ${BuildVersion}
+            BuildVersion: "no-plugin"
             ServerType: ${ServerType}
         
     prismadb:
