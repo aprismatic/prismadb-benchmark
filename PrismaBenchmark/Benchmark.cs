@@ -98,6 +98,22 @@ namespace PrismaBenchmark
                 Console.WriteLine(String.Format("Table {0} dropped.", tableName));
         }
 
+        public void InitOPETree()
+        {
+            var iteration = 1000;
+            string queryTemp = "PRISMADB REBALANCE OPETREE WITH VALUES (";
+            for (var i = 0; i < iteration; i++)
+            {
+                string query = queryTemp;
+                for (var j = 0; j < iteration - 1; j++)
+                {
+                    query += (j + iteration * i) + ", ";
+                }
+                query += (iteration + iteration * i - 1) + ")";
+                ExecuteQuery(query);
+            }
+        }
+
         protected long? ExecuteQuery(string query)
         {
             try
