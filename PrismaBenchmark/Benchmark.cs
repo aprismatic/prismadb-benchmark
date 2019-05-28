@@ -100,16 +100,14 @@ namespace PrismaBenchmark
 
         public void InitOPETree()
         {
-            var iteration = 1000;
+            var iteration = 10;
             string queryTemp = "PRISMADB REBALANCE OPETREE WITH VALUES (";
             for (var i = 0; i < iteration; i++)
             {
                 string query = queryTemp;
-                for (var j = 0; j < iteration - 1; j++)
-                {
-                    query += (j + iteration * i) + ", ";
-                }
-                query += (iteration + iteration * i - 1) + ")";
+                for (var j = 0; j < iteration * 10000 - 1; j++)
+                    query += (j + iteration * 10000 * i) + ", ";
+                query += (iteration * 10000 + iteration * 10000 * i - 1) + ")";
                 ExecuteQuery(query);
             }
         }
