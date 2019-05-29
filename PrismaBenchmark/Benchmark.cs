@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PrismaBenchmark
@@ -109,6 +110,14 @@ namespace PrismaBenchmark
                     query += (j + iteration * 10000 * i) + ", ";
                 query += (iteration * 10000 + iteration * 10000 * i - 1) + ")";
                 ExecuteQuery(query);
+
+                var queryCheck = "PRISMADB REBALANCE OPETREE STATUS";
+                var result = "";
+                do
+                {
+                    result = ExecuteReader(queryCheck);
+                    Thread.Sleep(100);
+                } while (result != "Completed");
             }
         }
 
