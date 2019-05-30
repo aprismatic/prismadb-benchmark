@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PrismaBenchmark
@@ -96,6 +97,28 @@ namespace PrismaBenchmark
             string query = String.Format("DROP TABLE {0}", tableName);
             if (ExecuteQuery(query) != null)
                 Console.WriteLine(String.Format("Table {0} dropped.", tableName));
+        }
+
+        public void InitOPETree()
+        {
+            var iteration = 10;
+            string queryTemp = "PRISMADB REBALANCE OPETREE WITH VALUES (";
+            for (var i = 0; i < iteration; i++)
+            {
+                string query = queryTemp;
+                for (var j = 0; j < iteration * 10000 - 1; j++)
+                    query += (j + iteration * 10000 * i) + ", ";
+                query += (iteration * 10000 + iteration * 10000 * i - 1) + ")";
+                ExecuteQuery(query);
+
+                var queryCheck = "PRISMADB REBALANCE OPETREE STATUS";
+                var result = "";
+                do
+                {
+                    result = ExecuteReader(queryCheck);
+                    Thread.Sleep(100);
+                } while (result != "Completed");
+            }
         }
 
         protected long? ExecuteQuery(string query)
