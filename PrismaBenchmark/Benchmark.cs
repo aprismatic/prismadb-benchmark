@@ -115,8 +115,8 @@ namespace PrismaBenchmark
                 var result = "";
                 do
                 {
-                    result = ExecuteReader(queryCheck);
                     Thread.Sleep(100);
+                    result = ExecuteReader(queryCheck);
                 } while (result != "Completed");
             }
         }
