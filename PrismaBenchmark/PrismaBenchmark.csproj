@@ -7,11 +7,11 @@
 
   <ItemGroup>
     <PackageReference Include="MedallionRandom" Version="1.1.0" />
-    <PackageReference Include="MySqlConnector" Version="0.51.1" />
-    <PackageReference Include="Npgsql" Version="4.0.5" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="MySqlConnector" Version="0.56.0" />
+    <PackageReference Include="Npgsql" Version="4.0.7" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
 	<PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
   </ItemGroup>
 
