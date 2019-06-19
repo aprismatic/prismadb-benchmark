@@ -2,7 +2,7 @@ Push-Location $PSScriptRoot
 
 try {
     $DigitalOceanToken = $env:DOTokenSecure
-    $DockerMachine = 'PrismaDB-BenchmarkTest'
+    $DockerMachine = 'PrismaDB-Benchmark-Test'
 	
     Set-Location PrismaBenchmark | dotnet restore | dotnet publish -c Release -o out
 
