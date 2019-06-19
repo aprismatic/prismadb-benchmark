@@ -34,7 +34,7 @@ namespace PrismaBenchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, SEARCH, RANGE),
+                    a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, RANGE),
                     b INT ENCRYPTED FOR(ADDITION),
                     c INT ENCRYPTED FOR(MULTIPLICATION),
                     d INT,
@@ -57,15 +57,15 @@ namespace PrismaBenchmark
             switch (conf.ServerType)
             {
                 case MSSQL:
-                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} ([a.Range])", tableName);
+                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} ([a])", tableName);
                     create_index_i2 = String.Format(@"CREATE INDEX {0}_i2 on {0} ([d])", tableName);
                     break;
                 case MYSQL:
-                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} (`a.Range`)", tableName);
+                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} (`a`)", tableName);
                     create_index_i2 = String.Format(@"CREATE INDEX {0}_i2 on {0} (`d`)", tableName);
                     break;
                 case PGSQL:
-                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} (""a.Range"")", tableName);
+                    create_index_i1 = String.Format(@"CREATE INDEX {0}_i1 on {0} (""a"")", tableName);
                     create_index_i2 = String.Format(@"CREATE INDEX {0}_i2 on {0} (""d"")", tableName);
                     break;
             }
