@@ -6,7 +6,7 @@ services:
         build:
             context: ./
             dockerfile: Dockerfile-Benchmark
-        image: aprismatic.azurecr.io/prismadb-benchmark:alpine
+        image: prismadb.azurecr.io/benchmark:alpine
         container_name: PrismaDB_SQL_Benchmark
         networks:
             - prisma
@@ -27,7 +27,7 @@ services:
             ACCEPT_EULA: "Y"
 
     prismaproxy:
-        image: "aprismatic.azurecr.io/prismadb-proxy-${ServerType}:alpine"
+        image: "aprismatic/prismadb-proxy-${ServerType}:alpine"
         container_name: PrismaDB_SQL_Server_Proxy
         networks:
             - prisma

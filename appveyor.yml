@@ -1,34 +1,46 @@
----
-skip_tags: true
+version: "0.3.0.{build}"
+
 branches:
   only:
     - master
-image: "Windows Server 2019"
+
+skip_tags: true
+
+image: "Visual Studio 2019"
+
 init:
-  - ps: $env:AzureRegistryPassword | docker login -u $env:AzureRegistryLogin --password-stdin aprismatic.azurecr.io
+  - ps: $env:AzureRegistryPassword | docker login -u $env:AzureRegistryLogin --password-stdin prismadb.azurecr.io
+
+install:
+  - choco install docker-machine --limit-output --no-progress
+
 before_build:
-  - ps: Switch-DockerLinux # Test docker linux switch before continuing
   - ps: ./pull.ps1
+
 build_script:
   - ps: ./build.ps1
+
 test_script:
   - ps: ./test.ps1
+
 deploy_script:
   - ps: ./deploy.ps1
+
 on_finish:
   - ps: ./kill.ps1
+
 environment:
   AuthTokenSecure:
     secure: hDmhAYD8sltmvMXgXADCaZeFM/4iJCpo8c24wf/BWvs=
   AccountNameSecure:
     secure: tjnWYxXSiCBP/XN3tEYtKg==
   DOTokenSecure:
-    secure: Tk+kQ8w/Xy+Z3xzIH03Ml4lw+5LL3eXvFwV3fXilBTVD+R/JrgUH9VgGnVazoU1HcvFjcpQ8Tlmg37E/hqHfcocPQoxmRpCcEzeanBITYeU=
+    secure: HbET0xWvnaDl9O5mR/GXo31SS1DNscJi1CLEn8VGyHh83w1nPCTgVS9Z1z0UTL5PyAud44AJMZCj4mhnm2Rc49gzsM6DGLPFYL+CEQoDsVs=
   SqlPassword:
     secure: NIV0ptxW2A7zvO6jsEZpyZLlfYOdEeZtQvpiROFpeybkPcuG4J+PtAjOPgy+nS0n
   ServerType: mssql
   AzureRegistryLogin:
-    secure: 2zeN4N4JCwJCC5uLlvSzlomqVrX/Il7WhVFRcCtpcH3Kr34dA726SNVk+8QBn/3K
+    secure: D+QsELUr21tUIrhQPDP0fQ==
   AzureRegistryPassword:
-    secure: b63+6f1lGXPoDDW3omA144Lt/vJZ3Eex+ViqcLPJXbGn3nO96/uj01WHqwjDAH74
-version: "0.3.0.{build}"
+    secure: ImAsW6ovcEPbmfxIEfxO06io6aYSSUroHqxf8eEoilIXx0LcpEooDmiPK+M/1bJ5
+
