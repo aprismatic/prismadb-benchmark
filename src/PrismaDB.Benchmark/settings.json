@@ -1,28 +1,25 @@
 {
-    "host": "prismaproxy",
-    "port": "4000",
-    "msuserid": "sa",
-    "myuserid": "root",
-    "pguserid": "postgres",
-    "password": "saPwd123",
-    "database": "testdb",
-    "useProxy": true,
-    "encrypt": true,
-    "useIndex": false,
-    "operations": [
-        "insert",
-        "select",
-        "update",
-        "delete",
-        "encrypt"
-    ],
-    "sizes": [
-        10000,
-        100000,
-        1000000
-    ],
-    "multiple": 10,
-    "threads": 5,
-    "verbal": 0,
-    "connectionTime": 2000
+  "host": "prismadb",
+  "port": "5432",
+  "msuserid": "sa",
+  "myuserid": "root",
+  "pguserid": "postgres",
+  "password": "saPwd123",
+  "database": "testdb",
+  "useProxy": true,
+  "encrypt": true,
+  "useIndex": false,
+  "operations": [
+    "insert",
+    "select"
+  ],
+  "sizes": [
+    10000,
+    100000,
+    1000000
+  ],
+  "multiple": 10,
+  "threads": 5,
+  "verbal": 0,
+  "connectionTime": 2000
 }

@@ -17,7 +17,7 @@ namespace PrismaDB.Benchmark
         private static List<ArrayList> benchaMark = new List<ArrayList>();
         private readonly string servertype;
         private static string dateTime;
-        private const int duration = 5;
+        private const int duration = 60;
 
         public LoadBenchmark() : base()
         {
@@ -32,19 +32,20 @@ namespace PrismaDB.Benchmark
                         queryTypeMap.Add("MULTIPLE_INSERT", 1);
                         break;
                     case "select":
-                        queryTypeMap.Add("SELECT_LIMIT_ONE", 2);
-                        queryTypeMap.Add("SINGLE_SELECT_WITHOUT_EN/DECRYPTION", 3);
-                        queryTypeMap.Add("MULTIPLE_SELECT_WITHOUT_EN/DECRYPTION", 4);
-                        queryTypeMap.Add("SINGLE_SELECT", 5);
-                        queryTypeMap.Add("MULTIPLE_SELECT", 6);
-                        queryTypeMap.Add("SINGLE_SELECT_ADDITION", 7);
-                        queryTypeMap.Add("MULTIPLE_SELECT_ADDITION", 8);
-                        queryTypeMap.Add("SINGLE_SELECT_MULTIPLICATION", 9);
-                        queryTypeMap.Add("MULTIPLE_SELECT_MULTIPLICATION", 10);
-                        queryTypeMap.Add("SINGLE_SELECT_COMPOSITION", 11);
-                        queryTypeMap.Add("MULTIPLE_SELECT_COMPOSITION", 12);
-                        queryTypeMap.Add("SINGLE_SELECT_WITH_JOIN", 13);
-                        queryTypeMap.Add("MULTIPLE_SELECT_WITH_JOIN", 14);
+                        //queryTypeMap.Add("SELECT_LIMIT_ONE", 2);
+                        //queryTypeMap.Add("SINGLE_SELECT_WITHOUT_EN/DECRYPTION", 3);
+                        //queryTypeMap.Add("MULTIPLE_SELECT_WITHOUT_EN/DECRYPTION", 4);
+                        //queryTypeMap.Add("SINGLE_SELECT", 5);
+                        //queryTypeMap.Add("MULTIPLE_SELECT", 6);
+                        //queryTypeMap.Add("SINGLE_SELECT_ADDITION", 7);
+                        //queryTypeMap.Add("MULTIPLE_SELECT_ADDITION", 8);
+                        //queryTypeMap.Add("SINGLE_SELECT_MULTIPLICATION", 9);
+                        //queryTypeMap.Add("MULTIPLE_SELECT_MULTIPLICATION", 10);
+                        //queryTypeMap.Add("SINGLE_SELECT_COMPOSITION", 11);
+                        //queryTypeMap.Add("MULTIPLE_SELECT_COMPOSITION", 12);
+                        //queryTypeMap.Add("SINGLE_SELECT_WITH_JOIN", 13);
+                        //queryTypeMap.Add("MULTIPLE_SELECT_WITH_JOIN", 14);
+                        queryTypeMap.Add("SELECT_WILDCARD_SEARCH", 30);
                         break;
                     case "update":
                         queryTypeMap.Add("SINGLE_UPDATE", 15);
@@ -106,6 +107,7 @@ namespace PrismaDB.Benchmark
                 case 25: return GenerateEncryptQuery(typeCase: 6); // encrypt columns for elgmal multiplication
                 case 26: return GenerateEncryptQuery(typeCase: 7); // encrypt columns for all types
                 case 27: return GenerateUpdateKeyQuery(); // update key for table
+                case 30: return GenerateWildcardSearchQuery();
                 default: return GenerateInsertQuery(1);
             }
         }
@@ -135,7 +137,7 @@ namespace PrismaDB.Benchmark
 
             CreateTable("t1");
             CreateTable("t2", encrypt: false);
-            InitOPETree();
+            //InitOPETree();
             SetupForSelect(conf.sizes[0], "t2");
 
             Console.WriteLine("\nStart Load Benchmarking ... \n");
@@ -158,21 +160,13 @@ namespace PrismaDB.Benchmark
                 {
                     string queryType = entry.Key;
                     int queryTypeInt = entry.Value;
-                    if (queryTypeInt >= 2 && queryTypeInt <= 18)
+                    if (queryTypeInt == 30)
                     {
-                        if (queryTypeInt == 2)
-                        {
-                            CreateTable("t1");
-                            SetupForSelect(size);
-                        }
-                        if (queryTypeInt >= 15 && queryTypeInt <= 18)
-                            RunLoad(ProduceQuery, queryType, 1, conf.verbal, size);
-                        else
-                        {
-                            if (size == 10000)
-                                RunLoad(ProduceQuery, queryType, 1, conf.verbal, size);
-                            RunLoad(ProduceQuery, queryType, conf.threads, conf.verbal, size);
-                        }
+                        CreateTable("t1");
+                        SetupForSelect(size);
+
+                        RunLoad(ProduceQuery, queryType, 1, conf.verbal, size);
+                        RunLoad(ProduceQuery, queryType, conf.threads, conf.verbal, size);
                     }
                 }
             }
@@ -247,8 +241,8 @@ namespace PrismaDB.Benchmark
 
             if (threadInfo.verbal >= 1)
                 Console.WriteLine("\nDone processing!");
-            benchaMark.Add(new ArrayList { queryType, threadInfo.rps, null, size, workers, servertype, conf.BuildVersion, dateTime });
-            Console.WriteLine("====Max RPS of {0} with {1} Thread(s): {2}====\n", queryType, workers, threadInfo.rps);
+            benchaMark.Add(new ArrayList { queryType, threadInfo.rpm, null, size, workers, servertype, conf.BuildVersion, dateTime });
+            Console.WriteLine("====Max RPM of {0} with {1} Thread(s): {2}====\n", queryType, workers, threadInfo.rpm);
         }
 
         private void WorkerProc(Object threadInfo)
@@ -260,7 +254,7 @@ namespace PrismaDB.Benchmark
             void startWorker()
             {
                 DataBase database = new DataBase();
-                while (info.rps == -1)
+                while (info.rpm == -1)
                 {
                     if (cq.TryDequeue(out string query))
                     {
@@ -304,7 +298,7 @@ namespace PrismaDB.Benchmark
                     if (watch.ElapsedMilliseconds > 1000)
                         info.couting = true;
                 }
-                info.rps += info.processed / (duration - 1) + 1;
+                info.rpm += info.processed;
                 cq.Clear();
                 watch.Stop();
             }
@@ -380,7 +374,7 @@ namespace PrismaDB.Benchmark
         }
 
         public int processed = 0;
-        public int rps = -1;
+        public int rpm = -1;
         public ConcurrentQueue<string> cq;
         public bool couting = false;
         public readonly int numberOfWorkers;

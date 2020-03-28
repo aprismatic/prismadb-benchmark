@@ -7,7 +7,7 @@ namespace PrismaDB.Benchmark
 {
     static class DataGenerator
     {
-        private static string RandomString(int length)
+        public static string RandomString(int length)
         {
 
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

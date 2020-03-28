@@ -34,22 +34,23 @@ namespace PrismaDB.Benchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT ENCRYPTED FOR(MULTIPLICATION, ADDITION, RANGE),
-                    b INT ENCRYPTED FOR(ADDITION),
-                    c INT ENCRYPTED FOR(MULTIPLICATION),
+                    a INT,
+                    b INT,
+                    c INT,
                     d INT,
-                    e VARCHAR(30) ENCRYPTED FOR(SEARCH)
+                    e VARCHAR(120)
                 );", tableName);
+                //ENCRYPTED FOR(WILDCARD)
             }
             else
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT ENCRYPTED FOR(RANGE),
+                    a INT,
                     b INT,
                     c INT,
                     d INT,
-                    e VARCHAR(30)
+                    e VARCHAR(120)
                 );", tableName);
             }
 
@@ -156,7 +157,7 @@ namespace PrismaDB.Benchmark
             ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
 
             // populate single range
-            int batch_size = 1000;
+            int batch_size = 100;
             while (size % batch_size != 0)
                 batch_size /= 10;
 
@@ -204,6 +205,9 @@ namespace PrismaDB.Benchmark
 
             watch.Stop();
             Console.WriteLine("====Time of INSERT {0} records: {1}====\n", size, watch.Elapsed.ToString(@"hh\:mm\:ss\.fff"));
+
+            //Console.WriteLine("=Waiting for 5 minutes to let indexing run=\n");
+            //Thread.Sleep(300000);
         }
 
         protected string GenerateInsertQuery(int numberOfRecords)
@@ -274,6 +278,11 @@ namespace PrismaDB.Benchmark
             int multiple_size = 4 * size / 10;
             int a = single ? rand.Next(0, single_size) : rand.Next(single_size, single_size + multiple_size / conf.multiple);
             return QueryConstructor.ConstructSelectJoinQuery(a);
+        }
+
+        protected string GenerateWildcardSearchQuery()
+        {
+            return QueryConstructor.ConstructWildcardSearchQuery(DataGenerator.RandomString(3));
         }
 
         protected string GenerateUpdateQuery(bool single = true)

@@ -226,7 +226,7 @@ namespace PrismaDB.Benchmark
 
         private void IsMYConnected()
         {
-            InitDatabase();
+            //InitDatabase();
             int attempt = 0;
             bool isConnected = false;
             var mybldr = new MySqlConnectionStringBuilder
@@ -269,18 +269,17 @@ namespace PrismaDB.Benchmark
         {
             var mybldr = new MySqlConnectionStringBuilder
             {
-                ["user id"] = "init",
-                ["password"] = "init",
+                ["user id"] = conf.userid,
+                ["password"] = conf.password,
                 ["server"] = conf.host,
                 ["port"] = conf.port,
-                ["database"] = conf.database,
             };
             using (var l_oConnection = new MySqlConnection(mybldr.ConnectionString))
             {
                 try
                 {
                     l_oConnection.Open();
-                    string Register = $"PRISMADB REGISTER USER '{conf.userid}' PASSWORD '{conf.password}';";
+                    string Register = $"CREATE DATABASE testdb;";
                     MySqlCommand cmd = new MySqlCommand
                     {
                         CommandText = Register,
@@ -288,10 +287,7 @@ namespace PrismaDB.Benchmark
                         CommandType = CommandType.Text,
                         CommandTimeout = 300
                     };
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        reader.Close();
-                    }
+                    cmd.ExecuteNonQuery();
                 }
                 catch (MySqlException e)
                 {

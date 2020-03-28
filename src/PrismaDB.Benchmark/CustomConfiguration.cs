@@ -15,9 +15,7 @@ namespace PrismaDB.Benchmark
                 .AddJsonFile("settings.json", true, false)
                 .AddEnvironmentVariables()
                 .Build();
-#if !DEBUG
             host = conf["host"];
-#endif
             port = conf["port"];
             userid = conf["userid"];
             password = conf["password"];

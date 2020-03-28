@@ -56,6 +56,11 @@ namespace PrismaDB.Benchmark
             return String.Format("SELECT t1.a, t1.b, t2.d, t2.e FROM t1 INNER JOIN t2 ON t1.a = t2.a WHERE t1.a={0};", targetA);
         }
 
+        public static string ConstructWildcardSearchQuery(string targetE)
+        {
+            return String.Format("SELECT e FROM t1 WHERE e LIKE '%{0}%';", targetE);
+        }
+
         public static string ConstructUpdateQuery(int targetA, ArrayList tuple) // set all matches to the same values
         {
             return String.Format("UPDATE t1 SET a={0}, b={1}, c={2}, d={3}, e='{4}' WHERE a={0};", targetA, tuple[1], tuple[2], tuple[3], tuple[4]);
