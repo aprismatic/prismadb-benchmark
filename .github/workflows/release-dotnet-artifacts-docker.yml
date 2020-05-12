@@ -5,42 +5,13 @@ on:
     types: [created]
 
 jobs:
-  test:
-    runs-on: windows-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup nuget
-      uses: nuget/setup-nuget@v1
-    - name: Update nuget source
-      run: |
-        nuget sources update -Name 'github' `
-                             -Source https://nuget.pkg.github.com/aprismatic/index.json `
-                             -UserName ${{ secrets.GithubUsername }} `
-                             -Password ${{ secrets.GithubToken }} `
-                             -ConfigFile ./nuget.config
-    - name: Restore packages
-      run: nuget restore
-    - name: Build with dotnet
-      run: dotnet build --configuration Release --no-restore
-    - name: Run tests
-      run: dotnet test --configuration Release --no-build
-
   publish:
-    needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup nuget
       uses: nuget/setup-nuget@v1
-    - name: Update nuget source
-      run: |
-        nuget sources update -Name 'github' \
-                             -Source https://nuget.pkg.github.com/aprismatic/index.json \
-                             -UserName ${{ secrets.GithubUsername }} \
-                             -Password ${{ secrets.GithubToken }} \
-                             -ConfigFile ./nuget.config
     - name: Restore packages
       run: nuget restore
     - name: Publish with dotnet
@@ -61,7 +32,7 @@ jobs:
       with:
         args: 'PrismaDB.Benchmark.*.zip'
 
-  test_docker:
+  publish_docker:
     needs: publish
     runs-on: ubuntu-latest
     steps:
@@ -73,47 +44,11 @@ jobs:
         name: publish
         path: ./publish
     - name: Login to ACR
-      run: docker login -u prismadb -p ${{ secrets.AzureRegistryPassword }} prismadb.azurecr.io
-      shell: pwsh
-    - name: Install docker machine
-      run: |
-        base=https://github.com/docker/machine/releases/download/v0.16.0 &&
-        curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine &&
-        sudo mv /tmp/docker-machine /usr/local/bin/docker-machine &&
-        chmod +x /usr/local/bin/docker-machine
-    - name: Test and benchmark on DigitalOcean
-      run: ./ci/test-${{ matrix.os }}.ps1
-      shell: pwsh
-      env:
-        VERSION: 0.0.0-test
-        DB_VARIANT: mssql
-        DO_TOKEN: ${{ secrets.DigitalOceanToken }}
-        BENCHMARK_DB_PASSWORD: ${{ secrets.BenchmarkDbPassword }}
-    - name: Remove docker machine
-      if: always()
-      run: ./ci/remove.ps1
-      shell: pwsh
-      env:
-        DB_VARIANT: mssql
-
-  publish_docker:
-    needs: test_docker
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Download artifacts
-      uses: actions/download-artifact@v1
-      with:
-        name: docker-images-${{ matrix.dbVariant }}-${{ matrix.os }}
-        path: ./docker-images
-    - name: Login to ACR and Docker Hub
       run: |
         docker login -u prismadb -p ${{ secrets.AzureRegistryPassword }} prismadb.azurecr.io
       shell: pwsh
-    - name: Push Docker images
-      run: ./ci/push-${{ matrix.os }}.ps1
+    - name: Build and Push Docker images
+      run: ./ci/build-push.ps1
       shell: pwsh
       env:
         VERSION: ${{ github.event.release.tag_name }}
-        DB_VARIANT: ${{ matrix.dbVariant }}

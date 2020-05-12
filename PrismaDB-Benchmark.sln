@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrismaDB.Benchmark", "src\P
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{37584308-8A11-4637-BBB9-95CC005FFEDC}"
 	ProjectSection(SolutionItems) = preProject
+		ci\build-push.ps1 = ci\build-push.ps1
 		ci\docker-compose.yml = ci\docker-compose.yml
 		ci\Dockerfile-Benchmark = ci\Dockerfile-Benchmark
-		ci\push.ps1 = ci\push.ps1
 		ci\remove.ps1 = ci\remove.ps1
 		ci\test.ps1 = ci\test.ps1
 	EndProjectSection
