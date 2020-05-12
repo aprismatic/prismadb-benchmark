@@ -4,7 +4,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace PrismaBenchmark
+namespace PrismaDB.Benchmark
 {
     class DataBase
     {
@@ -424,7 +424,7 @@ namespace PrismaBenchmark
             };
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
-                while(reader.Read())
+                while (reader.Read())
                     return reader[1].ToString();
             }
             return null;

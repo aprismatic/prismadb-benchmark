@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace PrismaBenchmark
+namespace PrismaDB.Benchmark
 {
-    
+
     class Program
     {
         private static CustomConfiguration conf;
@@ -20,6 +20,6 @@ namespace PrismaBenchmark
             Console.WriteLine("Press any key to exit ...");
             Console.ReadLine();
         }
- 
+
     }
 }

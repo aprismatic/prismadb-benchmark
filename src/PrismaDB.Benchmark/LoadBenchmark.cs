@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
 
-namespace PrismaBenchmark
+namespace PrismaDB.Benchmark
 {
     class LoadBenchmark : Benchmark
     {
@@ -19,7 +19,7 @@ namespace PrismaBenchmark
         private static string dateTime;
         private const int duration = 5;
 
-        public LoadBenchmark(): base()
+        public LoadBenchmark() : base()
         {
             dateTime = DateTime.Now.ToString();
             servertype = conf.ServerType;
@@ -75,7 +75,8 @@ namespace PrismaBenchmark
 
         private string ProduceQuery(int type)
         {
-            switch (type){
+            switch (type)
+            {
                 case 0: return GenerateInsertQuery(1); // single insertion
                 case 1: return GenerateInsertQuery(10); // multiple insertion
                 case 2: return GenerateSelectLimitQuery(); // single selection without en/decryption
@@ -235,10 +236,10 @@ namespace PrismaBenchmark
             Console.WriteLine("Benchmarking load {0}...", queryType);
 
             ThreadInfo threadInfo;
-            int queryTypeInt = queryTypeMap.TryGetValue(queryType, out queryTypeInt)? queryTypeInt: 1;
+            int queryTypeInt = queryTypeMap.TryGetValue(queryType, out queryTypeInt) ? queryTypeInt : 1;
 
             ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
-            threadInfo = new ThreadInfo(cq, ProduceQuery, queryTypeInt, numberOfWorkers:workers, verbal: verbal);
+            threadInfo = new ThreadInfo(cq, ProduceQuery, queryTypeInt, numberOfWorkers: workers, verbal: verbal);
             Task master = Task.Run(() => MasterProc(threadInfo));
             Task worker = Task.Run(() => WorkerProc(threadInfo));
             Task[] tasks = new Task[2] { worker, master };
@@ -254,7 +255,7 @@ namespace PrismaBenchmark
         {
             ThreadInfo info = threadInfo as ThreadInfo;
             ConcurrentQueue<string> cq = info.cq;
-            
+
             // An action to consume the ConcurrentQueue.
             void startWorker()
             {
@@ -289,7 +290,8 @@ namespace PrismaBenchmark
 
             void action()
             {
-                Parallel.For(0, 10, i => {
+                Parallel.For(0, 10, i =>
+                {
                     for (var j = 0; j < duration * info.numberOfWorkers * 1000; j++)
                     {
                         string query = info.produceQuery(info.queryType); // type of query
@@ -368,7 +370,7 @@ namespace PrismaBenchmark
 
     class ThreadInfo
     {
-        public ThreadInfo(ConcurrentQueue<string> cq, Func<int, string> produceQuery, int queryType, int numberOfWorkers = 1, int verbal=0)
+        public ThreadInfo(ConcurrentQueue<string> cq, Func<int, string> produceQuery, int queryType, int numberOfWorkers = 1, int verbal = 0)
         {
             this.cq = cq;
             this.numberOfWorkers = numberOfWorkers;

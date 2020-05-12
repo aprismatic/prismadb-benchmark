@@ -1,5 +1,6 @@
-# Prismadb-benchmark
-[![Build status](https://ci.appveyor.com/api/projects/status/32r7s2skrgm9ubva?svg=true)](https://ci.appveyor.com/project/bazzilic/prismadb-benchmark)
+# PrismaDB-Benchmark
+
+![Test Docker Images](https://github.com/aprismatic/prismadb-benchmark/workflows/Test%20Docker%20Images/badge.svg?branch=master)
 
 Benchmark Test for PrismaDB.
 

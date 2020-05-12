@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/core/runtime:2.1-alpine
+
+COPY ./ /app/
+
+WORKDIR /app/
+
+ENTRYPOINT ["dotnet", "PrismaDB.Benchmark.dll"]

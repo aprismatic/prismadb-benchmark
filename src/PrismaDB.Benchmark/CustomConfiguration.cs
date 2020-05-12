@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 
-namespace PrismaBenchmark
+namespace PrismaDB.Benchmark
 {
     class CustomConfiguration
     {
         private static CustomConfiguration _self = null;
 
-        private CustomConfiguration() {
+        private CustomConfiguration()
+        {
 
             IConfiguration conf = new ConfigurationBuilder()
                 .AddJsonFile("settings.json", true, false)
@@ -23,7 +24,7 @@ namespace PrismaBenchmark
             SqlPassword = conf["SqlPassword"];
             BuildVersion = conf["BuildVersion"];
             ServerType = conf["ServerType"];
-            switch(ServerType)
+            switch (ServerType)
             {
                 case "mssql":
                     userid = conf["msuserid"];
@@ -54,7 +55,7 @@ namespace PrismaBenchmark
             load = new Load(temp);
             foreach (var setting in conf.GetSection("sizes").GetChildren())
             {
-                sizes.Add(Int32.TryParse(setting.Value, out int size)? size : 10000);
+                sizes.Add(Int32.TryParse(setting.Value, out int size) ? size : 10000);
             };
             //// loadTest variables
             if (!Int32.TryParse(conf["multiple"], out multiple))

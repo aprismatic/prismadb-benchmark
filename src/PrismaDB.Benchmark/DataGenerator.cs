@@ -1,17 +1,15 @@
 ﻿using Medallion;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
-namespace PrismaBenchmark
+namespace PrismaDB.Benchmark
 {
     static class DataGenerator
     {
         private static string RandomString(int length)
         {
-          
+
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[Rand.Next(0, s.Length)]).ToArray());
@@ -27,7 +25,7 @@ namespace PrismaBenchmark
             return data;
         }
 
-        public static List<ArrayList> GetDataRowsForSelect(int start, int batch_size=1000)
+        public static List<ArrayList> GetDataRowsForSelect(int start, int batch_size = 1000)
         // sequence number of batch, each batch contains batch_size rows, with index starting with batch*batch_size, end with index (batch+1)*batch_size - 1 
         {
             List<ArrayList> data = new List<ArrayList>(batch_size);

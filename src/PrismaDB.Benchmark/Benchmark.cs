@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PrismaBenchmark
+namespace PrismaDB.Benchmark
 {
     abstract class Benchmark
     {

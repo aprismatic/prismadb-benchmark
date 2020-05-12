@@ -1,3 +1,0 @@
-FROM prismadb.azurecr.io/sqlpeek-mssql:alpine
-
-COPY ./PrismaDB-Plugin-MSSQL/   /app/Plugins/

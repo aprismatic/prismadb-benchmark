@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-namespace PrismaBenchmark
+namespace PrismaDB.Benchmark
 {
     static class QueryConstructor
     {
@@ -68,7 +68,7 @@ namespace PrismaBenchmark
 
         public static string ConstructDecryptQuery(bool check, bool str) // select on column a
         {
-            return String.Format("PRISMADB DECRYPT t2.{1} {0};", check? "STATUS" : "", str ? "e" : "b");
+            return String.Format("PRISMADB DECRYPT t2.{1} {0};", check ? "STATUS" : "", str ? "e" : "b");
         }
 
         public static string ConstructEncryptQuery(bool check, string type) // select on column a
