@@ -26,7 +26,7 @@ namespace PrismaDB.Benchmark
             ds = new DataBase(); // DataStore take care of db config
         }
 
-        protected void CreateTable(string tableName, bool overwrite = true, bool encrypt = true)
+        protected void CreateTable(string tableName, bool overwrite = true, bool encrypt = false)
         {
             // build query
             string query;
@@ -45,7 +45,7 @@ namespace PrismaDB.Benchmark
             {
                 query = String.Format(@"CREATE TABLE {0}
                 (
-                    a INT ENCRYPTED FOR(RANGE),
+                    a INT,
                     b INT,
                     c INT,
                     d INT,

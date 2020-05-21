@@ -226,7 +226,7 @@ namespace PrismaDB.Benchmark
 
         private void IsMYConnected()
         {
-            InitDatabase();
+            //InitDatabase();
             int attempt = 0;
             bool isConnected = false;
             var mybldr = new MySqlConnectionStringBuilder

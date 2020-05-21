@@ -11,8 +11,8 @@ services:
         networks:
             - prisma
         environment:
-            SqlPassword: ${BENCHMARK_DB_PASSWORD}
-            BuildVersion: ${VERSION}
+            SqlPassword: abc
+            BuildVersion: 0.0.0
             ServerType: mysql
         
     prismadb:
@@ -25,20 +25,20 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: "saPwd123"
 
-    prismaproxy:
-        image: aprismatic/prismadb-proxy-mysql:alpine
-        container_name: PrismaDB_SQL_Server_Proxy
-        networks:
-            - prisma
-        ports:
-            - 4000:4000
-        depends_on:
-            - prismadb
-        environment:
-            ListenPort: "4000"
-            ServerAddress: "prismadb"
-            ServerPort: "3306"
-            Database: "testdb"
+    # prismaproxy:
+    #     image: aprismatic/prismadb-proxy-mysql:alpine
+    #     container_name: PrismaDB_SQL_Server_Proxy
+    #     networks:
+    #         - prisma
+    #     ports:
+    #         - 4000:4000
+    #     depends_on:
+    #         - prismadb
+    #     environment:
+    #         ListenPort: "4000"
+    #         ServerAddress: "prismadb"
+    #         ServerPort: "3306"
+    #         Database: "testdb"
     
 networks:
     prisma:

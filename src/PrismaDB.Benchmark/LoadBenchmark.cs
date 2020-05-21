@@ -135,7 +135,7 @@ namespace PrismaDB.Benchmark
 
             CreateTable("t1");
             CreateTable("t2", encrypt: false);
-            InitOPETree();
+            //InitOPETree();
             SetupForSelect(conf.sizes[0], "t2");
 
             Console.WriteLine("\nStart Load Benchmarking ... \n");
