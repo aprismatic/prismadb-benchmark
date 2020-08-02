@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+
+    - name: Restore packages
+      run: nuget restore
+
+    - name: Publish with dotnet
+      run: |
+        dotnet publish --configuration Release --no-restore -p:Version=${{ github.event.release.tag_name }} --output "./publish/"
+
+    - name: Login to ACR
+      run: docker login -u aprismatic -p ${{ secrets.ACR_PASSWORD }} aprismatic.azurecr.io
+
+    - name: Build and push Docker images
+      run: ./ci/build-push.ps1
+      shell: pwsh
+      env:
+        VERSION: ${{ github.event.release.tag_name }}

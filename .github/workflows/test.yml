@@ -1,10 +1,9 @@
-name: Test Docker Images
+name: Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
 
 jobs:
   test_docker:
@@ -12,27 +11,33 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Setup nuget
+
+    - name: Setup NuGet
       uses: nuget/setup-nuget@v1
+
     - name: Restore packages
       run: nuget restore
+
     - name: Publish with dotnet
       run: |
         dotnet publish --configuration Release --no-restore --output "./publish/"
-    - name: Install docker machine
+
+    - name: Install Docker machine
       run: |
         base=https://github.com/docker/machine/releases/download/v0.16.0 &&
         curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine &&
         sudo mv /tmp/docker-machine /usr/local/bin/docker-machine &&
         chmod +x /usr/local/bin/docker-machine
-    - name: Test and benchmark on DigitalOcean
+
+    - name: Run test and benchmark on DigitalOcean
       run: ./ci/test.ps1
       shell: pwsh
       env:
         VERSION: 0.0.0-test
-        DO_TOKEN: ${{ secrets.DigitalOceanToken }}
-        BENCHMARK_DB_PASSWORD: ${{ secrets.BenchmarkDbPassword }}
-    - name: Remove docker machine
+        DO_TOKEN: ${{ secrets.DO_TOKEN }}
+        BENCHMARK_DB_PASSWORD: ${{ secrets.PRISMADB_BENCHMARK_DB_PASSWORD }}
+
+    - name: Remove Docker machine
       if: always()
       run: ./ci/remove.ps1
       shell: pwsh

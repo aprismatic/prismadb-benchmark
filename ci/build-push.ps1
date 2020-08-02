@@ -2,12 +2,12 @@ Push-Location $PSScriptRoot
 
 $ver = $env:VERSION
 
-docker build -t prismadb.azurecr.io/benchmark:$ver-alpine -f Dockerfile-Benchmark ../publish
+docker build -t aprismatic.azurecr.io/prismadb-benchmark:$ver-alpine -f Dockerfile-Benchmark ../publish
 
-docker tag prismadb.azurecr.io/benchmark:$ver-alpine prismadb.azurecr.io/benchmark:latest
-docker tag prismadb.azurecr.io/benchmark:$ver-alpine prismadb.azurecr.io/benchmark:alpine
-docker tag prismadb.azurecr.io/benchmark:$ver-alpine prismadb.azurecr.io/benchmark:$ver
+docker tag aprismatic.azurecr.io/prismadb-benchmark:$ver-alpine aprismatic.azurecr.io/prismadb-benchmark:latest
+docker tag aprismatic.azurecr.io/prismadb-benchmark:$ver-alpine aprismatic.azurecr.io/prismadb-benchmark:alpine
+docker tag aprismatic.azurecr.io/prismadb-benchmark:$ver-alpine aprismatic.azurecr.io/prismadb-benchmark:$ver
 
-docker push prismadb.azurecr.io/benchmark
+docker push aprismatic.azurecr.io/prismadb-benchmark
 
 Pop-Location
