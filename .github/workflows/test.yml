@@ -37,7 +37,7 @@ jobs:
         DO_TOKEN: ${{ secrets.DO_TOKEN }}
         BENCHMARK_DB_PASSWORD: ${{ secrets.PRISMADB_BENCHMARK_DB_PASSWORD }}
 
-    - name: Remove docker machine
+    - name: Remove Docker Machine
       if: always()
       run: ./ci/remove.ps1
       shell: pwsh

@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+
+    - name: Restore Packages
+      run: nuget restore
+
+    - name: Publish with Dotnet
+      run: |
+        dotnet publish --configuration Release --no-restore -p:Version=${{ github.event.release.tag_name }} --output "./publish/"
+
+    - name: Login to Docker Hub
+      run: docker login -u ${{ secrets.DH_USERNAME }} -p ${{ secrets.DH_TOKEN }}
+
+    - name: Build and Push Docker images
+      run: ./ci/build-push.ps1
+      shell: pwsh
+      env:
+        VERSION: ${{ github.event.release.tag_name }}
