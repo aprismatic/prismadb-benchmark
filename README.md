@@ -1,6 +1,6 @@
 # PrismaDB-Benchmark
 
-![Test Docker Images](https://github.com/aprismatic/prismadb-benchmark/workflows/Test%20Docker%20Images/badge.svg?branch=master)
+![Test Docker Images](https://github.com/aprismatic/prismadb-benchmark/workflows/Test/badge.svg?branch=master)
 
 Benchmark Test for PrismaDB.
 
