@@ -101,25 +101,20 @@ namespace PrismaDB.Benchmark
 
         public void InitOPETree()
         {
-            var iteration = 10;
-            string queryTemp = "PRISMADB OPETREE INSERT VALUES (";
-            for (var i = 0; i < iteration; i++)
-            {
-                string query = queryTemp;
-                for (var j = 0; j < iteration * 10000 - 1; j++)
-                    query += (j + iteration * 10000 * i) + ", ";
-                query += (iteration * 10000 + iteration * 10000 * i - 1) + ")";
-                ExecuteQuery(query);
-            }
+            string query = "PRISMADB OPETREE INSERT VALUES (";
+            for (var i = 0; i < 1000000; i += 10)
+                query += i + ", ";
+            query += 1000000 + ")";
+            ExecuteQuery(query);
 
-            ExecuteQuery("PRISMADB OPETREE REBUILD");
+            //ExecuteQuery("PRISMADB OPETREE REBUILD");
 
-            string result;
-            do
-            {
-                Thread.Sleep(100);
-                result = ExecuteReader("PRISMADB OPETREE REBUILD STATUS");
-            } while (result != "Completed");
+            //string result;
+            //do
+            //{
+            //    Thread.Sleep(100);
+            //    result = ExecuteReader("PRISMADB OPETREE REBUILD STATUS");
+            //} while (result != "Completed");
         }
 
         protected long? ExecuteQuery(string query)
